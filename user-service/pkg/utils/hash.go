@@ -2,6 +2,7 @@ package utils
 
 import (
 	"golang.org/x/crypto/bcrypt"
+	"github.com/golang-jwt/jwt/v5"
 	"os"
 	"time"
 )
