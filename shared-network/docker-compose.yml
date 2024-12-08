@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  hello:
+    container_name: hello
+
+networks:
+  cv-generator-network:
+    driver: bridge
