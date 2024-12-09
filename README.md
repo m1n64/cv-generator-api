@@ -1,4 +1,4 @@
-## CV GENERATOR | WIP
+## CV GENERATOR API | WIP
 
 ### Description
 This project is a simple CV generator API, written on Go in microservice architecture. It is a simple REST API with gRPC services.
