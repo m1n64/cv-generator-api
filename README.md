@@ -17,11 +17,10 @@ This project is a simple CV generator API, written on Go in microservice archite
 
 ### Startup
 ```
-docker-compose -f shared-network/docker-compose.yml up -d
-```
-or 
-```
 docker network create cv-generator-network
+```
+```
+docker-compose -f shared-network/docker-compose.yml up -d
 ```
 ```
 cd user-service
