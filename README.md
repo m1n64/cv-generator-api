@@ -5,7 +5,7 @@ This project is a simple CV generator API, written on Go in microservice archite
 
 ### Links:
 - [github](https://github.com/m1n64/cv-generator-api)
-- [API docs](https://api.resumego.online:8082)
+- [API docs](https://api.resumego.online/docs/)
 - [Base url](https://api.resumego.online)
 
 ### Checklist:
