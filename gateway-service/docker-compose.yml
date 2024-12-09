@@ -17,6 +17,18 @@ services:
     networks:
       - cv-generator-network
 
+  redoc:
+    image: redocly/redoc
+    container_name: redoc
+    environment:
+      SPEC_URL: /docs/openapi.json
+    volumes:
+      - ./config/swagger/openapi.json:/usr/share/nginx/html/docs/openapi.json
+    ports:
+      - "8082:80"
+    networks:
+      - cv-generator-network
+
 networks:
   cv-generator-network:
     external: true
