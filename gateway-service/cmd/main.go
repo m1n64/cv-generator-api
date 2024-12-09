@@ -23,7 +23,7 @@ func main() {
 
 	r.GET("/ping", handlers2.PingHandler)
 
-	r.GET("/docs/openapi.json", func(c *gin.Context) {
+	r.GET("/documentation/openapi.json", func(c *gin.Context) {
 		c.File("./config/swagger/openapi.json")
 	})
 

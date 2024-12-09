@@ -21,7 +21,7 @@ services:
     image: redocly/redoc
     container_name: cvgatway-redoc
     environment:
-      SPEC_URL: /docs/openapi.json
+      SPEC_URL: /documentation/openapi.json
     volumes:
       - ./config/swagger/openapi.json:/usr/share/nginx/html/docs/openapi.json
     ports:
