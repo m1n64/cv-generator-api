@@ -19,7 +19,7 @@ services:
 
   redoc:
     image: redocly/redoc
-    container_name: redoc
+    container_name: cvgatway-redoc
     environment:
       SPEC_URL: /docs/openapi.json
     volumes:
