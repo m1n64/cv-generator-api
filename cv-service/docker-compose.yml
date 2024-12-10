@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  db:
+  cvinfo-db:
     image: postgres:latest
-    container_name: cvuser-db
+    container_name: cv-info-db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -13,8 +13,8 @@ services:
     networks:
       - cv-generator-network
 
-  redis:
-    container_name: cvuser-redis
+  cvinfo-redis:
+    container_name: cv-info-redis
     hostname: redis
     image: redis:latest
     volumes:
@@ -23,22 +23,22 @@ services:
     networks:
       - cv-generator-network
 
-  backend:
+  cvinfo-backend:
     build:
       context: ./
       dockerfile: Dockerfile
       target: prod
-    container_name: cvuser-backend
+    container_name: cv-info-backend
     ports:
       - "${SERVICE_PORT:-8000}:${SERVICE_PORT:-8000}"
     volumes:
       - ./:/app:cached
     depends_on:
-      - db
-      - redis
+      - cvinfo-db
+      - cvinfo-redis
     environment:
-      REDIS_ADDRESS: redis:${REDIS_PORT:-6379}
-      DB_HOST: db
+      REDIS_ADDRESS: cvinfo-redis:${REDIS_PORT:-6379}
+      DB_HOST: cvinfo-db
       DB_PORT: ${POSTGRES_PORT:-5432}
       DB_USER: ${POSTGRES_USER}
       DB_PASS: ${POSTGRES_PASSWORD}
