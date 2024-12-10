@@ -2,8 +2,8 @@
   "openapi": "3.0.1",
   "info": {
     "title": "CV Generator API",
-    "description": "API for CV generation",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "API for CV generation"
   },
   "servers": [
     {
@@ -18,11 +18,8 @@
   "paths": {
     "/ping": {
       "get": {
-        "summary": "Ping API",
-        "description": "Check if API is working.",
         "responses": {
           "200": {
-            "description": "API is working.",
             "content": {
               "application/json": {
                 "example": {
@@ -30,134 +27,444 @@
                   "time": "2024-12-09T00:23:01.459149266Z"
                 }
               }
-            }
+            },
+            "description": "API is working."
           }
-        }
+        },
+        "summary": "Ping API",
+        "description": "Check if API is working."
       }
     },
     "/auth/register": {
       "post": {
-        "summary": "Register user",
-        "description": "Register new user.",
-        "tags": ["Auth"],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/RegisterRequest"
               }
             }
-          }
+          },
+          "required": true
         },
+        "tags": [
+          "Auth"
+        ],
         "responses": {
           "201": {
-            "description": "User successfully registered.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AuthResponse"
                 }
               }
-            }
+            },
+            "description": "User successfully registered."
           },
           "400": {
-            "description": "Invalid input data.",
             "content": {
               "application/json": {
                 "example": {
                   "error": "Invalid input data"
                 }
               }
-            }
+            },
+            "description": "Invalid input data."
           }
-        }
+        },
+        "summary": "Register user",
+        "description": "Register new user."
       }
     },
     "/auth/login": {
       "post": {
-        "summary": "Login user",
-        "description": "Login user.",
-        "tags": ["Auth"],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/LoginRequest"
               }
             }
-          }
+          },
+          "required": true
         },
+        "tags": [
+          "Auth"
+        ],
         "responses": {
           "200": {
-            "description": "Successfully logged in.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AuthResponse"
                 }
               }
-            }
+            },
+            "description": "Successfully logged in."
           },
           "401": {
-            "description": "Invalid credentials.",
             "content": {
               "application/json": {
                 "example": {
                   "error": "Unauthorized"
                 }
               }
-            }
+            },
+            "description": "Invalid credentials."
           }
-        }
+        },
+        "summary": "Login user",
+        "description": "Login user."
       }
     },
     "/user/info": {
       "get": {
-        "summary": "Get user info",
-        "description": "Retrieve user information by token.",
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "parameters": [
           {
             "name": "Authorization",
-            "in": "header",
-            "required": true,
             "description": "Bearer token",
             "schema": {
               "type": "string",
               "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-            }
+            },
+            "in": "header",
+            "required": true
           }
         ],
         "responses": {
           "200": {
-            "description": "User information retrieved.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
                 }
               }
-            }
+            },
+            "description": "User information retrieved."
           },
           "401": {
-            "description": "Invalid token.",
             "content": {
               "application/json": {
                 "example": {
                   "error": "invalid token"
                 }
               }
-            }
+            },
+            "description": "Invalid token."
+          }
+        },
+        "summary": "Get user info",
+        "description": "Retrieve user information by token."
+      }
+    },
+    "/cv": {
+      "get": {
+        "tags": [
+          "CV"
+        ],
+        "summary": "Get all CVs",
+        "description": "Get all CVs",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOfCV"
+                },
+                "examples": {
+                  "ListOfCV": {
+                    "value": {
+                      "list": [
+                        {
+                          "created_at": "2024-12-10T11:16:59Z",
+                          "id": "112e3ccf-bcf5-4d6e-8bd9-5aa286180f94",
+                          "name": "Main CV"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "description": "CVs"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "401 error": {
+                    "value": {
+                      "error": "error"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Not Authorized"
           }
         }
-      }
+      },
+      "post": {
+        "tags": [
+          "CV"
+        ],
+        "summary": "Create CV",
+        "description": "Create CV",
+        "requestBody": {
+          "description": "Info",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CVRequest"
+              },
+              "examples": {
+                "CV Request": {
+                  "value": {
+                    "name": "Submain CV 2"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CV"
+                },
+                "examples": {
+                  "CV Example": {
+                    "value": {
+                      "id": "b76529e6-bd40-4f1e-8424-561e99462d3b",
+                      "name": "Main CV 2",
+                      "created_at": "2024-12-10 11:17:47.306088 +0000 UTC"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "CV"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "401 error": {
+                    "value": {
+                      "error": "error"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Not Authorized"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "Authorization",
+          "description": "Bearer token",
+          "schema": {
+            "type": "string",
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "in": "header",
+          "required": true
+        }
+      ]
+    },
+    "/cv/:cv_id": {
+      "get": {
+        "tags": [
+          "CV"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CV"
+                },
+                "examples": {
+                  "CV Example": {
+                    "value": {
+                      "id": "b76529e6-bd40-4f1e-8424-561e99462d3b",
+                      "name": "Main CV 2",
+                      "created_at": "2024-12-10 11:17:47.306088 +0000 UTC"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "CV"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "401 error": {
+                    "value": {
+                      "error": "error"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Not Authorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "440 Error": {
+                    "value": {
+                      "error": "error"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "440 Error"
+          }
+        },
+        "summary": "Get CV by ID",
+        "description": "CV info by ID"
+      },
+      "post": {
+        "tags": [
+          "CV"
+        ],
+        "summary": "Update CV",
+        "description": "Update CV info",
+        "requestBody": {
+          "description": "Info",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CVRequest"
+              },
+              "examples": {
+                "CV Request": {
+                  "value": {
+                    "name": "Submain CV 2"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CV"
+                },
+                "examples": {
+                  "CV Example": {
+                    "value": {
+                      "id": "b76529e6-bd40-4f1e-8424-561e99462d3b",
+                      "name": "Main CV 2",
+                      "created_at": "2024-12-10 11:17:47.306088 +0000 UTC"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "CV"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "401 error": {
+                    "value": {
+                      "error": "error"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Not Authorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "CV"
+        ],
+        "summary": "Delete CV",
+        "description": "Delete CV by ID",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Deleted": {
+                    "value": {
+                      "success": true
+                    }
+                  }
+                }
+              }
+            },
+            "description": "CV"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "401 error": {
+                    "value": {
+                      "error": "error"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "Authorization",
+          "description": "Bearer token",
+          "schema": {
+            "type": "string",
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "in": "header",
+          "required": true
+        },
+        {
+          "name": "cv_id",
+          "description": "ID of CV",
+          "schema": {
+            "type": "string"
+          },
+          "in": "path",
+          "required": true
+        }
+      ]
     }
   },
   "components": {
     "schemas": {
       "RegisterRequest": {
+        "required": [
+          "username",
+          "email",
+          "password"
+        ],
         "type": "object",
         "properties": {
           "username": {
@@ -172,10 +479,13 @@
             "type": "string",
             "example": "secure_password"
           }
-        },
-        "required": ["username", "email", "password"]
+        }
       },
       "LoginRequest": {
+        "required": [
+          "email",
+          "password"
+        ],
         "type": "object",
         "properties": {
           "email": {
@@ -186,8 +496,7 @@
             "type": "string",
             "example": "secure_password"
           }
-        },
-        "required": ["email", "password"]
+        }
       },
       "AuthResponse": {
         "type": "object",
@@ -216,6 +525,56 @@
           "email": {
             "type": "string",
             "example": "john.doe@example.com"
+          }
+        }
+      },
+      "CV": {
+        "title": "Root Type for CV",
+        "description": "CV info",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "id": "b76529e6-bd40-4f1e-8424-561e99462d3b",
+          "name": "Main CV 2",
+          "created_at": "2024-12-10 11:17:47.306088 +0000 UTC"
+        }
+      },
+      "CVRequest": {
+        "description": "CV Request",
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "",
+            "type": "string"
+          }
+        }
+      },
+      "ListOfCV": {
+        "description": "",
+        "required": [
+          "list"
+        ],
+        "type": "object",
+        "properties": {
+          "list": {
+            "description": "",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CV"
+            }
           }
         }
       }
