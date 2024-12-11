@@ -34,7 +34,7 @@ func main() {
 	userRepo := repositories.NewUserRepository(db)
 	tokenRepo := repositories.NewTokenRepository(db)
 
-	authService := services.NewAuthService(userRepo, tokenRepo)
+	authService := services.NewAuthService(userRepo, tokenRepo, db)
 
 	grpcServer := grpc.NewServer()
 	authServiceServer := handlers.NewAuthServiceServer(authService)

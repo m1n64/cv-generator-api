@@ -1,6 +1,8 @@
 package repositories
 
-import "user-service/internal/users/models"
+import (
+	"user-service/internal/users/models"
+)
 
 type UserRepository interface {
 	CreateUser(user *models.User) error
