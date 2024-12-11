@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"gorm.io/gorm"
 	"time"
 	"user-service/internal/users/models"
 	"user-service/internal/users/repositories"
@@ -13,12 +14,14 @@ import (
 type AuthService struct {
 	userRepo  repositories.UserRepository
 	tokenRepo repositories.TokenRepository
+	db        *gorm.DB
 }
 
-func NewAuthService(userRepo repositories.UserRepository, tokenRepo repositories.TokenRepository) AuthService {
+func NewAuthService(userRepo repositories.UserRepository, tokenRepo repositories.TokenRepository, db *gorm.DB) AuthService {
 	return AuthService{
 		userRepo:  userRepo,
 		tokenRepo: tokenRepo,
+		db:        db,
 	}
 }
 
@@ -29,62 +32,81 @@ func (s *AuthService) Register(username string, email string, password string) (
 		return nil, status.Error(codes.Internal, "failed to process password")
 	}
 
-	// Сохраняем пользователя в базу данных
-	user := &models.User{
-		Username: username,
-		Email:    email,
-		Password: hashedPassword,
-	}
+	var jwtToken string
+	err = s.db.Transaction(func(tx *gorm.DB) error {
+		// Сохраняем пользователя в базу данных
+		user := &models.User{
+			Username: username,
+			Email:    email,
+			Password: hashedPassword,
+		}
 
-	if err := s.userRepo.CreateUser(user); err != nil {
-		return nil, status.Error(codes.Internal, "failed to save user")
-	}
+		if err := s.userRepo.CreateUser(user); err != nil {
+			return status.Error(codes.Internal, "failed to save user")
+		}
 
-	// Генерация токена
-	jwtToken, err := utils.GenerateToken(user.ID.String())
+		// Генерация токена
+		jwtToken, err = utils.GenerateToken(user.ID.String())
+		if err != nil {
+			return status.Error(codes.Internal, "failed to generate token")
+		}
+
+		token := &models.Token{
+			UserID:    user.ID,
+			Token:     jwtToken,
+			ExpiresAt: time.Now().Add(24 * time.Hour),
+		}
+
+		if err := s.tokenRepo.CreateToken(token); err != nil {
+			return status.Error(codes.Internal, "failed to save token")
+		}
+
+		return nil
+	})
+
 	if err != nil {
-		return nil, status.Error(codes.Internal, "failed to generate token")
-	}
-
-	token := &models.Token{
-		UserID:    user.ID,
-		Token:     jwtToken,
-		ExpiresAt: time.Now().Add(24 * time.Hour),
-	}
-
-	if err := s.tokenRepo.CreateToken(token); err != nil {
-		return nil, status.Error(codes.Internal, "failed to save token")
+		return nil, err
 	}
 
 	return &jwtToken, nil
 }
 
 func (s *AuthService) Login(email string, password string) (*string, error) {
-	// Ищем пользователя в базе данных
-	user, err := s.userRepo.FindByEmail(email)
-	if err != nil {
-		return nil, status.Error(codes.NotFound, "user not found")
-	}
+	var jwtToken string
 
-	// Проверяем пароль
-	if !utils.CheckPasswordHash(password, user.Password) {
+	err := s.db.Transaction(func(tx *gorm.DB) error {
+		// Ищем пользователя в базе данных
+		user, err := s.userRepo.FindByEmail(email)
+		if err != nil {
+			return status.Error(codes.NotFound, "user not found")
+		}
+
+		// Проверяем пароль
+		if !utils.CheckPasswordHash(password, user.Password) {
+			return status.Error(codes.Unauthenticated, "invalid credentials")
+		}
+
+		// Генерация токена
+		jwtToken, err = utils.GenerateToken(user.ID.String())
+		if err != nil {
+			return status.Error(codes.Internal, "failed to generate token")
+		}
+
+		token := &models.Token{
+			UserID:    user.ID,
+			Token:     jwtToken,
+			ExpiresAt: time.Now().Add(24 * time.Hour),
+		}
+
+		if err := s.tokenRepo.CreateToken(token); err != nil {
+			return status.Error(codes.Internal, "failed to save token")
+		}
+
+		return nil
+	})
+
+	if err != nil {
 		return nil, err
-	}
-
-	// Генерация токена
-	jwtToken, err := utils.GenerateToken(user.ID.String())
-	if err != nil {
-		return nil, status.Error(codes.Internal, "failed to generate token")
-	}
-
-	token := &models.Token{
-		UserID:    user.ID,
-		Token:     jwtToken,
-		ExpiresAt: time.Now().Add(24 * time.Hour),
-	}
-
-	if err := s.tokenRepo.CreateToken(token); err != nil {
-		return nil, status.Error(codes.Internal, "failed to save token")
 	}
 
 	return &jwtToken, nil

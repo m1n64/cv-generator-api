@@ -112,7 +112,7 @@ func (s *CVServiceServer) UpdateCV(ctx context.Context, req *cv.UpdateCVRequest)
 	cvId := uuid.MustParse(req.CvId)
 
 	cvModel, err := s.cvService.UpdateCV(cvId, req.Name)
-	if err == nil {
+	if err != nil {
 		utils.GetLogger().Info(fmt.Sprintf("Failed to fetch updated CV: %v", err))
 		return nil, err
 	}
