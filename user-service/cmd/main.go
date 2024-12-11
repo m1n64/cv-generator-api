@@ -9,6 +9,7 @@ import (
 	"user-service/internal/users/grpc/auth"
 	"user-service/internal/users/handlers"
 	"user-service/internal/users/repositories"
+	"user-service/internal/users/services"
 	"user-service/pkg/utils"
 )
 
@@ -33,9 +34,11 @@ func main() {
 	userRepo := repositories.NewUserRepository(db)
 	tokenRepo := repositories.NewTokenRepository(db)
 
+	authService := services.NewAuthService(userRepo, tokenRepo)
+
 	grpcServer := grpc.NewServer()
-	authService := handlers.NewAuthServiceServer(userRepo, tokenRepo)
-	auth.RegisterAuthServiceServer(grpcServer, authService)
+	authServiceServer := handlers.NewAuthServiceServer(authService)
+	auth.RegisterAuthServiceServer(grpcServer, authServiceServer)
 
 	log.Printf("gRPC server is running on port %s", port)
 	if err := grpcServer.Serve(listener); err != nil {
