@@ -6,6 +6,7 @@ import (
 )
 
 type InformationRepository interface {
-	CreateOrUpdateInformation(information *models.Information) error
+	CreateOrUpdateInformation(information *models.Information, cvID *uuid.UUID) error
 	GetInformationByCvID(cvID uuid.UUID) (*models.Information, error)
+	DeleteInformationByCvID(cvID uuid.UUID) error
 }
