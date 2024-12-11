@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  cvdata-db:
+    image: postgres:latest
+    container_name: cv-data-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - cv-generator-network
+
+  cvdata-redis:
+    container_name: cv-data-redis
+    hostname: redis
+    image: redis:latest
+    volumes:
+      - redis_data:/data
+    restart: always
+    networks:
+      - cv-generator-network
+
+  cvdata-backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: prod
+    container_name: cv-data-backend
+    ports:
+      - "${SERVICE_PORT:-8000}:${SERVICE_PORT:-8000}"
+    volumes:
+      - ./:/app:cached
+    depends_on:
+      - cvdata-db
+      - cvdata-redis
+    environment:
+      REDIS_ADDRESS: cvdata-redis:${REDIS_PORT:-6379}
+      DB_HOST: cvdata-db
+      DB_PORT: ${POSTGRES_PORT:-5432}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASS: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+      GIN_MODE: "release"
+    restart: always
+    networks:
+      - cv-generator-network
+
+volumes:
+  db_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  cv-generator-network:
+    external: true

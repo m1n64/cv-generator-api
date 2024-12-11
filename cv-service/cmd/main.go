@@ -4,6 +4,7 @@ import (
 	"cv-service/internal/cv/grpc/cv"
 	"cv-service/internal/cv/handlers"
 	"cv-service/internal/cv/repositories"
+	"cv-service/internal/cv/service"
 	"cv-service/pkg/utils"
 	"fmt"
 	"google.golang.org/grpc"
@@ -32,9 +33,12 @@ func main() {
 
 	cvRepo := repositories.NewCVRepository(db)
 
+	_, redisClient := utils.GetRedisConn()
+	cvService := service.NewCVService(cvRepo, redisClient)
+
 	grpcServer := grpc.NewServer()
-	cvService := handlers.NewCVServiceServer(cvRepo)
-	cv.RegisterCVServiceServer(grpcServer, cvService)
+	cvServiceServer := handlers.NewCVServiceServer(cvService)
+	cv.RegisterCVServiceServer(grpcServer, cvServiceServer)
 
 	log.Printf("gRPC server is running on port %s", port)
 	if err := grpcServer.Serve(listener); err != nil {

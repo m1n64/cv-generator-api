@@ -3,23 +3,23 @@ package handlers
 import (
 	"context"
 	"cv-service/internal/cv/grpc/cv"
-	"cv-service/internal/cv/models"
-	"cv-service/internal/cv/repositories"
+	"cv-service/internal/cv/service"
+	"cv-service/pkg/utils"
+	"fmt"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
 	"time"
 )
 
 type CVServiceServer struct {
 	cv.UnimplementedCVServiceServer
-	cvRepo repositories.CVRepository
+	cvService service.CVService
 }
 
-func NewCVServiceServer(cvRepo repositories.CVRepository) *CVServiceServer {
+func NewCVServiceServer(cvService service.CVService) *CVServiceServer {
 	return &CVServiceServer{
-		cvRepo: cvRepo,
+		cvService: cvService,
 	}
 }
 
@@ -28,14 +28,10 @@ func (s *CVServiceServer) CreateCV(ctx context.Context, req *cv.CreateCVRequest)
 		return nil, status.Error(codes.InvalidArgument, "userID and name are required")
 	}
 
-	cvModel := &models.CV{
-		UserID: uuid.MustParse(req.UserId),
-		Title:  req.Name,
-	}
-
-	if err := s.cvRepo.CreateCV(cvModel); err != nil {
-		log.Printf("Error saving CV: %v", err)
-		return nil, status.Error(codes.Internal, err.Error())
+	cvModel, err := s.cvService.CreateCV(uuid.MustParse(req.UserId), req.Name)
+	if err != nil {
+		utils.GetLogger().Info(fmt.Sprintf("Error creating CV: %v", err))
+		return nil, err
 	}
 
 	return &cv.CVResponse{
@@ -51,10 +47,11 @@ func (s *CVServiceServer) GetAllCVsByUserID(ctx context.Context, req *cv.GetAllC
 		return nil, status.Error(codes.InvalidArgument, "userID is required")
 	}
 
-	cvs, err := s.cvRepo.GetAllCVsByUserID(uuid.MustParse(req.UserId))
+	cvs, err := s.cvService.GetAllCVsByUserID(uuid.MustParse(req.UserId))
 	if err != nil {
-		log.Printf("Error getting CVs: %v", err)
-		return nil, status.Error(codes.Internal, err.Error())
+		utils.GetLogger().Info(fmt.Sprintf("Error creating CV: %v", err))
+
+		return nil, err
 	}
 
 	var cvList []*cv.CV
@@ -77,10 +74,10 @@ func (s *CVServiceServer) GetCVByID(ctx context.Context, req *cv.GetCVByIDReques
 		return nil, status.Error(codes.InvalidArgument, "cvID is required")
 	}
 
-	cvModel, err := s.cvRepo.GetCVByID(uuid.MustParse(req.CvId))
+	cvModel, err := s.cvService.GetCVByID(uuid.MustParse(req.CvId))
 	if err != nil {
-		log.Printf("Error getting CV: %v", err)
-		return nil, status.Error(codes.Internal, err.Error())
+		utils.GetLogger().Info(fmt.Sprintf("Error getting CV: %v", err))
+		return nil, err
 	}
 
 	return &cv.CVResponse{
@@ -96,10 +93,10 @@ func (s *CVServiceServer) DeleteCVByID(ctx context.Context, req *cv.DeleteCVByID
 		return nil, status.Error(codes.InvalidArgument, "cvID is required")
 	}
 
-	err := s.cvRepo.DeleteCVByID(uuid.MustParse(req.CvId))
+	err := s.cvService.DeleteCVByID(uuid.MustParse(req.CvId))
 	if err != nil {
-		log.Printf("Error getting CV: %v", err)
-		return nil, status.Error(codes.Internal, err.Error())
+		utils.GetLogger().Info(fmt.Sprintf("Error deleting CV: %v", err))
+		return nil, err
 	}
 
 	return &cv.DeleteCVByIDResponse{
@@ -114,27 +111,17 @@ func (s *CVServiceServer) UpdateCV(ctx context.Context, req *cv.UpdateCVRequest)
 
 	cvId := uuid.MustParse(req.CvId)
 
-	updatedCV := &models.CV{
-		Title: req.Name,
-	}
-
-	err := s.cvRepo.UpdateCVByID(cvId, updatedCV)
-	if err != nil {
-		log.Printf("Error getting CV: %v", err)
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	updatedCVFromDB, err := s.cvRepo.GetCVByID(cvId)
-	if err != nil {
-		log.Printf("Error fetching updated CV: %v", err)
-		return nil, status.Error(codes.Internal, "failed to fetch updated CV")
+	cvModel, err := s.cvService.UpdateCV(cvId, req.Name)
+	if err == nil {
+		utils.GetLogger().Info(fmt.Sprintf("Failed to fetch updated CV: %v", err))
+		return nil, err
 	}
 
 	return &cv.CVResponse{
-		Id:         updatedCVFromDB.ID.String(),
-		ExternalId: updatedCVFromDB.ExternalID.String(),
-		Name:       updatedCVFromDB.Title,
-		CreatedAt:  updatedCVFromDB.CreatedAt.String(),
+		Id:         cvModel.ID.String(),
+		ExternalId: cvModel.ExternalID.String(),
+		Name:       cvModel.Title,
+		CreatedAt:  cvModel.CreatedAt.String(),
 	}, nil
 }
 
@@ -143,10 +130,10 @@ func (s *CVServiceServer) GetOriginalID(ctx context.Context, req *cv.GetOriginal
 		return nil, status.Error(codes.InvalidArgument, "userID and cvID is required")
 	}
 
-	originalId, err := s.cvRepo.GetOriginalIDByExternalID(uuid.MustParse(req.CvId), uuid.MustParse(req.UserId))
+	originalId, err := s.cvService.GetOriginalID(uuid.MustParse(req.UserId), uuid.MustParse(req.CvId))
 	if err != nil {
-		log.Printf("Error getting CV: %v", err)
-		return nil, status.Error(codes.Internal, err.Error())
+		utils.GetLogger().Info(fmt.Sprintf("Failed to fetch original ID: %v", err))
+		return nil, err
 	}
 
 	return &cv.GetOriginalIDResponse{
