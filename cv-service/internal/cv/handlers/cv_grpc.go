@@ -24,8 +24,8 @@ func NewCVServiceServer(cvService service.CVService) *CVServiceServer {
 }
 
 func (s *CVServiceServer) CreateCV(ctx context.Context, req *cv.CreateCVRequest) (*cv.CVResponse, error) {
-	if req.UserId == "" || req.Name == "" {
-		return nil, status.Error(codes.InvalidArgument, "userID and name are required")
+	if uuid.Validate(req.UserId) != nil || req.Name == "" {
+		return nil, status.Error(codes.InvalidArgument, "userID and name are required and valid UUID")
 	}
 
 	cvModel, err := s.cvService.CreateCV(uuid.MustParse(req.UserId), req.Name)
@@ -43,8 +43,8 @@ func (s *CVServiceServer) CreateCV(ctx context.Context, req *cv.CreateCVRequest)
 }
 
 func (s *CVServiceServer) GetAllCVsByUserID(ctx context.Context, req *cv.GetAllCVsByUserIDRequest) (*cv.GetAllCVsResponse, error) {
-	if req.UserId == "" {
-		return nil, status.Error(codes.InvalidArgument, "userID is required")
+	if uuid.Validate(req.UserId) != nil {
+		return nil, status.Error(codes.InvalidArgument, "userID is required and must be valid UUID")
 	}
 
 	cvs, err := s.cvService.GetAllCVsByUserID(uuid.MustParse(req.UserId))
@@ -70,8 +70,8 @@ func (s *CVServiceServer) GetAllCVsByUserID(ctx context.Context, req *cv.GetAllC
 }
 
 func (s *CVServiceServer) GetCVByID(ctx context.Context, req *cv.GetCVByIDRequest) (*cv.CVResponse, error) {
-	if req.CvId == "" {
-		return nil, status.Error(codes.InvalidArgument, "cvID is required")
+	if uuid.Validate(req.CvId) != nil {
+		return nil, status.Error(codes.InvalidArgument, "cvID is required and must be valid UUID")
 	}
 
 	cvModel, err := s.cvService.GetCVByID(uuid.MustParse(req.CvId))
@@ -89,8 +89,8 @@ func (s *CVServiceServer) GetCVByID(ctx context.Context, req *cv.GetCVByIDReques
 }
 
 func (s *CVServiceServer) DeleteCVByID(ctx context.Context, req *cv.DeleteCVByIDRequest) (*cv.DeleteCVByIDResponse, error) {
-	if req.CvId == "" {
-		return nil, status.Error(codes.InvalidArgument, "cvID is required")
+	if uuid.Validate(req.CvId) != nil {
+		return nil, status.Error(codes.InvalidArgument, "cvID is required and must be valid UUID")
 	}
 
 	err := s.cvService.DeleteCVByID(uuid.MustParse(req.CvId))
@@ -105,8 +105,8 @@ func (s *CVServiceServer) DeleteCVByID(ctx context.Context, req *cv.DeleteCVByID
 }
 
 func (s *CVServiceServer) UpdateCV(ctx context.Context, req *cv.UpdateCVRequest) (*cv.CVResponse, error) {
-	if req.CvId == "" || req.Name == "" {
-		return nil, status.Error(codes.InvalidArgument, "cvID and name is required")
+	if req.Name == "" || uuid.Validate(req.CvId) != nil {
+		return nil, status.Error(codes.InvalidArgument, "cvID and name is required and must be valid UUID")
 	}
 
 	cvId := uuid.MustParse(req.CvId)
@@ -126,8 +126,8 @@ func (s *CVServiceServer) UpdateCV(ctx context.Context, req *cv.UpdateCVRequest)
 }
 
 func (s *CVServiceServer) GetOriginalID(ctx context.Context, req *cv.GetOriginalIDRequest) (*cv.GetOriginalIDResponse, error) {
-	if req.UserId == "" || req.CvId == "" {
-		return nil, status.Error(codes.InvalidArgument, "userID and cvID is required")
+	if uuid.Validate(req.UserId) != nil || uuid.Validate(req.CvId) != nil {
+		return nil, status.Error(codes.InvalidArgument, "userID and cvID is required and must be valid UUID")
 	}
 
 	originalId, err := s.cvService.GetOriginalID(uuid.MustParse(req.UserId), uuid.MustParse(req.CvId))

@@ -31,9 +31,12 @@ func main() {
 
 	db := utils.GetDBConnection()
 
+	_, redisConnection := utils.GetRedisConn()
+
+	redisClient := utils.NewRedisAdapter(redisConnection)
+
 	cvRepo := repositories.NewCVRepository(db)
 
-	_, redisClient := utils.GetRedisConn()
 	cvService := service.NewCVService(cvRepo, redisClient, db)
 
 	grpcServer := grpc.NewServer()

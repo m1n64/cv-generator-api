@@ -16,11 +16,11 @@ import (
 
 type CVService struct {
 	cvRepo      repositories.CVRepository
-	redisClient *redis.Client
+	redisClient utils.RedisClient
 	db          *gorm.DB
 }
 
-func NewCVService(cvRepo repositories.CVRepository, redisClient *redis.Client, db *gorm.DB) CVService {
+func NewCVService(cvRepo repositories.CVRepository, redisClient utils.RedisClient, db *gorm.DB) CVService {
 	return CVService{
 		cvRepo:      cvRepo,
 		redisClient: redisClient,
@@ -42,7 +42,7 @@ func (s *CVService) CreateCV(userID uuid.UUID, name string) (*models.CV, error) 
 		ctx := context.Background()
 		cacheKey := fmt.Sprintf("cv:original_id:%s:%s", userID.String(), cvModel.ExternalID.String())
 
-		err := s.redisClient.Set(ctx, cacheKey, cvModel.ID.String(), time.Hour*24).Err()
+		err := s.redisClient.Set(ctx, cacheKey, cvModel.ID.String(), time.Hour*24)
 		if err != nil {
 			utils.GetLogger().Error(fmt.Sprintf("Error saving CV ID to Redis: %v", err))
 		}
@@ -85,7 +85,7 @@ func (s *CVService) DeleteCVByID(cvID uuid.UUID) error {
 		ctx := context.Background()
 		cacheKey := fmt.Sprintf("cv:original_id:%s:%s", cv.UserID.String(), cv.ExternalID.String())
 
-		err = s.redisClient.Del(ctx, cacheKey).Err()
+		err = s.redisClient.Del(ctx, cacheKey)
 		if err != nil {
 			utils.GetLogger().Error(fmt.Sprintf("Error remove CV ID from Redis: %v", err))
 		}
@@ -136,7 +136,7 @@ func (s *CVService) GetOriginalID(userID uuid.UUID, cvID uuid.UUID) (*uuid.UUID,
 	ctx := context.Background()
 	cacheKey := fmt.Sprintf("cv:original_id:%s:%s", userID, cvID)
 
-	cachedValue, err := s.redisClient.Get(ctx, cacheKey).Result()
+	cachedValue, err := s.redisClient.Get(ctx, cacheKey)
 	if err == nil {
 		originalID, parseErr := uuid.Parse(cachedValue)
 		if parseErr != nil {
@@ -153,7 +153,7 @@ func (s *CVService) GetOriginalID(userID uuid.UUID, cvID uuid.UUID) (*uuid.UUID,
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	err = s.redisClient.Set(ctx, cacheKey, originalId.String(), time.Hour*24).Err()
+	err = s.redisClient.Set(ctx, cacheKey, originalId.String(), time.Hour*24)
 	if err != nil {
 		utils.GetLogger().Error(fmt.Sprintf("Error saving CV ID to Redis: %v", err))
 	}

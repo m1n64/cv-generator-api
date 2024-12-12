@@ -16,10 +16,18 @@ func NewInformationRepository(db *gorm.DB) InformationRepository {
 	}
 }
 
-func (r *informationRepository) CreateOrUpdateInformation(information *models.Information) error {
+func (r *informationRepository) CreateOrUpdateInformation(information *models.Information, cvID *uuid.UUID) error {
+	if cvID != nil {
+		information.CvID = *cvID
+	}
+
 	return nil
 }
 
 func (r *informationRepository) GetInformationByCvID(cvID uuid.UUID) (*models.Information, error) {
 	return nil, nil
+}
+
+func (r *informationRepository) DeleteInformationByCvID(cvID uuid.UUID) error {
+	return nil
 }

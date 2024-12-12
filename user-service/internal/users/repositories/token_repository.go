@@ -8,4 +8,5 @@ type TokenRepository interface {
 	DeleteTokenByValue(token string) error
 	FindTokenByID(id string) (*models.Token, error)
 	FindTokenByValue(token string) (*models.Token, error)
+	DeleteExpiredTokens() error
 }

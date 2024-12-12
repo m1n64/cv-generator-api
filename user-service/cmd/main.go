@@ -6,10 +6,12 @@ import (
 	"log"
 	"net"
 	"os"
+	"time"
 	"user-service/internal/users/grpc/auth"
 	"user-service/internal/users/handlers"
 	"user-service/internal/users/repositories"
 	"user-service/internal/users/services"
+	"user-service/internal/users/workers"
 	"user-service/pkg/utils"
 )
 
@@ -35,6 +37,8 @@ func main() {
 	tokenRepo := repositories.NewTokenRepository(db)
 
 	authService := services.NewAuthService(userRepo, tokenRepo, db)
+
+	go workers.StartRemoveExpiredTokensWorker(tokenRepo, 24*time.Hour)
 
 	grpcServer := grpc.NewServer()
 	authServiceServer := handlers.NewAuthServiceServer(authService)
