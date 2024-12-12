@@ -13,19 +13,16 @@ import (
 
 type AuthServiceServer struct {
 	auth.UnimplementedAuthServiceServer
-	authService services.AuthService
+	authService *services.AuthService
 }
 
-// Конструктор для AuthServiceServer
-func NewAuthServiceServer(authService services.AuthService) *AuthServiceServer {
+func NewAuthServiceServer(authService *services.AuthService) *AuthServiceServer {
 	return &AuthServiceServer{
 		authService: authService,
 	}
 }
 
-// Регистрация пользователя
 func (s *AuthServiceServer) Register(ctx context.Context, req *auth.RegisterRequest) (*auth.TokenResponse, error) {
-	// Проверка данных
 	if req.Username == "" || req.Email == "" || req.Password == "" {
 		return nil, status.Error(codes.InvalidArgument, "username, email, and password are required")
 	}
@@ -42,9 +39,7 @@ func (s *AuthServiceServer) Register(ctx context.Context, req *auth.RegisterRequ
 	}, nil
 }
 
-// Логин пользователя
 func (s *AuthServiceServer) Login(ctx context.Context, req *auth.LoginRequest) (*auth.TokenResponse, error) {
-	// Проверка данных
 	if req.Email == "" || req.Password == "" {
 		return nil, status.Error(codes.InvalidArgument, "email and password are required")
 	}
@@ -61,7 +56,6 @@ func (s *AuthServiceServer) Login(ctx context.Context, req *auth.LoginRequest) (
 	}, nil
 }
 
-// Метод ValidateToken
 func (s *AuthServiceServer) ValidateToken(ctx context.Context, req *auth.ValidateTokenRequest) (*auth.ValidateTokenResponse, error) {
 	if req.Token == "" {
 		return nil, status.Error(codes.InvalidArgument, "token is required")
@@ -84,7 +78,6 @@ func (s *AuthServiceServer) ValidateToken(ctx context.Context, req *auth.Validat
 	}, nil
 }
 
-// Метод GetUserInfo
 func (s *AuthServiceServer) GetUserInfo(ctx context.Context, req *auth.GetUserInfoRequest) (*auth.GetUserInfoResponse, error) {
 	if req.Token == "" {
 		return nil, status.Error(codes.InvalidArgument, "token is required")

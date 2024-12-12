@@ -14,10 +14,10 @@ import (
 
 type CVServiceServer struct {
 	cv.UnimplementedCVServiceServer
-	cvService service.CVService
+	cvService *service.CVService
 }
 
-func NewCVServiceServer(cvService service.CVService) *CVServiceServer {
+func NewCVServiceServer(cvService *service.CVService) *CVServiceServer {
 	return &CVServiceServer{
 		cvService: cvService,
 	}

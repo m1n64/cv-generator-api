@@ -21,7 +21,6 @@ func (r *userRepository) CreateUser(user *models.User) error {
 	return r.db.Create(user).Error
 }
 
-// Поиск пользователя по email
 func (r *userRepository) FindByEmail(email string) (*models.User, error) {
 	var user models.User
 	if err := r.db.Where("email = ?", email).First(&user).Error; err != nil {
