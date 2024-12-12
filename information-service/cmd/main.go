@@ -2,16 +2,32 @@ package main
 
 import (
 	"fmt"
-	"information-service/pkg/utils"
+	"google.golang.org/grpc"
+	information "information-service/internal/information/grpc"
+	"information-service/internal/information/handlers"
+	"information-service/pkg/containers"
+	"log"
+	"net"
+	"os"
 )
 
 func main() {
-	fmt.Println("User service started!")
+	fmt.Println("CV Information service started!")
 
-	utils.InitLogs()
-	utils.LoadEnv()
-	utils.CreateRedisConn()
-	utils.InitDBConnection()
-	utils.StartMigrations()
-	utils.InitValidator()
+	dependencies, _ := containers.InitializeDependencies()
+
+	port := os.Getenv("SERVICE_PORT")
+	listener, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", port))
+	if err != nil {
+		log.Fatalf("Failed to listen on port %s: %v", port, err)
+	}
+
+	grpcServer := grpc.NewServer()
+	cvInfoServer := handlers.NewCVInformationServiceServer(dependencies.CVInformationService)
+	information.RegisterInformationServiceServer(grpcServer, cvInfoServer)
+
+	log.Printf("gRPC server is running on port %s", port)
+	if err := grpcServer.Serve(listener); err != nil {
+		log.Fatalf("Failed to serve gRPC server: %v", err)
+	}
 }

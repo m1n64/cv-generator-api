@@ -20,8 +20,8 @@ type CVService struct {
 	db          *gorm.DB
 }
 
-func NewCVService(cvRepo repositories.CVRepository, redisClient utils.RedisClient, db *gorm.DB) CVService {
-	return CVService{
+func NewCVService(cvRepo repositories.CVRepository, redisClient utils.RedisClient, db *gorm.DB) *CVService {
+	return &CVService{
 		cvRepo:      cvRepo,
 		redisClient: redisClient,
 		db:          db,
