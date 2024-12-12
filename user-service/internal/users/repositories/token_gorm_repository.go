@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"gorm.io/gorm"
+	"time"
 	"user-service/internal/users/models"
 )
 
@@ -46,4 +47,9 @@ func (r *tokenRepository) FindTokenByValue(token string) (*models.Token, error) 
 	}
 
 	return &tokenModel, nil
+}
+
+// Удаление всех истекших токенов
+func (r *tokenRepository) DeleteExpiredTokens() error {
+	return r.db.Delete(&models.Token{}, "expires_at < ?", time.Now()).Error
 }

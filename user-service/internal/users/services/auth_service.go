@@ -54,7 +54,7 @@ func (s *AuthService) Register(username string, email string, password string) (
 		token := &models.Token{
 			UserID:    user.ID,
 			Token:     jwtToken,
-			ExpiresAt: time.Now().Add(24 * time.Hour),
+			ExpiresAt: time.Now().Add(3 * 24 * time.Hour),
 		}
 
 		if err := s.tokenRepo.CreateToken(token); err != nil {
@@ -95,7 +95,7 @@ func (s *AuthService) Login(email string, password string) (*string, error) {
 		token := &models.Token{
 			UserID:    user.ID,
 			Token:     jwtToken,
-			ExpiresAt: time.Now().Add(24 * time.Hour),
+			ExpiresAt: time.Now().Add(3 * 24 * time.Hour),
 		}
 
 		if err := s.tokenRepo.CreateToken(token); err != nil {
@@ -116,7 +116,7 @@ func (s *AuthService) ValidateToken(token string) (*string, bool, error) {
 	// Ищем токен в базе
 	tokenModel, err := s.tokenRepo.FindTokenByValue(token)
 	if err != nil {
-		return nil, false, err
+		return nil, false, status.Error(codes.NotFound, "token not found")
 	}
 
 	// Проверяем срок действия токена
@@ -134,6 +134,10 @@ func (s *AuthService) GetUserInfo(token string) (*models.User, error) {
 	tokenModel, err := s.tokenRepo.FindTokenByValue(token)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "token not found")
+	}
+
+	if tokenModel.ExpiresAt.Before(time.Now()) {
+		return nil, status.Error(codes.Unauthenticated, "token is expired")
 	}
 
 	// Ищем пользователя, связанного с токеном

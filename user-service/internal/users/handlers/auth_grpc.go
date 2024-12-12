@@ -73,8 +73,13 @@ func (s *AuthServiceServer) ValidateToken(ctx context.Context, req *auth.Validat
 		return nil, err
 	}
 
+	var userIDString string
+	if userID != nil {
+		userIDString = *userID
+	}
+
 	return &auth.ValidateTokenResponse{
-		UserId: *userID,
+		UserId: userIDString,
 		Valid:  valid,
 	}, nil
 }

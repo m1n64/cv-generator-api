@@ -4,6 +4,7 @@ services:
   nginx:
     image: nginx
     container_name: cv-generator-nginx
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"

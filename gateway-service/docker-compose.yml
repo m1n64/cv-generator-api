@@ -13,7 +13,7 @@ services:
       - ./:/app:cached
     environment:
       GIN_MODE: "release"
-    restart: always
+    restart: unless-stopped
     networks:
       - cv-generator-network
 
