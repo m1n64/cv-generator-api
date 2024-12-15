@@ -1,5 +1,5 @@
 # Variables
-SERVICES = user-service cv-service gateway-service shared-network
+SERVICES = shared-network user-service cv-service gateway-service
 
 .PHONY: help
 help:

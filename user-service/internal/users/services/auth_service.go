@@ -1,7 +1,10 @@
 package services
 
 import (
+	"fmt"
+	json "github.com/goccy/go-json"
 	"github.com/google/uuid"
+	"github.com/streadway/amqp"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
@@ -56,6 +59,34 @@ func (s *AuthService) Register(username string, email string, password string) (
 
 		if err := s.tokenRepo.CreateToken(token); err != nil {
 			return status.Error(codes.Internal, "failed to save token")
+		}
+
+		userRegistrationMessage := utils.UserAnalyticQueueMessage{
+			UserID:   user.ID,
+			Action:   "user_register",
+			DateTime: user.CreatedAt,
+			Detail:   "User registered successfully",
+		}
+
+		body, err := json.Marshal(userRegistrationMessage)
+		if err != nil {
+			utils.GetLogger().Error(fmt.Sprintf("Error marshaling user registration message: %v", err))
+		}
+
+		rabbit := utils.GetRabbitMQInstance()
+		err = rabbit.Channel.Publish(
+			"",
+			utils.AnalyticQueueName,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType: "application/json",
+				Body:        body,
+			},
+		)
+
+		if err != nil {
+			utils.GetLogger().Error(fmt.Sprintf("Error publishing user registration message: %v", err))
 		}
 
 		return nil

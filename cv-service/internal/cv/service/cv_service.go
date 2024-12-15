@@ -7,7 +7,9 @@ import (
 	"cv-service/pkg/utils"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"github.com/goccy/go-json"
 	"github.com/google/uuid"
+	"github.com/streadway/amqp"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
@@ -45,6 +47,35 @@ func (s *CVService) CreateCV(userID uuid.UUID, name string) (*models.CV, error) 
 		err := s.redisClient.Set(ctx, cacheKey, cvModel.ID.String(), time.Hour*24)
 		if err != nil {
 			utils.GetLogger().Error(fmt.Sprintf("Error saving CV ID to Redis: %v", err))
+		}
+
+		analyticMessage := utils.CVAnalyticQueueMessage{
+			UserID:   userID,
+			CvID:     cvModel.ExternalID,
+			Action:   "cv_create",
+			DateTime: cvModel.CreatedAt,
+			Detail:   "CV created successfully",
+		}
+
+		body, err := json.Marshal(analyticMessage)
+		if err != nil {
+			utils.GetLogger().Error(fmt.Sprintf("Error marshaling CV analytic message: %v", err))
+		}
+
+		rabbit := utils.GetRabbitMQInstance()
+		err = rabbit.Channel.Publish(
+			"",
+			utils.AnalyticQueueName,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType: "application/json",
+				Body:        body,
+			},
+		)
+
+		if err != nil {
+			utils.GetLogger().Error(fmt.Sprintf("Error publishing CV analytic message: %v", err))
 		}
 
 		return nil
@@ -88,6 +119,58 @@ func (s *CVService) DeleteCVByID(cvID uuid.UUID) error {
 		err = s.redisClient.Del(ctx, cacheKey)
 		if err != nil {
 			utils.GetLogger().Error(fmt.Sprintf("Error remove CV ID from Redis: %v", err))
+		}
+
+		analyticMessage := utils.CVAnalyticQueueMessage{
+			UserID:   cv.UserID,
+			CvID:     cv.ExternalID,
+			Action:   "cv_delete",
+			DateTime: cv.CreatedAt,
+			Detail:   "CV created successfully",
+		}
+
+		analyticBody, err := json.Marshal(analyticMessage)
+		if err != nil {
+			utils.GetLogger().Error(fmt.Sprintf("Error marshaling CV analytic message: %v", err))
+		}
+
+		rabbit := utils.GetRabbitMQInstance()
+		err = rabbit.Channel.Publish(
+			"",
+			utils.AnalyticQueueName,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType: "application/json",
+				Body:        analyticBody,
+			},
+		)
+
+		if err != nil {
+			utils.GetLogger().Error(fmt.Sprintf("Error publishing CV analytic message: %v", err))
+		}
+
+		deleteQueueBody := map[string]interface{}{
+			"cv_id": cv.ID,
+		}
+
+		deleteBody, err := json.Marshal(deleteQueueBody)
+
+		fmt.Println(deleteBody, deleteQueueBody)
+
+		err = rabbit.Channel.Publish(
+			"",
+			utils.DeleteCVQueueName,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType: "application/json",
+				Body:        deleteBody,
+			},
+		)
+
+		if err != nil {
+			utils.GetLogger().Error(fmt.Sprintf("Error publishing CV analytic message: %v", err))
 		}
 
 		err = s.cvRepo.DeleteCVByID(cvID)

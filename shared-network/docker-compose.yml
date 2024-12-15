@@ -14,6 +14,19 @@ services:
     networks:
       - cv-generator-network
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: cv-generator-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin0981234532adm
+    networks:
+      - cv-generator-network
+
 networks:
   cv-generator-network:
     external: true
