@@ -24,6 +24,8 @@ func main() {
 	utils.InitDBConnection()
 	utils.StartMigrations()
 	utils.InitValidator()
+	utils.ConnectRabbitMQ()
+	utils.InitializeQueues()
 
 	port := os.Getenv("SERVICE_PORT")
 	listener, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", port))
