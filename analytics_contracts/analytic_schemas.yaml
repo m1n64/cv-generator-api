@@ -1,0 +1,92 @@
+UserAnalyticQueueMessage:
+  type: object
+  properties:
+    user_id:
+      type: string
+      format: uuid
+      description: "Unique identifier for the user"
+    action:
+      type: string
+      description: "Type of action performed (e.g., 'user_register')"
+    date_time:
+      type: string
+      format: date-time
+      description: "Timestamp of when the action occurred"
+    detail:
+      type: string
+      description: "Additional details about the action"
+
+CVAnalyticQueueMessage:
+  type: object
+  properties:
+    user_id:
+      type: string
+      format: uuid
+      description: "Unique identifier for the user"
+    cv_id:
+      type: string
+      format: uuid
+      description: "Unique identifier for the CV"
+    action:
+      type: string
+      description: "Type of action performed (e.g., 'cv_create' or 'cv_delete')"
+    date_time:
+      type: string
+      format: date-time
+      description: "Timestamp of when the action occurred"
+    detail:
+      type: string
+      description: "Additional details about the action"
+
+LanguageAnalyticQueueMessage:
+  type: object
+  properties:
+    lang_id:
+      type: string
+      format: uuid
+      description: "Unique identifier for the language record"
+    cv_id:
+      type: string
+      format: uuid
+      description: "Unique identifier for the CV"
+    action:
+      type: string
+      description: "Type of action performed (e.g., 'lang_create' or 'lang_update')"
+    date_time:
+      type: string
+      format: date-time
+      description: "Timestamp of when the action occurred"
+    detail:
+      type: string
+      description: "Additional details about the action"
+    language:
+      type: string
+      description: "Name of the language"
+    level:
+      type: string
+      description: "Proficiency level of the language"
+
+SkillAnalyticQueueMessage:
+  type: object
+  properties:
+    stack_id:
+      type: string
+      format: uuid
+      description: "Unique identifier for the stack record"
+    cv_id:
+      type: string
+      format: uuid
+      description: "Unique identifier for the CV"
+    action:
+      type: string
+      description: "Type of action performed (e.g., 'stack_create' or 'stack_update')"
+    date_time:
+      type: string
+      format: date-time
+      description: "Timestamp of when the action occurred"
+    detail:
+      type: string
+      description: "Additional details about the action"
+    technology:
+      type: string
+      description: "Name of the technology (e.g., PHP or Go, etc)"

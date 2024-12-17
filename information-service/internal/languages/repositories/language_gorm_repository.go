@@ -62,3 +62,7 @@ func (r *languageRepository) UpdateLanguage(id uuid.UUID, language *models.Langu
 func (r *languageRepository) DeleteLanguageByCvID(id uuid.UUID, cvID uuid.UUID) error {
 	return r.db.Where("id = ? AND cv_id = ?", id, cvID).Delete(&models.Language{}).Error
 }
+
+func (r *languageRepository) DeleteLanguagesByCvID(cvID uuid.UUID) error {
+	return r.db.Where("cv_id = ?", cvID).Delete(&models.Language{}).Error
+}

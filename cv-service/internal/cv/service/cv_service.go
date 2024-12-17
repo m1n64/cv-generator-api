@@ -5,6 +5,7 @@ import (
 	"cv-service/internal/cv/models"
 	"cv-service/internal/cv/repositories"
 	"cv-service/pkg/utils"
+	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/goccy/go-json"
@@ -227,7 +228,7 @@ func (s *CVService) GetOriginalID(userID uuid.UUID, cvID uuid.UUID) (*uuid.UUID,
 		} else {
 			return &originalID, nil
 		}
-	} else if err != redis.Nil {
+	} else if !errors.Is(err, redis.Nil) {
 		utils.GetLogger().Error(fmt.Sprintf("Error reading CV ID from Redis: %v", err))
 	}
 
