@@ -6,6 +6,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/streadway/amqp"
 	"information-service/internal/information/services"
+	services2 "information-service/internal/languages/services"
+	services3 "information-service/internal/skills/services"
 	"information-service/pkg/utils"
 )
 
@@ -14,12 +16,16 @@ type DeleteCVMessage struct {
 }
 
 type DeleteCVInfoHandler struct {
-	infoService *services.CVInformationService
+	infoService     *services.CVInformationService
+	languageService *services2.LanguageService
+	skillService    *services3.SkillService
 }
 
-func NewDeleteCVInfoHandler(infoService *services.CVInformationService) *DeleteCVInfoHandler {
+func NewDeleteCVInfoHandler(infoService *services.CVInformationService, languageService *services2.LanguageService, skillService *services3.SkillService) *DeleteCVInfoHandler {
 	return &DeleteCVInfoHandler{
-		infoService: infoService,
+		infoService:     infoService,
+		languageService: languageService,
+		skillService:    skillService,
 	}
 }
 
@@ -38,13 +44,24 @@ func (h *DeleteCVInfoHandler) HandleDeleteCVMessage(msg amqp.Delivery) {
 		return
 	}
 
+	cvID := uuid.MustParse(deleteMsg.CvID)
+
 	logger.Info(fmt.Sprintf("Received delete CV message: %s", deleteMsg.CvID))
 
-	err = h.infoService.DeleteInformation(uuid.MustParse(deleteMsg.CvID))
+	err = h.infoService.DeleteInformation(cvID)
 	if err != nil {
 		logger.Error(fmt.Sprintf("Error deleting CV: %v", err))
-		return
 	}
+
+	err = h.languageService.DeleteLanguagesByCvID(cvID)
+	if err != nil {
+		logger.Error(fmt.Sprintf("Error deleting CV: %v", err))
+	}
+
+	/*err = h.skillService.DeleteSkillsByCvID(cvID)
+	if err != nil {
+		logger.Error(fmt.Sprintf("Error deleting CV: %v", err))
+	}*/
 
 	logger.Info(fmt.Sprintf("Deleted CV: %s", deleteMsg.CvID))
 }

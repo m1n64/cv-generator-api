@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package languages;
+
+option go_package = "./internal/languages/grpc;languages";
+
+service LanguagesService {
+  rpc GetLanguages(GetLanguagesRequest) returns (AllLanguagesResponse);
+
+  rpc GetLanguageByID(GetLanguageByIDRequest) returns (LanguageResponse);
+
+  rpc CreateLanguage(CreateLanguageRequest) returns (LanguageResponse);
+
+  rpc DeleteLanguageByID(DeleteLanguageByIDRequest) returns (DeleteLanguageByIDResponse);
+
+  rpc UpdateLanguageByID(UpdateLanguageByIDRequest) returns (LanguageResponse);
+}
+
+message GetLanguagesRequest {
+  string cv_id = 1;
+}
+
+message GetLanguageByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+}
+
+message AllLanguagesResponse {
+  repeated LanguageResponse languages = 1;
+}
+
+message CreateLanguageRequest {
+  string cv_id = 1;
+  string name = 2;
+  string level = 3;
+}
+
+message UpdateLanguageByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+  string name = 3;
+  string level = 4;
+}
+
+message DeleteLanguageByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+}
+
+message LanguageResponse {
+  string id = 1;
+  string cv_id = 2;
+  string name = 3;
+  string level = 4;
+  string created_at = 5;
+  string updated_at = 6;
+}
+
+message DeleteLanguageByIDResponse {
+  bool success = 1;
+}

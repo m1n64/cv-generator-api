@@ -23,6 +23,25 @@ type InformationAnalyticQueueMessage struct {
 	Detail   string    `json:"detail"`
 }
 
+type LanguageAnalyticQueueMessage struct {
+	LangID   uuid.UUID `json:"lang_id"`
+	CvID     uuid.UUID `json:"cv_id"`
+	Action   string    `json:"action"`
+	DateTime time.Time `json:"date_time"`
+	Detail   string    `json:"detail"`
+	Language string    `json:"language"`
+	Level    string    `json:"level"`
+}
+
+type SkillAnalyticQueueMessage struct {
+	StackID    uuid.UUID `json:"stack_id"`
+	CvID       uuid.UUID `json:"cv_id"`
+	Action     string    `json:"action"`
+	DateTime   time.Time `json:"date_time"`
+	Detail     string    `json:"detail"`
+	Technology string    `json:"technology"`
+}
+
 type RabbitMQConnection struct {
 	Connection *amqp.Connection
 	Channel    *amqp.Channel
