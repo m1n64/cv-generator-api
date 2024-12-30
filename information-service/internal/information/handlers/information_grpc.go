@@ -4,21 +4,23 @@ import (
 	"context"
 	"fmt"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	information "information-service/internal/information/grpc"
 	"information-service/internal/information/services"
-	"information-service/pkg/utils"
 )
 
 type CVInformationServiceServer struct {
 	information.UnimplementedInformationServiceServer
 	infoService *services.CVInformationService
+	logger      *zap.Logger
 }
 
-func NewCVInformationServiceServer(infoService *services.CVInformationService) *CVInformationServiceServer {
+func NewCVInformationServiceServer(infoService *services.CVInformationService, logger *zap.Logger) *CVInformationServiceServer {
 	return &CVInformationServiceServer{
 		infoService: infoService,
+		logger:      logger,
 	}
 }
 
@@ -31,7 +33,7 @@ func (s *CVInformationServiceServer) CreateOrUpdateInformation(ctx context.Conte
 
 	info, err := s.infoService.CreateOrUpdateCV(cvID, req.FullName, req.PhotoFileId, req.Position, req.Location, req.Biography)
 	if err != nil {
-		utils.GetLogger().Info(fmt.Sprintf("Error creating or updating information: %s", err.Error()))
+		s.logger.Info(fmt.Sprintf("Error creating or updating information: %s", err.Error()))
 		return nil, err
 	}
 
@@ -55,7 +57,7 @@ func (s *CVInformationServiceServer) GetInformationByCvID(ctx context.Context, r
 
 	info, err := s.infoService.GetCVInformation(cvID)
 	if err != nil {
-		utils.GetLogger().Info(fmt.Sprintf("Error getting information: %s", err.Error()))
+		s.logger.Info(fmt.Sprintf("Error getting information: %s", err.Error()))
 		return nil, err
 	}
 
@@ -79,7 +81,7 @@ func (s *CVInformationServiceServer) DeleteInformationByCvID(ctx context.Context
 
 	err := s.infoService.DeleteInformation(cvID)
 	if err != nil {
-		utils.GetLogger().Info(fmt.Sprintf("Error deleting information: %s", err.Error()))
+		s.logger.Info(fmt.Sprintf("Error deleting information: %s", err.Error()))
 		return nil, err
 	}
 

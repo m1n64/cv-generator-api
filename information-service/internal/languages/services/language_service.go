@@ -1,27 +1,25 @@
 package services
 
 import (
-	"fmt"
-	"github.com/goccy/go-json"
 	"github.com/google/uuid"
-	"github.com/streadway/amqp"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 	"information-service/internal/languages/models"
 	repositories2 "information-service/internal/languages/repositories"
-	"information-service/pkg/utils"
 )
 
 type LanguageService struct {
-	languageRepo repositories2.LanguageRepository
-	db           *gorm.DB
+	languageRepo             repositories2.LanguageRepository
+	languageAnalyticsService *LanguageAnalyticsService
+	db                       *gorm.DB
 }
 
-func NewLanguageService(languageRepo repositories2.LanguageRepository, db *gorm.DB) *LanguageService {
+func NewLanguageService(languageRepo repositories2.LanguageRepository, languageAnalyticsService *LanguageAnalyticsService, db *gorm.DB) *LanguageService {
 	return &LanguageService{
-		languageRepo: languageRepo,
-		db:           db,
+		languageRepo:             languageRepo,
+		languageAnalyticsService: languageAnalyticsService,
+		db:                       db,
 	}
 }
 
@@ -44,49 +42,20 @@ func (s *LanguageService) GetLanguage(id uuid.UUID, cvID uuid.UUID) (*models.Lan
 }
 
 func (s *LanguageService) CreateLanguage(cvID uuid.UUID, name string, level string) (*models.Language, error) {
-	model := &models.Language{
+	lang := &models.Language{
 		CvID:  cvID,
 		Name:  name,
 		Level: level,
 	}
 
-	var lang *models.Language
-
 	err := s.db.Transaction(func(tx *gorm.DB) error {
 		var err error
-		lang, err = s.languageRepo.CreateLanguage(model)
+		lang, err = s.languageRepo.CreateLanguage(lang)
 		if err != nil {
 			return err
 		}
 
-		message := utils.LanguageAnalyticQueueMessage{
-			LangID:   lang.ID,
-			CvID:     lang.CvID,
-			Action:   "lang_create",
-			DateTime: lang.CreatedAt,
-			Detail:   "",
-			Language: lang.Name,
-			Level:    lang.Level,
-		}
-
-		body, err := json.Marshal(message)
-		if err == nil {
-			rabbit := utils.GetRabbitMQInstance()
-			err = rabbit.Channel.Publish(
-				"",
-				utils.AnalyticQueueName,
-				false,
-				false,
-				amqp.Publishing{
-					ContentType: "application/json",
-					Body:        body,
-				},
-			)
-
-			if err != nil {
-				utils.GetLogger().Error(fmt.Sprintf("Error publishing message: %v", err))
-			}
-		}
+		s.languageAnalyticsService.SendCreateEvent(lang)
 
 		return nil
 	})
@@ -99,49 +68,20 @@ func (s *LanguageService) CreateLanguage(cvID uuid.UUID, name string, level stri
 }
 
 func (s *LanguageService) UpdateLanguage(langID uuid.UUID, cvID uuid.UUID, name string, level string) (*models.Language, error) {
-	model := &models.Language{
+	lang := &models.Language{
 		CvID:  cvID,
 		Name:  name,
 		Level: level,
 	}
 
-	var lang *models.Language
-
 	err := s.db.Transaction(func(tx *gorm.DB) error {
 		var err error
-		lang, err = s.languageRepo.UpdateLanguage(langID, model)
+		lang, err = s.languageRepo.UpdateLanguage(langID, lang)
 		if err != nil {
 			return err
 		}
 
-		message := utils.LanguageAnalyticQueueMessage{
-			LangID:   lang.ID,
-			CvID:     lang.CvID,
-			Action:   "lang_update",
-			DateTime: lang.UpdatedAt,
-			Detail:   "",
-			Language: lang.Name,
-			Level:    lang.Level,
-		}
-
-		body, err := json.Marshal(message)
-		if err == nil {
-			rabbit := utils.GetRabbitMQInstance()
-			err = rabbit.Channel.Publish(
-				"",
-				utils.AnalyticQueueName,
-				false,
-				false,
-				amqp.Publishing{
-					ContentType: "application/json",
-					Body:        body,
-				},
-			)
-
-			if err != nil {
-				utils.GetLogger().Error(fmt.Sprintf("Error publishing message: %v", err))
-			}
-		}
+		s.languageAnalyticsService.SendUpdateEvent(lang)
 
 		return nil
 	})

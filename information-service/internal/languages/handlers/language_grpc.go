@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	languages "information-service/internal/languages/grpc"
@@ -12,11 +13,13 @@ import (
 type LanguageServiceServer struct {
 	languages.UnimplementedLanguagesServiceServer
 	languageService *services.LanguageService
+	logger          *zap.Logger
 }
 
-func NewLanguageServiceServer(languageService *services.LanguageService) *LanguageServiceServer {
+func NewLanguageServiceServer(languageService *services.LanguageService, logger *zap.Logger) *LanguageServiceServer {
 	return &LanguageServiceServer{
 		languageService: languageService,
+		logger:          logger,
 	}
 }
 

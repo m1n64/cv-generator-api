@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package certificates;
+
+option go_package = "./internal/certificates/grpc;certificates";
+
+service CertificatesService {
+  rpc GetCertificates(GetCertificatesRequest) returns (AllCertificatesResponse);
+
+  rpc GetCertificateByID(GetCertificateByIDRequest) returns (CertificateResponse);
+
+  rpc CreateCertificate(CreateCertificateRequest) returns (CertificateResponse);
+
+  rpc DeleteCertificateByID(DeleteCertificateByIDRequest) returns (DeleteCertificateByIDResponse);
+
+  rpc UpdateCertificateByID(UpdateCertificateByIDRequest) returns (CertificateResponse);
+}
+
+message GetCertificatesRequest {
+  string cv_id = 1;
+}
+
+message GetCertificateByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+}
+
+message AllCertificatesResponse {
+  repeated CertificateResponse certificates = 1;
+}
+
+message CreateCertificateRequest {
+  string cv_id = 1;
+  string title = 3;
+  string vendor = 4;
+  string start_date = 5;
+  optional string end_date = 6;
+  optional string description = 7;
+}
+
+message UpdateCertificateByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+  string title = 3;
+  string vendor = 4;
+  string start_date = 5;
+  optional string end_date = 6;
+  optional string description = 7;
+}
+
+message DeleteCertificateByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+}
+
+message CertificateResponse {
+  string id = 1;
+  string cv_id = 2;
+  string title = 3;
+  string vendor = 4;
+  string start_date = 5;
+  optional string end_date = 6;
+  optional string description = 7;
+  string created_at = 8;
+  optional string updated_at = 9;
+}
+
+message DeleteCertificateByIDResponse {
+  bool success = 1;
+}

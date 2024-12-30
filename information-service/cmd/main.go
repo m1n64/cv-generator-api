@@ -7,6 +7,8 @@ import (
 	"information-service/internal/information/handlers"
 	languages "information-service/internal/languages/grpc"
 	handlers2 "information-service/internal/languages/handlers"
+	skills "information-service/internal/skills/grpc"
+	handlers3 "information-service/internal/skills/handlers"
 	"information-service/pkg/containers"
 	"log"
 	"net"
@@ -26,11 +28,14 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	cvInfoServer := handlers.NewCVInformationServiceServer(dependencies.CVInformationService)
+	cvInfoServer := handlers.NewCVInformationServiceServer(dependencies.CVInformationService, dependencies.Logger)
 	information.RegisterInformationServiceServer(grpcServer, cvInfoServer)
 
-	langServer := handlers2.NewLanguageServiceServer(dependencies.LanguageService)
+	langServer := handlers2.NewLanguageServiceServer(dependencies.LanguageService, dependencies.Logger)
 	languages.RegisterLanguagesServiceServer(grpcServer, langServer)
+
+	skillsServer := handlers3.NewSkillServiceServer(dependencies.SkillService, dependencies.Logger)
+	skills.RegisterSkillsServiceServer(grpcServer, skillsServer)
 
 	log.Printf("gRPC server is running on port %s", port)
 	if err := grpcServer.Serve(listener); err != nil {
