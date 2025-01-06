@@ -27,6 +27,25 @@ services:
     networks:
       - cv-generator-network
 
+  minio:
+    image: minio/minio
+    container_name: cv-generator-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: adminadminadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - cv-generator-network
+
+volumes:
+  minio_data:
+    driver: local
+
 networks:
   cv-generator-network:
     external: true

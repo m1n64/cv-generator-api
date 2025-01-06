@@ -12,10 +12,21 @@ This project is a simple CV generator API, written on Go in microservice archite
 - [x] user-service (Authorization, token validation, user info) (gRPC)
 - [x] main cv-service (List of CV\'s, CRUD for CV\'s) (gRPC)
 - [ ] cv information-service (biography, name, position, location, photo, education, work experience and skills) (gRPC) 
-- [ ] file storage-service (minio) (gRPC, RabbitMQ(?))
+- [x] file storage-service (minio) (Direct connection in services)
 - [ ] cv PDF generator-service (cv PDF generator) (gRPC, RabbitMQ)
 - [ ] gateway-service (proxy for services from gRPC to REST) (REST API)
 - [x] swagger docs service (or container in gateway-service) (REST API)
+- [x] shared-network service (network for all services, and nginx configuration)
+- [ ] analytics service in separate repository, which my friend will develop in PHP, Laravel (RabbitMQ)
+- [ ] health check service (HTML page, gRPC, REST API) (?)
+
+### Peculiarities:
+- Microservice architecture
+- Authorization and authentication
+- Transactional database
+- S3 file storage (minio)
+- gRPC, RabbitMQ, REST API
+- In CV information-service DI container is used (and cleaner code :)
 
 ### Startup (makefile)
 Init (for create network):

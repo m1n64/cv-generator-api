@@ -15,7 +15,7 @@ service InformationService {
 message CreateOrUpdateInformationRequest {
   string cv_id = 2;
   string full_name = 3;
-  optional string photo_file_id = 4;
+  optional bytes photo = 4;
   optional string position = 5;
   optional string location = 6;
   optional string biography = 7;
@@ -25,12 +25,13 @@ message InformationResponse {
   string id = 1;
   string cv_id = 2;
   string full_name = 3;
-  optional string photo_file_id = 4;
-  optional string position = 5;
-  optional string location = 6;
-  optional string biography = 7;
-  string created_at = 8;
-  string updated_at = 9;
+  optional bytes photo_file = 4;
+  optional string photo_url = 5;
+  optional string position = 6;
+  optional string location = 7;
+  optional string biography = 8;
+  string created_at = 9;
+  string updated_at = 10;
 }
 
 message GetInformationByCvIDRequest {

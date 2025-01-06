@@ -13,7 +13,9 @@ type Education struct {
 	StartDate   time.Time  `gorm:"type:date;not null"`
 	EndDate     *time.Time `gorm:"type:date"`
 	Location    string     `gorm:"not null"`
-	Description string     `gorm:"type:text;not null"`
+	Faculty     string     `gorm:"not null"`
+	Degree      *string    `gorm:"type:varchar(255)"`
+	Description *string    `gorm:"type:text"`
 	gorm.Model
 }
 

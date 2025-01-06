@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package skills;
+
+option go_package = "./internal/skills/grpc;skills";
+
+service SkillsService {
+  rpc GetSkills(GetSkillsRequest) returns (AllSkillsResponse);
+
+  rpc GetSkillByID(GetSkillByIDRequest) returns (SkillResponse);
+
+  rpc CreateSkill(CreateSkillRequest) returns (SkillResponse);
+
+  rpc DeleteSkillByID(DeleteSkillByIDRequest) returns (DeleteSkillByIDResponse);
+
+  rpc UpdateSkillByID(UpdateSkillByIDRequest) returns (SkillResponse);
+}
+
+message GetSkillsRequest {
+  string cv_id = 1;
+}
+
+message GetSkillByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+}
+
+message AllSkillsResponse {
+  repeated SkillResponse skills = 1;
+}
+
+message CreateSkillRequest {
+  string cv_id = 1;
+  string name = 2;
+}
+
+message UpdateSkillByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+  string name = 3;
+}
+
+message DeleteSkillByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+}
+
+message SkillResponse {
+  string id = 1;
+  string cv_id = 2;
+  string name = 3;
+  string created_at = 4;
+  string updated_at = 5;
+}
+
+message DeleteSkillByIDResponse {
+  bool success = 1;
+}
