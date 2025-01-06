@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package contacts;
+
+option go_package = "./internal/contacts/grpc;contacts";
+
+service ContactsService {
+  rpc GetContacts(GetContactsRequest) returns (AllContactsResponse);
+
+  rpc GetContactByID(GetContactByIDRequest) returns (ContactResponse);
+
+  rpc CreateContact(CreateContactRequest) returns (ContactResponse);
+
+  rpc DeleteContactByID(DeleteContactByIDRequest) returns (DeleteContactByIDResponse);
+
+  rpc UpdateContactByID(UpdateContactByIDRequest) returns (ContactResponse);
+}
+
+message GetContactsRequest {
+  string cv_id = 1;
+}
+
+message GetContactByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+}
+
+message AllContactsResponse {
+  repeated ContactResponse contacts = 1;
+}
+
+message CreateContactRequest {
+  string cv_id = 1;
+  string title = 2;
+  optional string link = 3;
+}
+
+message UpdateContactByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+  string title = 3;
+  optional string link = 4;
+}
+
+message DeleteContactByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+}
+
+message ContactResponse {
+  string id = 1;
+  string cv_id = 2;
+  string title = 3;
+  optional string link = 4;
+  string created_at = 5;
+  string updated_at = 6;
+}
+
+message DeleteContactByIDResponse {
+  bool success = 1;
+}

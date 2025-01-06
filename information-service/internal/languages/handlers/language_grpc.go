@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	languages "information-service/internal/languages/grpc"
+	"information-service/internal/languages/models"
 	"information-service/internal/languages/services"
 )
 
@@ -35,14 +36,7 @@ func (server *LanguageServiceServer) GetLanguages(context context.Context, req *
 
 	var langs []*languages.LanguageResponse
 	for _, lang := range languagesList {
-		langs = append(langs, &languages.LanguageResponse{
-			Id:        lang.ID.String(),
-			CvId:      lang.CvID.String(),
-			Name:      lang.Name,
-			Level:     lang.Level,
-			CreatedAt: lang.CreatedAt.String(),
-			UpdatedAt: lang.UpdatedAt.String(),
-		})
+		langs = append(langs, server.getLanguageResponse(lang))
 	}
 	return &languages.AllLanguagesResponse{
 		Languages: langs,
@@ -62,14 +56,7 @@ func (server *LanguageServiceServer) GetLanguageByID(context context.Context, re
 		return nil, err
 	}
 
-	return &languages.LanguageResponse{
-		Id:        language.ID.String(),
-		CvId:      language.CvID.String(),
-		Name:      language.Name,
-		Level:     language.Level,
-		CreatedAt: language.CreatedAt.String(),
-		UpdatedAt: language.UpdatedAt.String(),
-	}, nil
+	return server.getLanguageResponse(language), nil
 }
 
 func (server *LanguageServiceServer) CreateLanguage(context context.Context, req *languages.CreateLanguageRequest) (*languages.LanguageResponse, error) {
@@ -82,14 +69,7 @@ func (server *LanguageServiceServer) CreateLanguage(context context.Context, req
 		return nil, err
 	}
 
-	return &languages.LanguageResponse{
-		Id:        language.ID.String(),
-		CvId:      language.CvID.String(),
-		Name:      language.Name,
-		Level:     language.Level,
-		CreatedAt: language.CreatedAt.String(),
-		UpdatedAt: language.UpdatedAt.String(),
-	}, nil
+	return server.getLanguageResponse(language), nil
 }
 
 func (server *LanguageServiceServer) UpdateLanguageByID(context context.Context, req *languages.UpdateLanguageByIDRequest) (*languages.LanguageResponse, error) {
@@ -102,14 +82,7 @@ func (server *LanguageServiceServer) UpdateLanguageByID(context context.Context,
 		return nil, err
 	}
 
-	return &languages.LanguageResponse{
-		Id:        language.ID.String(),
-		CvId:      language.CvID.String(),
-		Name:      language.Name,
-		Level:     language.Level,
-		CreatedAt: language.CreatedAt.String(),
-		UpdatedAt: language.UpdatedAt.String(),
-	}, nil
+	return server.getLanguageResponse(language), nil
 }
 
 func (server *LanguageServiceServer) DeleteLanguageByID(context context.Context, req *languages.DeleteLanguageByIDRequest) (*languages.DeleteLanguageByIDResponse, error) {
@@ -125,4 +98,15 @@ func (server *LanguageServiceServer) DeleteLanguageByID(context context.Context,
 	return &languages.DeleteLanguageByIDResponse{
 		Success: true,
 	}, nil
+}
+
+func (server *LanguageServiceServer) getLanguageResponse(language *models.Language) *languages.LanguageResponse {
+	return &languages.LanguageResponse{
+		Id:        language.ID.String(),
+		CvId:      language.CvID.String(),
+		Name:      language.Name,
+		Level:     language.Level,
+		CreatedAt: language.CreatedAt.String(),
+		UpdatedAt: language.UpdatedAt.String(),
+	}
 }

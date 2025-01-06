@@ -49,8 +49,8 @@ message SkillResponse {
   string id = 1;
   string cv_id = 2;
   string name = 3;
-  string created_at = 5;
-  string updated_at = 6;
+  string created_at = 4;
+  string updated_at = 5;
 }
 
 message DeleteSkillByIDResponse {

@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	skills "information-service/internal/skills/grpc"
+	"information-service/internal/skills/models"
 	"information-service/internal/skills/services"
 )
 
@@ -36,13 +37,7 @@ func (s *SkillServiceServer) GetSkills(ctx context.Context, request *skills.GetS
 
 	var skillsResp []*skills.SkillResponse
 	for _, skill := range skillsList {
-		skillsResp = append(skillsResp, &skills.SkillResponse{
-			Id:        skill.ID.String(),
-			CvId:      skill.CvID.String(),
-			Name:      skill.Name,
-			CreatedAt: skill.CreatedAt.String(),
-			UpdatedAt: skill.UpdatedAt.String(),
-		})
+		skillsResp = append(skillsResp, s.getSkillResponse(skill))
 	}
 	return &skills.AllSkillsResponse{Skills: skillsResp}, nil
 }
@@ -58,13 +53,7 @@ func (s *SkillServiceServer) GetSkillByID(ctx context.Context, request *skills.G
 		return nil, err
 	}
 
-	return &skills.SkillResponse{
-		Id:        skill.ID.String(),
-		CvId:      skill.CvID.String(),
-		Name:      skill.Name,
-		CreatedAt: skill.CreatedAt.String(),
-		UpdatedAt: skill.UpdatedAt.String(),
-	}, nil
+	return s.getSkillResponse(skill), nil
 }
 
 func (s *SkillServiceServer) CreateSkill(ctx context.Context, request *skills.CreateSkillRequest) (*skills.SkillResponse, error) {
@@ -78,13 +67,7 @@ func (s *SkillServiceServer) CreateSkill(ctx context.Context, request *skills.Cr
 		return nil, err
 	}
 
-	return &skills.SkillResponse{
-		Id:        skill.ID.String(),
-		CvId:      skill.CvID.String(),
-		Name:      skill.Name,
-		CreatedAt: skill.CreatedAt.String(),
-		UpdatedAt: skill.UpdatedAt.String(),
-	}, nil
+	return s.getSkillResponse(skill), nil
 }
 
 func (s *SkillServiceServer) UpdateSkillByID(ctx context.Context, request *skills.UpdateSkillByIDRequest) (*skills.SkillResponse, error) {
@@ -98,13 +81,7 @@ func (s *SkillServiceServer) UpdateSkillByID(ctx context.Context, request *skill
 		return nil, err
 	}
 
-	return &skills.SkillResponse{
-		Id:        skill.ID.String(),
-		CvId:      skill.CvID.String(),
-		Name:      skill.Name,
-		CreatedAt: skill.CreatedAt.String(),
-		UpdatedAt: skill.UpdatedAt.String(),
-	}, nil
+	return s.getSkillResponse(skill), nil
 }
 
 func (s *SkillServiceServer) DeleteSkillByID(ctx context.Context, request *skills.DeleteSkillByIDRequest) (*skills.DeleteSkillByIDResponse, error) {
@@ -119,4 +96,14 @@ func (s *SkillServiceServer) DeleteSkillByID(ctx context.Context, request *skill
 	}
 
 	return &skills.DeleteSkillByIDResponse{Success: true}, nil
+}
+
+func (s *SkillServiceServer) getSkillResponse(skill *models.Skill) *skills.SkillResponse {
+	return &skills.SkillResponse{
+		Id:        skill.ID.String(),
+		CvId:      skill.CvID.String(),
+		Name:      skill.Name,
+		CreatedAt: skill.CreatedAt.String(),
+		UpdatedAt: skill.UpdatedAt.String(),
+	}
 }

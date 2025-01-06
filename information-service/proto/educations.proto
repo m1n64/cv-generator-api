@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package educations;
+
+option go_package = "./internal/educations/grpc;educations";
+
+service EducationService {
+  rpc GetEducations(GetEducationsRequest) returns (AllEducationsResponse);
+
+  rpc GetEducationByID(GetEducationByIDRequest) returns (EducationResponse);
+
+  rpc CreateEducation(CreateEducationRequest) returns (EducationResponse);
+
+  rpc DeleteEducationByID(DeleteEducationByIDRequest) returns (DeleteEducationByIDResponse);
+
+  rpc UpdateEducationByID(UpdateEducationByIDRequest) returns (EducationResponse);
+}
+
+message GetEducationsRequest {
+  string cv_id = 1;
+}
+
+message GetEducationByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+}
+
+message AllEducationsResponse {
+  repeated EducationResponse educations = 1;
+}
+
+message CreateEducationRequest {
+  string cv_id = 1;
+  string institution = 2;
+  string start_date = 3;
+  optional string end_date = 4;
+  string location = 5;
+  optional string description = 6;
+  string faculty = 7;
+  optional string degree = 8;
+}
+
+message UpdateEducationByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+  string institution = 3;
+  string start_date = 4;
+  optional string end_date = 5;
+  string location = 6;
+  optional string description = 7;
+  string faculty = 8;
+  optional string degree = 9;
+}
+
+message DeleteEducationByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+}
+
+message EducationResponse {
+  string id = 1;
+  string cv_id = 2;
+  string institution = 3;
+  string start_date = 4;
+  optional string end_date = 5;
+  string location = 6;
+  optional string description = 7;
+  string faculty = 8;
+  optional string degree = 9;
+  string created_at = 10;
+  string updated_at = 11;
+}
+
+message DeleteEducationByIDResponse {
+  bool success = 1;
+}
