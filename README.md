@@ -11,7 +11,7 @@ This project is a simple CV generator API, written on Go in microservice archite
 ### Checklist:
 - [x] user-service (Authorization, token validation, user info) (gRPC)
 - [x] main cv-service (List of CV\'s, CRUD for CV\'s) (gRPC)
-- [ ] cv information-service (biography, name, position, location, photo, education, work experience and skills) (gRPC) 
+- [x] cv information-service (biography, name, position, location, photo, education, work experience and skills) (gRPC) 
 - [x] file storage-service (minio) (Direct connection in services)
 - [ ] cv PDF generator-service (cv PDF generator) (gRPC, RabbitMQ)
 - [ ] gateway-service (proxy for services from gRPC to REST) (REST API)
