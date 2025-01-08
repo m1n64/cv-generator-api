@@ -4,83 +4,67 @@ package cv;
 
 option go_package = "./internal/cv/grpc/cv;cv";
 
-// CVService содержит методы для работы с резюме
 service CVService {
-  // Метод для создания резюме
   rpc CreateCV(CreateCVRequest) returns (CVResponse);
 
-  // Метод для получения всех резюме пользователя
   rpc GetAllCVsByUserID(GetAllCVsByUserIDRequest) returns (GetAllCVsResponse);
 
-  // Метод для получения резюме по ID
   rpc GetCVByID(GetCVByIDRequest) returns (CVResponse);
 
-  // Метод для удаления резюме
   rpc DeleteCVByID(DeleteCVByIDRequest) returns (DeleteCVByIDResponse);
 
-  // Метод для редактирования резюме
   rpc UpdateCV(UpdateCVRequest) returns (CVResponse);
 
-  // Метод для получения оригинального ID для CV
   rpc GetOriginalID(GetOriginalIDRequest) returns (GetOriginalIDResponse);
 }
 
-// Запрос для создания резюме
 message CreateCVRequest {
-  string name = 1;       // Имя резюме
-  string user_id = 2;    // ID пользователя
+  string name = 1;
+  string user_id = 2;
 }
 
-// Запрос для получения всех резюме пользователя
 message GetAllCVsByUserIDRequest {
-  string user_id = 1;    // ID пользователя
+  string user_id = 1;
 }
 
-// Ответ с информацией обо всех резюме
 message GetAllCVsResponse {
   repeated CV cv_list = 1;
 }
 
-// Запрос для получения резюме по ID
 message GetCVByIDRequest {
-  string cv_id = 1;      // ID резюме
+  string cv_id = 1;
 }
 
-// Запрос для удаления резюме
 message DeleteCVByIDRequest {
-  string cv_id = 1;      // ID резюме
+  string cv_id = 1;
 }
 
-// Ответ на удаление резюме
 message DeleteCVByIDResponse {
   bool success = 1;
 }
 
-// Запрос для редактирования резюме
 message UpdateCVRequest {
-  string cv_id = 1;      // ID резюме
-  string name = 2;       // Новое имя резюме
+  string cv_id = 1;
+  string name = 2;
 }
 
-// Ответ с информацией о резюме
 message CVResponse {
-  string id = 1;         // ID резюме
-  string external_id = 2;         // External ID резюме
-  string name = 3;       // Имя резюме
-  string created_at = 4; // Дата создания
+  string id = 1;
+  string external_id = 2;
+  string name = 3;
+  string created_at = 4;
 }
 
-// Структура для представления резюме
 message CV {
-  string id = 1;         // ID резюме
-  string external_id = 2;         // External ID резюме
-  string name = 3;       // Имя резюме
-  string created_at = 4; // Дата создания
+  string id = 1;
+  string external_id = 2;
+  string name = 3;
+  string created_at = 4;
 }
 
 message GetOriginalIDRequest {
-  string cv_id = 1;      // External ID
-  string user_id = 2;    // ID пользователя
+  string cv_id = 1;
+  string user_id = 2;
 }
 
 message GetOriginalIDResponse {

@@ -36,7 +36,7 @@ func (r *educationRepository) GetEducation(id uuid.UUID, cvID uuid.UUID) (*model
 
 func (r *educationRepository) GetEducationsByCvID(cvID uuid.UUID) ([]*models.Education, error) {
 	var contacts []*models.Education
-	if err := r.db.Where("cv_id = ?", cvID).Find(&contacts).Error; err != nil {
+	if err := r.db.Where("cv_id = ?", cvID).Order("start_date DESC").Find(&contacts).Error; err != nil {
 		return nil, err
 	}
 

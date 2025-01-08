@@ -17,6 +17,7 @@ This project is a simple CV generator API, written on Go in microservice archite
 - [ ] gateway-service (proxy for services from gRPC to REST) (REST API)
 - [x] swagger docs service (or container in gateway-service) (REST API)
 - [x] shared-network service (network for all services, and nginx configuration)
+- [ ] log system and visualization service
 - [ ] analytics service in separate repository, which my friend will develop in PHP, Laravel (RabbitMQ)
 - [ ] health check service (HTML page, gRPC, REST API) (?)
 

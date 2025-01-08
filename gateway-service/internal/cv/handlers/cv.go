@@ -13,6 +13,12 @@ type CVProxyHandler struct {
 	cvClient cv.CVServiceClient
 }
 
+type CVResponse struct {
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	CreatedAt string `json:"created_at"`
+}
+
 func NewCVProxy() *CVProxyHandler {
 	cvConn := services2.GetCVConnection()
 
@@ -49,11 +55,7 @@ func (h *CVProxyHandler) CreateCVHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"id":         resp.ExternalId,
-		"name":       resp.Name,
-		"created_at": resp.CreatedAt,
-	})
+	c.JSON(http.StatusOK, h.getCVResponse(resp))
 }
 
 func (h *CVProxyHandler) GetCVListHandler(c *gin.Context) {
@@ -75,12 +77,12 @@ func (h *CVProxyHandler) GetCVListHandler(c *gin.Context) {
 		return
 	}
 
-	var cvList []map[string]interface{}
+	var cvList []CVResponse
 	for _, cvItem := range listOfCV.CvList {
-		cvList = append(cvList, map[string]interface{}{
-			"id":         cvItem.ExternalId,
-			"name":       cvItem.Name,
-			"created_at": cvItem.CreatedAt,
+		cvList = append(cvList, CVResponse{
+			ID:        cvItem.ExternalId,
+			Name:      cvItem.Name,
+			CreatedAt: cvItem.CreatedAt,
 		})
 	}
 
@@ -114,11 +116,7 @@ func (h *CVProxyHandler) GetCVHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"id":         resp.ExternalId,
-		"name":       resp.Name,
-		"created_at": resp.CreatedAt,
-	})
+	c.JSON(http.StatusOK, h.getCVResponse(resp))
 }
 
 func (h *CVProxyHandler) UpdateCVHandler(c *gin.Context) {
@@ -156,11 +154,7 @@ func (h *CVProxyHandler) UpdateCVHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"id":         resp.ExternalId,
-		"name":       resp.Name,
-		"created_at": resp.CreatedAt,
-	})
+	c.JSON(http.StatusOK, h.getCVResponse(resp))
 }
 
 func (h *CVProxyHandler) DeleteCV(c *gin.Context) {
@@ -191,4 +185,12 @@ func (h *CVProxyHandler) DeleteCV(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"success": resp.Success,
 	})
+}
+
+func (h *CVProxyHandler) getCVResponse(gRPCResponse *cv.CVResponse) CVResponse {
+	return CVResponse{
+		ID:        gRPCResponse.ExternalId,
+		Name:      gRPCResponse.Name,
+		CreatedAt: gRPCResponse.CreatedAt,
+	}
 }

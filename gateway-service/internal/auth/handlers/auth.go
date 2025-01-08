@@ -14,6 +14,17 @@ type UserProxyHandler struct {
 	authClient auth.AuthServiceClient
 }
 
+type AuthResponse struct {
+	Token     string `json:"token"`
+	ExpiresAt string `json:"expires_at"`
+}
+
+type UserResponse struct {
+	UserId   string `json:"user_id"`
+	Email    string `json:"email"`
+	Username string `json:"username"`
+}
+
 func NewUserProxy() *UserProxyHandler {
 	authConn := services.GetAuthConnection()
 
@@ -49,10 +60,7 @@ func (h *UserProxyHandler) RegisterHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"token":      resp.Token,
-		"expires_at": resp.ExpiresAt,
-	})
+	c.JSON(http.StatusOK, h.getAuthResponse(resp))
 }
 
 func (h *UserProxyHandler) LoginHandler(c *gin.Context) {
@@ -80,10 +88,7 @@ func (h *UserProxyHandler) LoginHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"token":      resp.Token,
-		"expires_at": resp.ExpiresAt,
-	})
+	c.JSON(http.StatusOK, h.getAuthResponse(resp))
 }
 
 func (h *UserProxyHandler) UserInfoHandler(c *gin.Context) {
@@ -103,9 +108,20 @@ func (h *UserProxyHandler) UserInfoHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"user_id":  resp.UserId,
-		"username": resp.Username,
-		"email":    resp.Email,
-	})
+	c.JSON(http.StatusOK, h.getUserResponse(resp))
+}
+
+func (h *UserProxyHandler) getAuthResponse(resp *auth.TokenResponse) AuthResponse {
+	return AuthResponse{
+		Token:     resp.Token,
+		ExpiresAt: resp.ExpiresAt,
+	}
+}
+
+func (h *UserProxyHandler) getUserResponse(resp *auth.GetUserInfoResponse) UserResponse {
+	return UserResponse{
+		UserId:   resp.UserId,
+		Email:    resp.Email,
+		Username: resp.Username,
+	}
 }

@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"context"
-	"fmt"
 	"gateway-service/internal/cv/grpc/cv"
 	services2 "gateway-service/internal/cv/services"
 	"github.com/gin-gonic/gin"
@@ -33,7 +32,6 @@ func (m *CVMiddleware) GetCVOriginalID() gin.HandlerFunc {
 			return
 		}
 
-		// Извлекаем user_id из контекста
 		userID, exists := c.Get("user_id")
 		if !exists {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "user_id not found in context"})
@@ -41,7 +39,6 @@ func (m *CVMiddleware) GetCVOriginalID() gin.HandlerFunc {
 			return
 		}
 
-		// Приводим user_id к строке
 		userIDStr, ok := userID.(string)
 		if !ok {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user_id format"})
@@ -64,12 +61,8 @@ func (m *CVMiddleware) GetCVOriginalID() gin.HandlerFunc {
 			return
 		}
 
-		fmt.Println(resp)
-
-		// Сохраняем оригинальный ID CV в контекст
 		c.Set("original_cv_id", resp.Id)
 
-		// Продолжаем выполнение запроса
 		c.Next()
 	}
 }
