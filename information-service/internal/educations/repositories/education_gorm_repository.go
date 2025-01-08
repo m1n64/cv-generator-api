@@ -7,17 +7,17 @@ import (
 	"information-service/internal/educations/models"
 )
 
-type educationRepository struct {
+type educationGormRepository struct {
 	db *gorm.DB
 }
 
-func NewEducationRepository(db *gorm.DB) EducationRepository {
-	return &educationRepository{
+func NewEducationGormRepository(db *gorm.DB) EducationRepository {
+	return &educationGormRepository{
 		db: db,
 	}
 }
 
-func (r *educationRepository) CreateEducation(education *models.Education) (*models.Education, error) {
+func (r *educationGormRepository) CreateEducation(education *models.Education) (*models.Education, error) {
 	if err := r.db.Create(education).Error; err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func (r *educationRepository) CreateEducation(education *models.Education) (*mod
 	return education, nil
 }
 
-func (r *educationRepository) GetEducation(id uuid.UUID, cvID uuid.UUID) (*models.Education, error) {
+func (r *educationGormRepository) GetEducation(id uuid.UUID, cvID uuid.UUID) (*models.Education, error) {
 	var contact models.Education
 	if err := r.db.Where("id = ? AND cv_id = ?", id, cvID).First(&contact).Error; err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func (r *educationRepository) GetEducation(id uuid.UUID, cvID uuid.UUID) (*model
 	return &contact, nil
 }
 
-func (r *educationRepository) GetEducationsByCvID(cvID uuid.UUID) ([]*models.Education, error) {
+func (r *educationGormRepository) GetEducationsByCvID(cvID uuid.UUID) ([]*models.Education, error) {
 	var contacts []*models.Education
 	if err := r.db.Where("cv_id = ?", cvID).Order("start_date DESC").Find(&contacts).Error; err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (r *educationRepository) GetEducationsByCvID(cvID uuid.UUID) ([]*models.Edu
 	return contacts, nil
 }
 
-func (r *educationRepository) UpdateEducation(id uuid.UUID, education *models.Education) (*models.Education, error) {
+func (r *educationGormRepository) UpdateEducation(id uuid.UUID, education *models.Education) (*models.Education, error) {
 	var existingEducation models.Education
 	if err := r.db.First(&existingEducation, "id = ?", id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -59,10 +59,10 @@ func (r *educationRepository) UpdateEducation(id uuid.UUID, education *models.Ed
 	return education, nil
 }
 
-func (r *educationRepository) DeleteEducation(id uuid.UUID, cvID uuid.UUID) error {
+func (r *educationGormRepository) DeleteEducation(id uuid.UUID, cvID uuid.UUID) error {
 	return r.db.Where("id = ? AND cv_id = ?", id, cvID).Delete(&models.Education{}).Error
 }
 
-func (r *educationRepository) DeleteEducationsByCvID(cvID uuid.UUID) error {
+func (r *educationGormRepository) DeleteEducationsByCvID(cvID uuid.UUID) error {
 	return r.db.Where("cv_id = ?", cvID).Delete(&models.Education{}).Error
 }

@@ -6,27 +6,27 @@ import (
 	"user-service/internal/users/models"
 )
 
-type tokenRepository struct {
+type tokenGormRepository struct {
 	db *gorm.DB
 }
 
-func NewTokenRepository(db *gorm.DB) TokenRepository {
-	return &tokenRepository{db: db}
+func NewTokenGormRepository(db *gorm.DB) TokenRepository {
+	return &tokenGormRepository{db: db}
 }
 
-func (r *tokenRepository) CreateToken(token *models.Token) error {
+func (r *tokenGormRepository) CreateToken(token *models.Token) error {
 	return r.db.Create(token).Error
 }
 
-func (r *tokenRepository) DeleteTokenByID(id string) error {
+func (r *tokenGormRepository) DeleteTokenByID(id string) error {
 	return r.db.Delete(&models.Token{}, "id = ?", id).Error
 }
 
-func (r *tokenRepository) DeleteTokenByValue(token string) error {
+func (r *tokenGormRepository) DeleteTokenByValue(token string) error {
 	return r.db.Delete(&models.Token{}, "token = ?", token).Error
 }
 
-func (r *tokenRepository) FindTokenByID(id string) (*models.Token, error) {
+func (r *tokenGormRepository) FindTokenByID(id string) (*models.Token, error) {
 	var token models.Token
 	if err := r.db.Where("id = ?", id).First(&token).Error; err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func (r *tokenRepository) FindTokenByID(id string) (*models.Token, error) {
 	return &token, nil
 }
 
-func (r *tokenRepository) FindTokenByValue(token string) (*models.Token, error) {
+func (r *tokenGormRepository) FindTokenByValue(token string) (*models.Token, error) {
 	var tokenModel models.Token
 	if err := r.db.Preload("User").Where("token = ?", token).First(&tokenModel).Error; err != nil {
 		return nil, err
@@ -43,6 +43,6 @@ func (r *tokenRepository) FindTokenByValue(token string) (*models.Token, error) 
 	return &tokenModel, nil
 }
 
-func (r *tokenRepository) DeleteExpiredTokens() error {
+func (r *tokenGormRepository) DeleteExpiredTokens() error {
 	return r.db.Delete(&models.Token{}, "expires_at < ?", time.Now()).Error
 }

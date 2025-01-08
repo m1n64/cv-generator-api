@@ -7,17 +7,17 @@ import (
 	"information-service/internal/experiences/models"
 )
 
-type workExperienceRepository struct {
+type workExperienceGormRepository struct {
 	db *gorm.DB
 }
 
-func NewWorkExperienceRepository(db *gorm.DB) WorkExperienceRepository {
-	return &workExperienceRepository{
+func NewWorkExperienceGormRepository(db *gorm.DB) WorkExperienceRepository {
+	return &workExperienceGormRepository{
 		db: db,
 	}
 }
 
-func (r *workExperienceRepository) CreateWorkExperience(experience *models.WorkExperience) (*models.WorkExperience, error) {
+func (r *workExperienceGormRepository) CreateWorkExperience(experience *models.WorkExperience) (*models.WorkExperience, error) {
 	if err := r.db.Create(experience).Error; err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func (r *workExperienceRepository) CreateWorkExperience(experience *models.WorkE
 	return experience, nil
 }
 
-func (r *workExperienceRepository) GetWorkExperience(id uuid.UUID, cvID uuid.UUID) (*models.WorkExperience, error) {
+func (r *workExperienceGormRepository) GetWorkExperience(id uuid.UUID, cvID uuid.UUID) (*models.WorkExperience, error) {
 	var experience models.WorkExperience
 	if err := r.db.Where("id = ? AND cv_id = ?", id, cvID).First(&experience).Error; err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func (r *workExperienceRepository) GetWorkExperience(id uuid.UUID, cvID uuid.UUI
 	return &experience, nil
 }
 
-func (r *workExperienceRepository) GetWorkExperiencesByCvID(cvID uuid.UUID) ([]*models.WorkExperience, error) {
+func (r *workExperienceGormRepository) GetWorkExperiencesByCvID(cvID uuid.UUID) ([]*models.WorkExperience, error) {
 	var experiences []*models.WorkExperience
 	if err := r.db.Where("cv_id = ?", cvID).Order("start_date DESC").Find(&experiences).Error; err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (r *workExperienceRepository) GetWorkExperiencesByCvID(cvID uuid.UUID) ([]*
 	return experiences, nil
 }
 
-func (r *workExperienceRepository) UpdateWorkExperience(id uuid.UUID, experience *models.WorkExperience) (*models.WorkExperience, error) {
+func (r *workExperienceGormRepository) UpdateWorkExperience(id uuid.UUID, experience *models.WorkExperience) (*models.WorkExperience, error) {
 	var existingExperience models.WorkExperience
 	if err := r.db.First(&existingExperience, "id = ?", id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -59,10 +59,10 @@ func (r *workExperienceRepository) UpdateWorkExperience(id uuid.UUID, experience
 	return experience, nil
 }
 
-func (r *workExperienceRepository) DeleteWorkExperiencesByCvID(cvID uuid.UUID) error {
+func (r *workExperienceGormRepository) DeleteWorkExperiencesByCvID(cvID uuid.UUID) error {
 	return r.db.Where("cv_id = ?", cvID).Delete(&models.WorkExperience{}).Error
 }
 
-func (r *workExperienceRepository) DeleteWorkExperience(id uuid.UUID, cvID uuid.UUID) error {
+func (r *workExperienceGormRepository) DeleteWorkExperience(id uuid.UUID, cvID uuid.UUID) error {
 	return r.db.Where("id = ? AND cv_id = ?", id, cvID).Delete(&models.WorkExperience{}).Error
 }

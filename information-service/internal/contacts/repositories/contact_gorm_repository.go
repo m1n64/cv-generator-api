@@ -7,17 +7,17 @@ import (
 	"information-service/internal/contacts/models"
 )
 
-type contactRepository struct {
+type contactGormRepository struct {
 	db *gorm.DB
 }
 
-func NewContactRepository(db *gorm.DB) ContactRepository {
-	return &contactRepository{
+func NewContactGormRepository(db *gorm.DB) ContactRepository {
+	return &contactGormRepository{
 		db: db,
 	}
 }
 
-func (r *contactRepository) CreateContact(contact *models.Contact) (*models.Contact, error) {
+func (r *contactGormRepository) CreateContact(contact *models.Contact) (*models.Contact, error) {
 	if err := r.db.Create(contact).Error; err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func (r *contactRepository) CreateContact(contact *models.Contact) (*models.Cont
 	return contact, nil
 }
 
-func (r *contactRepository) GetContact(id uuid.UUID, cvID uuid.UUID) (*models.Contact, error) {
+func (r *contactGormRepository) GetContact(id uuid.UUID, cvID uuid.UUID) (*models.Contact, error) {
 	var contact models.Contact
 	if err := r.db.Where("id = ? AND cv_id = ?", id, cvID).First(&contact).Error; err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func (r *contactRepository) GetContact(id uuid.UUID, cvID uuid.UUID) (*models.Co
 	return &contact, nil
 }
 
-func (r *contactRepository) GetContactsByCvID(cvID uuid.UUID) ([]*models.Contact, error) {
+func (r *contactGormRepository) GetContactsByCvID(cvID uuid.UUID) ([]*models.Contact, error) {
 	var contacts []*models.Contact
 	if err := r.db.Where("cv_id = ?", cvID).Find(&contacts).Error; err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (r *contactRepository) GetContactsByCvID(cvID uuid.UUID) ([]*models.Contact
 	return contacts, nil
 }
 
-func (r *contactRepository) UpdateContact(id uuid.UUID, contact *models.Contact) (*models.Contact, error) {
+func (r *contactGormRepository) UpdateContact(id uuid.UUID, contact *models.Contact) (*models.Contact, error) {
 	var existingContact models.Contact
 	if err := r.db.First(&existingContact, "id = ?", id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -59,10 +59,10 @@ func (r *contactRepository) UpdateContact(id uuid.UUID, contact *models.Contact)
 	return contact, nil
 }
 
-func (r *contactRepository) DeleteContact(id uuid.UUID, cvID uuid.UUID) error {
+func (r *contactGormRepository) DeleteContact(id uuid.UUID, cvID uuid.UUID) error {
 	return r.db.Where("id = ? AND cv_id = ?", id, cvID).Delete(&models.Contact{}).Error
 }
 
-func (r *contactRepository) DeleteContactsByCvID(cvID uuid.UUID) error {
+func (r *contactGormRepository) DeleteContactsByCvID(cvID uuid.UUID) error {
 	return r.db.Where("cv_id = ?", cvID).Delete(&models.Contact{}).Error
 }

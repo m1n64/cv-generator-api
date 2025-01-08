@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package generator;
+
+option go_package = "./internal/generator/grpc;generator";
+
+service GeneratorService {
+  rpc GetAllListGenerated(AllListGeneratedRequest) returns (ListGeneratedPDF);
+  rpc GetListGenerated(GeneratedRequest) returns (ListGeneratedPDF);
+  rpc DeleteGenerated(GeneratedRequest) returns (DeleteGeneratedResponse);
+}
+
+message AllListGeneratedRequest {
+  string user_id = 1;
+}
+
+message GeneratedRequest {
+  string user_id = 1;
+  string cv_id = 2;
+}
+
+message ListGeneratedPDF {
+  repeated GeneratedPDF pdfs = 1;
+}
+
+message GeneratedPDF {
+  string id = 1;
+  string cv_id = 2;
+  string user_id = 3;
+  string title = 4;
+  bytes pdf_file = 5;
+  string pdf_url = 6;
+  string created_at = 7;
+  string updated_at = 8;
+}
+
+message DeleteGeneratedResponse {
+  bool deleted = 1;
+}

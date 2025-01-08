@@ -7,17 +7,17 @@ import (
 	"information-service/internal/languages/models"
 )
 
-type languageRepository struct {
+type languageGormRepository struct {
 	db *gorm.DB
 }
 
-func NewLanguageRepository(db *gorm.DB) LanguageRepository {
-	return &languageRepository{
+func NewLanguageGormRepository(db *gorm.DB) LanguageRepository {
+	return &languageGormRepository{
 		db: db,
 	}
 }
 
-func (r *languageRepository) CreateLanguage(language *models.Language) (*models.Language, error) {
+func (r *languageGormRepository) CreateLanguage(language *models.Language) (*models.Language, error) {
 	if err := r.db.Create(language).Error; err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func (r *languageRepository) CreateLanguage(language *models.Language) (*models.
 	return language, nil
 }
 
-func (r *languageRepository) GetLanguagesByCvID(cvID uuid.UUID) ([]*models.Language, error) {
+func (r *languageGormRepository) GetLanguagesByCvID(cvID uuid.UUID) ([]*models.Language, error) {
 	var languages []*models.Language
 	if err := r.db.Where("cv_id = ?", cvID).Find(&languages).Error; err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func (r *languageRepository) GetLanguagesByCvID(cvID uuid.UUID) ([]*models.Langu
 	return languages, nil
 }
 
-func (r *languageRepository) GetLanguage(id uuid.UUID, cvID uuid.UUID) (*models.Language, error) {
+func (r *languageGormRepository) GetLanguage(id uuid.UUID, cvID uuid.UUID) (*models.Language, error) {
 	var language models.Language
 	if err := r.db.Where("id = ? AND cv_id = ?", id, cvID).First(&language).Error; err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (r *languageRepository) GetLanguage(id uuid.UUID, cvID uuid.UUID) (*models.
 	return &language, nil
 }
 
-func (r *languageRepository) UpdateLanguage(id uuid.UUID, language *models.Language) (*models.Language, error) {
+func (r *languageGormRepository) UpdateLanguage(id uuid.UUID, language *models.Language) (*models.Language, error) {
 	var existingLanguage models.Language
 	if err := r.db.First(&existingLanguage, "id = ?", id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -59,10 +59,10 @@ func (r *languageRepository) UpdateLanguage(id uuid.UUID, language *models.Langu
 	return &existingLanguage, nil
 }
 
-func (r *languageRepository) DeleteLanguageByCvID(id uuid.UUID, cvID uuid.UUID) error {
+func (r *languageGormRepository) DeleteLanguageByCvID(id uuid.UUID, cvID uuid.UUID) error {
 	return r.db.Where("id = ? AND cv_id = ?", id, cvID).Delete(&models.Language{}).Error
 }
 
-func (r *languageRepository) DeleteLanguagesByCvID(cvID uuid.UUID) error {
+func (r *languageGormRepository) DeleteLanguagesByCvID(cvID uuid.UUID) error {
 	return r.db.Where("cv_id = ?", cvID).Delete(&models.Language{}).Error
 }

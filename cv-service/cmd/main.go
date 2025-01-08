@@ -37,7 +37,7 @@ func main() {
 
 	redisClient := utils.NewRedisAdapter(redisConnection)
 
-	cvRepo := repositories.NewCVRepository(db)
+	cvRepo := repositories.NewCVGormRepository(db)
 
 	cvService := service.NewCVService(cvRepo, redisClient, db)
 

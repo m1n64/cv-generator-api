@@ -7,17 +7,17 @@ import (
 	"information-service/internal/information/models"
 )
 
-type informationRepository struct {
+type informationGormRepository struct {
 	db *gorm.DB
 }
 
-func NewInformationRepository(db *gorm.DB) InformationRepository {
-	return &informationRepository{
+func NewInformationGormRepository(db *gorm.DB) InformationRepository {
+	return &informationGormRepository{
 		db: db,
 	}
 }
 
-func (r *informationRepository) CreateOrUpdateInformation(information *models.Information) (*models.Information, error) {
+func (r *informationGormRepository) CreateOrUpdateInformation(information *models.Information) (*models.Information, error) {
 	var result models.Information
 
 	err := r.db.Where("cv_id = ?", information.CvID).First(&result).Error
@@ -39,7 +39,7 @@ func (r *informationRepository) CreateOrUpdateInformation(information *models.In
 	return &result, nil
 }
 
-func (r *informationRepository) GetInformationByCvID(cvID uuid.UUID) (*models.Information, error) {
+func (r *informationGormRepository) GetInformationByCvID(cvID uuid.UUID) (*models.Information, error) {
 	var information models.Information
 
 	if err := r.db.Where("cv_id = ?", cvID).First(&information).Error; err != nil {
@@ -49,6 +49,6 @@ func (r *informationRepository) GetInformationByCvID(cvID uuid.UUID) (*models.In
 	return &information, nil
 }
 
-func (r *informationRepository) DeleteInformationByCvID(cvID uuid.UUID) error {
+func (r *informationGormRepository) DeleteInformationByCvID(cvID uuid.UUID) error {
 	return r.db.Where("cv_id = ?", cvID).Delete(&models.Information{}).Error
 }

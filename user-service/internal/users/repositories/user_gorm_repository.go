@@ -5,23 +5,23 @@ import (
 	"user-service/internal/users/models"
 )
 
-type userRepository struct {
+type userGormRepository struct {
 	db *gorm.DB
 }
 
-func NewUserRepository(db *gorm.DB) UserRepository {
-	return &userRepository{db: db}
+func NewUserGormRepository(db *gorm.DB) UserRepository {
+	return &userGormRepository{db: db}
 }
 
-func (r *userRepository) GetDB() *gorm.DB {
+func (r *userGormRepository) GetDB() *gorm.DB {
 	return r.db
 }
 
-func (r *userRepository) CreateUser(user *models.User) error {
+func (r *userGormRepository) CreateUser(user *models.User) error {
 	return r.db.Create(user).Error
 }
 
-func (r *userRepository) FindByEmail(email string) (*models.User, error) {
+func (r *userGormRepository) FindByEmail(email string) (*models.User, error) {
 	var user models.User
 	if err := r.db.Where("email = ?", email).First(&user).Error; err != nil {
 		return nil, err
@@ -29,7 +29,7 @@ func (r *userRepository) FindByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
-func (r *userRepository) FindByID(id string) (*models.User, error) {
+func (r *userGormRepository) FindByID(id string) (*models.User, error) {
 	var user models.User
 	if err := r.db.Where("id = ?", id).First(&user).Error; err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func (r *userRepository) FindByID(id string) (*models.User, error) {
 	return &user, nil
 }
 
-func (r *userRepository) FindByToken(token string) (*models.User, error) {
+func (r *userGormRepository) FindByToken(token string) (*models.User, error) {
 	var user models.User
 	if err := r.db.Joins("JOIN tokens ON tokens.user_id = users.id").
 		Where("tokens.token = ?", token).

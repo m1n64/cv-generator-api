@@ -70,13 +70,13 @@ func InitializeDependencies() (*Dependencies, error) {
 	minioClient := utils.NewMinioClient(os.Getenv("MINIO_ENDPOINT"), os.Getenv("MINIO_ROOT_USER"), os.Getenv("MINIO_ROOT_PASSWORD"), "cv-information", os.Getenv("MINIO_SECURE") == "true")
 
 	// Repositories
-	informationRepo := repositories.NewInformationRepository(db)
-	langRepo := repositories2.NewLanguageRepository(db)
-	skillRepo := repositories3.NewSkillRepository(db)
-	certificatesRepo := repositories4.NewCertificateRepository(db)
-	contactRepo := repositories5.NewContactRepository(db)
-	educationRepo := repositories6.NewEducationRepository(db)
-	workExperienceRepo := repositories7.NewWorkExperienceRepository(db)
+	informationRepo := repositories.NewInformationGormRepository(db)
+	langRepo := repositories2.NewLanguageGormRepository(db)
+	skillRepo := repositories3.NewSkillGormRepository(db)
+	certificatesRepo := repositories4.NewCertificateGormRepository(db)
+	contactRepo := repositories5.NewContactGormRepository(db)
+	educationRepo := repositories6.NewEducationGormRepository(db)
+	workExperienceRepo := repositories7.NewWorkExperienceGormRepository(db)
 
 	// Services
 	langAnalyticsService := services2.NewLanguageAnalyticsService(rabbitMQ, logger)

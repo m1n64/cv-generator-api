@@ -35,8 +35,8 @@ func main() {
 
 	db := utils.GetDBConnection()
 
-	userRepo := repositories.NewUserRepository(db)
-	tokenRepo := repositories.NewTokenRepository(db)
+	userRepo := repositories.NewUserGormRepository(db)
+	tokenRepo := repositories.NewTokenGormRepository(db)
 
 	authService := services.NewAuthService(userRepo, tokenRepo, db)
 
