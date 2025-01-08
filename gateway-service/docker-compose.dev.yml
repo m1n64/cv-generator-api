@@ -17,8 +17,8 @@ services:
       - cv-generator-network
 
   # @TODO: remove this before deploy
-  redoc:
-    environment:
-      SPEC_URL: "http://localhost:8000/documentation/openapi.json"
-    networks:
-      - cv-generator-network
+#  redoc:
+#    environment:
+#      SPEC_URL: "http://localhost:8000/documentation/openapi.json"
+#    networks:
+#      - cv-generator-network
