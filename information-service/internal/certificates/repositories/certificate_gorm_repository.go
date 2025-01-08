@@ -19,7 +19,7 @@ func NewCertificateRepository(db *gorm.DB) CertificateRepository {
 
 func (r *certificateRepository) GetCertificates(cvID uuid.UUID) ([]*models.Certificate, error) {
 	var certificates []*models.Certificate
-	if err := r.db.Where("cv_id = ?", cvID).Find(&certificates).Error; err != nil {
+	if err := r.db.Where("cv_id = ?", cvID).Order("start_date DESC").Find(&certificates).Error; err != nil {
 		return nil, err
 	}
 	return certificates, nil

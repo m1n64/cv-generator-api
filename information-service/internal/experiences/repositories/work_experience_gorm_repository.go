@@ -36,7 +36,7 @@ func (r *workExperienceRepository) GetWorkExperience(id uuid.UUID, cvID uuid.UUI
 
 func (r *workExperienceRepository) GetWorkExperiencesByCvID(cvID uuid.UUID) ([]*models.WorkExperience, error) {
 	var experiences []*models.WorkExperience
-	if err := r.db.Where("cv_id = ?", cvID).Find(&experiences).Error; err != nil {
+	if err := r.db.Where("cv_id = ?", cvID).Order("start_date DESC").Find(&experiences).Error; err != nil {
 		return nil, err
 	}
 

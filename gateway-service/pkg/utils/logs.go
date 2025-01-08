@@ -8,16 +8,13 @@ import (
 
 var logger *zap.Logger
 
-// InitLogs инициализирует логгер
 func InitLogs() {
 	config := zap.NewProductionConfig()
-	// Пишем в файл и в консольку
 	config.OutputPaths = []string{
 		"app.log",
 		"stdout",
 	}
 
-	// При желании можно заменить на json и данные будут писаться в JSON
 	config.Encoding = "console"
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 
@@ -29,7 +26,6 @@ func InitLogs() {
 	}()
 }
 
-// GetLogger возвращает логгер
 func GetLogger() *zap.Logger {
 	return logger
 }

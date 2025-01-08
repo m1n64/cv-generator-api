@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package experiences;
+
+option go_package = "./internal/information/experiences/grpc;experiences";
+
+service ExperiencesService {
+  rpc GetExperiences(GetExperiencesRequest) returns (AllExperiencesResponse);
+
+  rpc GetExperienceByID(GetExperienceByIDRequest) returns (ExperienceResponse);
+
+  rpc CreateExperience(CreateExperienceRequest) returns (ExperienceResponse);
+
+  rpc DeleteExperienceByID(DeleteExperienceByIDRequest) returns (DeleteExperienceByIDResponse);
+
+  rpc UpdateExperienceByID(UpdateExperienceByIDRequest) returns (ExperienceResponse);
+}
+
+message GetExperiencesRequest {
+  string cv_id = 1;
+}
+
+message GetExperienceByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+}
+
+message AllExperiencesResponse {
+  repeated ExperienceResponse work_experiences = 1;
+}
+
+message CreateExperienceRequest {
+  string cv_id = 1;
+  string company = 2;
+  string position = 3;
+  string start_date = 4;
+  optional string end_date = 5;
+  string location = 6;
+  string description = 7;
+}
+
+message UpdateExperienceByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+  string company = 3;
+  string position = 4;
+  string start_date = 5;
+  optional string end_date = 6;
+  string location = 7;
+  string description = 8;
+}
+
+message DeleteExperienceByIDRequest {
+  string id = 1;
+  string cv_id = 2;
+}
+
+message ExperienceResponse {
+  string id = 1;
+  string cv_id = 2;
+  string company = 3;
+  string position = 4;
+  string start_date = 5;
+  optional string end_date = 6;
+  string location = 7;
+  string description = 8;
+  string created_at = 9;
+  string updated_at = 10;
+}
+
+message DeleteExperienceByIDResponse {
+  bool success = 1;
+}
