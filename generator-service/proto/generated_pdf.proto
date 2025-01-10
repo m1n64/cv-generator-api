@@ -7,7 +7,8 @@ option go_package = "./internal/generator/grpc;generator";
 service GeneratorService {
   rpc GetAllListGenerated(AllListGeneratedRequest) returns (ListGeneratedPDF);
   rpc GetListGenerated(GeneratedRequest) returns (ListGeneratedPDF);
-  rpc DeleteGenerated(GeneratedRequest) returns (DeleteGeneratedResponse);
+  rpc GetGeneratedPDF(GeneratedPDFRequest) returns (GeneratedPDF);
+  rpc DeleteGenerated(GeneratedPDFRequest) returns (DeleteGeneratedResponse);
 }
 
 message AllListGeneratedRequest {
@@ -17,6 +18,12 @@ message AllListGeneratedRequest {
 message GeneratedRequest {
   string user_id = 1;
   string cv_id = 2;
+}
+
+message GeneratedPDFRequest {
+  string id = 1;
+  string user_id = 2;
+  string cv_id = 3;
 }
 
 message ListGeneratedPDF {
@@ -30,10 +37,11 @@ message GeneratedPDF {
   string title = 4;
   bytes pdf_file = 5;
   string pdf_url = 6;
-  string created_at = 7;
-  string updated_at = 8;
+  string status = 7;
+  string created_at = 8;
+  string updated_at = 9;
 }
 
 message DeleteGeneratedResponse {
-  bool deleted = 1;
+  bool success = 1;
 }

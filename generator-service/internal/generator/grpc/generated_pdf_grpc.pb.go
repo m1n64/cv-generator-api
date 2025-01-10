@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	GeneratorService_GetAllListGenerated_FullMethodName = "/generator.GeneratorService/GetAllListGenerated"
 	GeneratorService_GetListGenerated_FullMethodName    = "/generator.GeneratorService/GetListGenerated"
+	GeneratorService_GetGeneratedPDF_FullMethodName     = "/generator.GeneratorService/GetGeneratedPDF"
 	GeneratorService_DeleteGenerated_FullMethodName     = "/generator.GeneratorService/DeleteGenerated"
 )
 
@@ -30,7 +31,8 @@ const (
 type GeneratorServiceClient interface {
 	GetAllListGenerated(ctx context.Context, in *AllListGeneratedRequest, opts ...grpc.CallOption) (*ListGeneratedPDF, error)
 	GetListGenerated(ctx context.Context, in *GeneratedRequest, opts ...grpc.CallOption) (*ListGeneratedPDF, error)
-	DeleteGenerated(ctx context.Context, in *GeneratedRequest, opts ...grpc.CallOption) (*DeleteGeneratedResponse, error)
+	GetGeneratedPDF(ctx context.Context, in *GeneratedPDFRequest, opts ...grpc.CallOption) (*GeneratedPDF, error)
+	DeleteGenerated(ctx context.Context, in *GeneratedPDFRequest, opts ...grpc.CallOption) (*DeleteGeneratedResponse, error)
 }
 
 type generatorServiceClient struct {
@@ -61,7 +63,17 @@ func (c *generatorServiceClient) GetListGenerated(ctx context.Context, in *Gener
 	return out, nil
 }
 
-func (c *generatorServiceClient) DeleteGenerated(ctx context.Context, in *GeneratedRequest, opts ...grpc.CallOption) (*DeleteGeneratedResponse, error) {
+func (c *generatorServiceClient) GetGeneratedPDF(ctx context.Context, in *GeneratedPDFRequest, opts ...grpc.CallOption) (*GeneratedPDF, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GeneratedPDF)
+	err := c.cc.Invoke(ctx, GeneratorService_GetGeneratedPDF_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *generatorServiceClient) DeleteGenerated(ctx context.Context, in *GeneratedPDFRequest, opts ...grpc.CallOption) (*DeleteGeneratedResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteGeneratedResponse)
 	err := c.cc.Invoke(ctx, GeneratorService_DeleteGenerated_FullMethodName, in, out, cOpts...)
@@ -77,7 +89,8 @@ func (c *generatorServiceClient) DeleteGenerated(ctx context.Context, in *Genera
 type GeneratorServiceServer interface {
 	GetAllListGenerated(context.Context, *AllListGeneratedRequest) (*ListGeneratedPDF, error)
 	GetListGenerated(context.Context, *GeneratedRequest) (*ListGeneratedPDF, error)
-	DeleteGenerated(context.Context, *GeneratedRequest) (*DeleteGeneratedResponse, error)
+	GetGeneratedPDF(context.Context, *GeneratedPDFRequest) (*GeneratedPDF, error)
+	DeleteGenerated(context.Context, *GeneratedPDFRequest) (*DeleteGeneratedResponse, error)
 	mustEmbedUnimplementedGeneratorServiceServer()
 }
 
@@ -94,7 +107,10 @@ func (UnimplementedGeneratorServiceServer) GetAllListGenerated(context.Context, 
 func (UnimplementedGeneratorServiceServer) GetListGenerated(context.Context, *GeneratedRequest) (*ListGeneratedPDF, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetListGenerated not implemented")
 }
-func (UnimplementedGeneratorServiceServer) DeleteGenerated(context.Context, *GeneratedRequest) (*DeleteGeneratedResponse, error) {
+func (UnimplementedGeneratorServiceServer) GetGeneratedPDF(context.Context, *GeneratedPDFRequest) (*GeneratedPDF, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGeneratedPDF not implemented")
+}
+func (UnimplementedGeneratorServiceServer) DeleteGenerated(context.Context, *GeneratedPDFRequest) (*DeleteGeneratedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteGenerated not implemented")
 }
 func (UnimplementedGeneratorServiceServer) mustEmbedUnimplementedGeneratorServiceServer() {}
@@ -154,8 +170,26 @@ func _GeneratorService_GetListGenerated_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GeneratorService_GetGeneratedPDF_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GeneratedPDFRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GeneratorServiceServer).GetGeneratedPDF(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GeneratorService_GetGeneratedPDF_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GeneratorServiceServer).GetGeneratedPDF(ctx, req.(*GeneratedPDFRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _GeneratorService_DeleteGenerated_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GeneratedRequest)
+	in := new(GeneratedPDFRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -167,7 +201,7 @@ func _GeneratorService_DeleteGenerated_Handler(srv interface{}, ctx context.Cont
 		FullMethod: GeneratorService_DeleteGenerated_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeneratorServiceServer).DeleteGenerated(ctx, req.(*GeneratedRequest))
+		return srv.(GeneratorServiceServer).DeleteGenerated(ctx, req.(*GeneratedPDFRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -186,6 +220,10 @@ var GeneratorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetListGenerated",
 			Handler:    _GeneratorService_GetListGenerated_Handler,
+		},
+		{
+			MethodName: "GetGeneratedPDF",
+			Handler:    _GeneratorService_GetGeneratedPDF_Handler,
 		},
 		{
 			MethodName: "DeleteGenerated",

@@ -4,10 +4,16 @@ import (
 	"github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"information-service/internal/generator/consumers"
 	"information-service/internal/generator/repositories"
 	"information-service/internal/generator/services"
 	"information-service/pkg/utils"
+	"log"
 	"os"
+)
+
+const (
+	maxPdfQueueWorkers = 10
 )
 
 type Dependencies struct {
@@ -17,9 +23,10 @@ type Dependencies struct {
 	Logger           *zap.Logger
 	MinioClient      *utils.MinioClient
 	RabbitMQ         *utils.RabbitMQConnection
-	GeneratedPDFRepo repositories.GeneratedPDFRepository
+	PdfGeneratorRepo repositories.PdfGeneratorRepository
 
-	GeneratedPDFService *services.GeneratedPDFService
+	PdfGeneratorService *services.PdfGeneratorService
+	GeneratePdfService  *services.GeneratePdfService
 }
 
 func InitializeDependencies() (*Dependencies, error) {
@@ -43,10 +50,11 @@ func InitializeDependencies() (*Dependencies, error) {
 	minioClient := utils.NewMinioClient(os.Getenv("MINIO_ENDPOINT"), os.Getenv("MINIO_ROOT_USER"), os.Getenv("MINIO_ROOT_PASSWORD"), "cv-pdf", os.Getenv("MINIO_SECURE") == "true")
 
 	// Repositories
-	generatedPDFRepo := repositories.NewGeneratedPDFGormRepository(db)
+	pdfGeneratorRepo := repositories.NewPdfGeneratorGormRepository(db)
 
 	// Services
-	generatorPDFService := services.NewGeneratedPDFService(generatedPDFRepo, db)
+	pdfGeneratorService := services.NewPdfGeneratorService(pdfGeneratorRepo, db)
+	generatorPdfService := services.NewGeneratePdfService(pdfGeneratorService)
 
 	// Dependencies
 	return &Dependencies{
@@ -56,10 +64,17 @@ func InitializeDependencies() (*Dependencies, error) {
 		Logger:              logger,
 		MinioClient:         minioClient,
 		RabbitMQ:            rabbitMQ,
-		GeneratedPDFRepo:    generatedPDFRepo,
-		GeneratedPDFService: generatorPDFService,
+		PdfGeneratorRepo:    pdfGeneratorRepo,
+		PdfGeneratorService: pdfGeneratorService,
+		GeneratePdfService:  generatorPdfService,
 	}, nil
 }
 
 func InitializeQueuesConsumer(dependencies *Dependencies) {
+	generatorConsumer := consumers.NewGeneratorPdfConsumer(dependencies.GeneratePdfService, dependencies.Logger, maxPdfQueueWorkers)
+
+	err := utils.ListenToQueue(utils.PDFGenerateQueue, generatorConsumer.HandleGenerateCvToPdf)
+	if err != nil {
+		log.Fatalf("Error starting listener for PDFGenerateQueue: %v", err)
+	}
 }

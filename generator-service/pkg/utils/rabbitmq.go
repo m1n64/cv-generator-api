@@ -8,9 +8,10 @@ import (
 )
 
 const (
-	AnalyticQueueName = "analytics_queue"
-	DeleteCVQueueName = "delete_cv_queue"
-	PDFGenerateQueue  = "pdf_generate_queue"
+	AnalyticQueueName  = "analytics_queue"
+	DeleteCVQueueName  = "delete_cv_queue"
+	PDFGenerateQueue   = "pdf_generate_queue"
+	GatewayEventsQueue = "gateway_events_queue"
 )
 
 type RabbitMQConnection struct {
@@ -47,6 +48,7 @@ func InitializeQueues() {
 		AnalyticQueueName,
 		DeleteCVQueueName,
 		PDFGenerateQueue,
+		GatewayEventsQueue,
 	}
 
 	for _, queue := range queues {

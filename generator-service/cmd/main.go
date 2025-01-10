@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"google.golang.org/grpc"
+	generator "information-service/internal/generator/grpc"
+	"information-service/internal/generator/handlers"
 	"information-service/pkg/containers"
 	"log"
 	"net"
@@ -22,6 +24,9 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
+
+	generatorServer := handlers.NewGeneratorServiceServer(dependencies.PdfGeneratorService, dependencies.Logger)
+	generator.RegisterGeneratorServiceServer(grpcServer, generatorServer)
 
 	log.Printf("gRPC server is running on port %s", port)
 	if err := grpcServer.Serve(listener); err != nil {
