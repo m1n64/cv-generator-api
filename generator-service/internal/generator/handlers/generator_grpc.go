@@ -26,7 +26,7 @@ func NewGeneratorServiceServer(generatorService *services.PdfGeneratorService, l
 	}
 }
 
-func (s *GeneratorServiceServer) GetAllListGenerated(ctx context.Context, req *generator.AllListGeneratedRequest) (*generator.ListGeneratedPDF, error) {
+func (s *GeneratorServiceServer) GetAllListGenerated(ctx context.Context, req *generator.AllListGeneratedRequest) (*generator.ListGeneratedPdf, error) {
 	if uuid.Validate(req.UserId) != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid user id")
 	}
@@ -37,15 +37,15 @@ func (s *GeneratorServiceServer) GetAllListGenerated(ctx context.Context, req *g
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	var pdfs []*generator.GeneratedPDF
+	var pdfs []*generator.GeneratedPdf
 	for _, f := range fs {
 		pdfs = append(pdfs, s.getGeneratedResponse(ctx, f))
 	}
 
-	return &generator.ListGeneratedPDF{Pdfs: pdfs}, nil
+	return &generator.ListGeneratedPdf{Pdfs: pdfs}, nil
 }
 
-func (s *GeneratorServiceServer) GetListGenerated(ctx context.Context, req *generator.GeneratedRequest) (*generator.ListGeneratedPDF, error) {
+func (s *GeneratorServiceServer) GetListGenerated(ctx context.Context, req *generator.GeneratedRequest) (*generator.ListGeneratedPdf, error) {
 	if uuid.Validate(req.UserId) != nil || uuid.Validate(req.CvId) != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid user id or cv id")
 	}
@@ -55,15 +55,15 @@ func (s *GeneratorServiceServer) GetListGenerated(ctx context.Context, req *gene
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	var pdfs []*generator.GeneratedPDF
+	var pdfs []*generator.GeneratedPdf
 	for _, f := range pdf {
 		pdfs = append(pdfs, s.getGeneratedResponse(ctx, f))
 	}
 
-	return &generator.ListGeneratedPDF{Pdfs: pdfs}, nil
+	return &generator.ListGeneratedPdf{Pdfs: pdfs}, nil
 }
 
-func (s *GeneratorServiceServer) GetGeneratedPDF(ctx context.Context, req *generator.GeneratedPDFRequest) (*generator.GeneratedPDF, error) {
+func (s *GeneratorServiceServer) GetGeneratedPDF(ctx context.Context, req *generator.GeneratedPDFRequest) (*generator.GeneratedPdf, error) {
 	if uuid.Validate(req.Id) != nil || uuid.Validate(req.UserId) != nil || uuid.Validate(req.CvId) != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid id, user id or cv id")
 	}
@@ -89,7 +89,7 @@ func (s *GeneratorServiceServer) DeleteGenerated(ctx context.Context, req *gener
 	return &generator.DeleteGeneratedResponse{Success: true}, nil
 }
 
-func (s *GeneratorServiceServer) getGeneratedResponse(ctx context.Context, model *models.GeneratedPDF) *generator.GeneratedPDF {
+func (s *GeneratorServiceServer) getGeneratedResponse(ctx context.Context, model *models.GeneratedPdf) *generator.GeneratedPdf {
 	pdfFile, err := s.minio.GetFileAsBytes(ctx, model.FileOrigin)
 	if err != nil {
 		s.logger.Error("error getting pdf file", zap.Error(err))
@@ -102,7 +102,7 @@ func (s *GeneratorServiceServer) getGeneratedResponse(ctx context.Context, model
 		return nil
 	}
 
-	return &generator.GeneratedPDF{
+	return &generator.GeneratedPdf{
 		Id:        model.ID.String(),
 		CvId:      model.CvID.String(),
 		UserId:    model.UserID.String(),

@@ -29,9 +29,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GeneratorServiceClient interface {
-	GetAllListGenerated(ctx context.Context, in *AllListGeneratedRequest, opts ...grpc.CallOption) (*ListGeneratedPDF, error)
-	GetListGenerated(ctx context.Context, in *GeneratedRequest, opts ...grpc.CallOption) (*ListGeneratedPDF, error)
-	GetGeneratedPDF(ctx context.Context, in *GeneratedPDFRequest, opts ...grpc.CallOption) (*GeneratedPDF, error)
+	GetAllListGenerated(ctx context.Context, in *AllListGeneratedRequest, opts ...grpc.CallOption) (*ListGeneratedPdf, error)
+	GetListGenerated(ctx context.Context, in *GeneratedRequest, opts ...grpc.CallOption) (*ListGeneratedPdf, error)
+	GetGeneratedPDF(ctx context.Context, in *GeneratedPDFRequest, opts ...grpc.CallOption) (*GeneratedPdf, error)
 	DeleteGenerated(ctx context.Context, in *GeneratedPDFRequest, opts ...grpc.CallOption) (*DeleteGeneratedResponse, error)
 }
 
@@ -43,9 +43,9 @@ func NewGeneratorServiceClient(cc grpc.ClientConnInterface) GeneratorServiceClie
 	return &generatorServiceClient{cc}
 }
 
-func (c *generatorServiceClient) GetAllListGenerated(ctx context.Context, in *AllListGeneratedRequest, opts ...grpc.CallOption) (*ListGeneratedPDF, error) {
+func (c *generatorServiceClient) GetAllListGenerated(ctx context.Context, in *AllListGeneratedRequest, opts ...grpc.CallOption) (*ListGeneratedPdf, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListGeneratedPDF)
+	out := new(ListGeneratedPdf)
 	err := c.cc.Invoke(ctx, GeneratorService_GetAllListGenerated_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -53,9 +53,9 @@ func (c *generatorServiceClient) GetAllListGenerated(ctx context.Context, in *Al
 	return out, nil
 }
 
-func (c *generatorServiceClient) GetListGenerated(ctx context.Context, in *GeneratedRequest, opts ...grpc.CallOption) (*ListGeneratedPDF, error) {
+func (c *generatorServiceClient) GetListGenerated(ctx context.Context, in *GeneratedRequest, opts ...grpc.CallOption) (*ListGeneratedPdf, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListGeneratedPDF)
+	out := new(ListGeneratedPdf)
 	err := c.cc.Invoke(ctx, GeneratorService_GetListGenerated_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -63,9 +63,9 @@ func (c *generatorServiceClient) GetListGenerated(ctx context.Context, in *Gener
 	return out, nil
 }
 
-func (c *generatorServiceClient) GetGeneratedPDF(ctx context.Context, in *GeneratedPDFRequest, opts ...grpc.CallOption) (*GeneratedPDF, error) {
+func (c *generatorServiceClient) GetGeneratedPDF(ctx context.Context, in *GeneratedPDFRequest, opts ...grpc.CallOption) (*GeneratedPdf, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GeneratedPDF)
+	out := new(GeneratedPdf)
 	err := c.cc.Invoke(ctx, GeneratorService_GetGeneratedPDF_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -87,9 +87,9 @@ func (c *generatorServiceClient) DeleteGenerated(ctx context.Context, in *Genera
 // All implementations must embed UnimplementedGeneratorServiceServer
 // for forward compatibility.
 type GeneratorServiceServer interface {
-	GetAllListGenerated(context.Context, *AllListGeneratedRequest) (*ListGeneratedPDF, error)
-	GetListGenerated(context.Context, *GeneratedRequest) (*ListGeneratedPDF, error)
-	GetGeneratedPDF(context.Context, *GeneratedPDFRequest) (*GeneratedPDF, error)
+	GetAllListGenerated(context.Context, *AllListGeneratedRequest) (*ListGeneratedPdf, error)
+	GetListGenerated(context.Context, *GeneratedRequest) (*ListGeneratedPdf, error)
+	GetGeneratedPDF(context.Context, *GeneratedPDFRequest) (*GeneratedPdf, error)
 	DeleteGenerated(context.Context, *GeneratedPDFRequest) (*DeleteGeneratedResponse, error)
 	mustEmbedUnimplementedGeneratorServiceServer()
 }
@@ -101,13 +101,13 @@ type GeneratorServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedGeneratorServiceServer struct{}
 
-func (UnimplementedGeneratorServiceServer) GetAllListGenerated(context.Context, *AllListGeneratedRequest) (*ListGeneratedPDF, error) {
+func (UnimplementedGeneratorServiceServer) GetAllListGenerated(context.Context, *AllListGeneratedRequest) (*ListGeneratedPdf, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllListGenerated not implemented")
 }
-func (UnimplementedGeneratorServiceServer) GetListGenerated(context.Context, *GeneratedRequest) (*ListGeneratedPDF, error) {
+func (UnimplementedGeneratorServiceServer) GetListGenerated(context.Context, *GeneratedRequest) (*ListGeneratedPdf, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetListGenerated not implemented")
 }
-func (UnimplementedGeneratorServiceServer) GetGeneratedPDF(context.Context, *GeneratedPDFRequest) (*GeneratedPDF, error) {
+func (UnimplementedGeneratorServiceServer) GetGeneratedPDF(context.Context, *GeneratedPDFRequest) (*GeneratedPdf, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGeneratedPDF not implemented")
 }
 func (UnimplementedGeneratorServiceServer) DeleteGenerated(context.Context, *GeneratedPDFRequest) (*DeleteGeneratedResponse, error) {
