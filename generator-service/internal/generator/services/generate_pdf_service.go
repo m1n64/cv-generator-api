@@ -81,7 +81,7 @@ func (s *GeneratePdfService) GeneratePDF(cvInfo models.CvInfo) error {
 				return fmt.Errorf("failed to upload file to MinIO: %w", err)
 			}
 
-			generated, err = s.pdfGeneratorService.UpdateGeneratedPDF(generated.ID, generated.CvID, generated.UserID, generated.Title, &objectName, enums.StatusCompleted)
+			_, err = s.pdfGeneratorService.UpdateGeneratedPDF(generated.ID, generated.CvID, generated.UserID, generated.Title, &objectName, enums.StatusCompleted)
 			if err != nil {
 				return err
 			}
@@ -90,6 +90,10 @@ func (s *GeneratePdfService) GeneratePDF(cvInfo models.CvInfo) error {
 		}),
 	})
 	if err != nil {
+		err := s.pdfGeneratorService.UpdateStatus(generated.ID, enums.StatusFailed)
+		if err != nil {
+			return err
+		}
 		return fmt.Errorf("chromedp execution failed: %w", err)
 	}
 

@@ -105,23 +105,7 @@ func (s *GeneratorServiceServer) GetPDFLink(ctx context.Context, req *generator.
 		return nil, status.Error(codes.NotFound, "pdf file not found")
 	}
 
-	var pdfFile []byte
-	var pdfLink *string
-
-	if pdf.FileOrigin != nil {
-		var err error
-		pdfFile, err = s.minio.GetFileAsBytes(ctx, *pdf.FileOrigin)
-		if err != nil {
-			s.logger.Error("Error getting PDF file", zap.Error(err))
-		}
-
-		pdfGenLink, err := s.minio.GetFileURL(ctx, *pdf.FileOrigin)
-		if err != nil {
-			s.logger.Error("Error getting PDF link", zap.Error(err))
-		}
-
-		pdfLink = &pdfGenLink
-	}
+	pdfFile, pdfLink := s.getPdfFile(ctx, pdf.FileOrigin)
 
 	return &generator.PDFLink{
 		Id:      pdf.ID.String(),
@@ -135,19 +119,8 @@ func (s *GeneratorServiceServer) getGeneratedResponse(ctx context.Context, model
 	var pdfFile []byte
 	var pdfLink *string
 
-	if generatePdf && model.FileOrigin != nil {
-		var err error
-		pdfFile, err = s.minio.GetFileAsBytes(ctx, *model.FileOrigin)
-		if err != nil {
-			s.logger.Error("Error getting PDF file", zap.Error(err))
-		}
-
-		pdfGenLink, err := s.minio.GetFileURL(ctx, *model.FileOrigin)
-		if err != nil {
-			s.logger.Error("Error getting PDF link", zap.Error(err))
-		}
-
-		pdfLink = &pdfGenLink
+	if generatePdf {
+		pdfFile, pdfLink = s.getPdfFile(ctx, model.FileOrigin)
 	}
 
 	return &generator.GeneratedPdf{
@@ -161,4 +134,26 @@ func (s *GeneratorServiceServer) getGeneratedResponse(ctx context.Context, model
 		CreatedAt: model.CreatedAt.String(),
 		UpdatedAt: model.UpdatedAt.String(),
 	}
+}
+
+func (s *GeneratorServiceServer) getPdfFile(ctx context.Context, fileOrigin *string) ([]byte, *string) {
+	var pdfFile []byte
+	var pdfLink *string
+
+	if fileOrigin != nil {
+		var err error
+		pdfFile, err = s.minio.GetFileAsBytes(ctx, *fileOrigin)
+		if err != nil {
+			s.logger.Error("Error getting PDF file", zap.Error(err))
+		}
+
+		pdfGenLink, err := s.minio.GetFileURL(ctx, *fileOrigin)
+		if err != nil {
+			s.logger.Error("Error getting PDF link", zap.Error(err))
+		}
+
+		pdfLink = &pdfGenLink
+	}
+
+	return pdfFile, pdfLink
 }
