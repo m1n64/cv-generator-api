@@ -1,10 +1,11 @@
 package repositories
 
 import (
+	"cv-generator-service/internal/generator/enums"
+	"cv-generator-service/internal/generator/models"
+	"errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"information-service/internal/generator/enums"
-	"information-service/internal/generator/models"
 )
 
 type pdfGeneratorGormRepository struct {
@@ -27,6 +28,26 @@ func (r *pdfGeneratorGormRepository) CreateGeneratedPDF(pdf *models.GeneratedPdf
 
 func (r *pdfGeneratorGormRepository) UpdateStatus(id uuid.UUID, status enums.StatusType) error {
 	return r.db.Model(&models.GeneratedPdf{}).Where("id = ?", id).Update("status", status).Error
+}
+
+func (r *pdfGeneratorGormRepository) UpdateFileOrigin(id uuid.UUID, fileOrigin *string) error {
+	return r.db.Model(&models.GeneratedPdf{}).Where("id = ?", id).Update("file_origin", fileOrigin).Error
+}
+
+func (r *pdfGeneratorGormRepository) UpdateGeneratedPDF(id uuid.UUID, pdf *models.GeneratedPdf) (*models.GeneratedPdf, error) {
+	var existingGeneratedPdf models.GeneratedPdf
+	if err := r.db.First(&existingGeneratedPdf, "id = ?", id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, gorm.ErrRecordNotFound
+		}
+		return nil, err
+	}
+
+	if err := r.db.Model(&existingGeneratedPdf).Updates(pdf).Error; err != nil {
+		return nil, err
+	}
+
+	return pdf, nil
 }
 
 func (r *pdfGeneratorGormRepository) GetGeneratedPDFsByCvID(userID uuid.UUID, cvID uuid.UUID) ([]*models.GeneratedPdf, error) {

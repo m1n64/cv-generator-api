@@ -3,8 +3,11 @@ package utils
 import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"math/rand"
 	"time"
 )
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func ParseStartAndEndDate(startDate string, endDate *string) (time.Time, *time.Time, error) {
 	startDateParsed, err := time.Parse(time.DateOnly, startDate)
@@ -30,4 +33,12 @@ func PtrToTimeString(t *time.Time) *string {
 	}
 	str := t.String()
 	return &str
+}
+
+func RandStringBytesRmndr(n int) string {
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.Int63()%int64(len(letterBytes))]
+	}
+	return string(b)
 }

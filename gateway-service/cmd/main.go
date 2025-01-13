@@ -6,6 +6,7 @@ import (
 	"gateway-service/internal/auth/routes"
 	middlewares2 "gateway-service/internal/cv/middlewares"
 	routes2 "gateway-service/internal/cv/routes"
+	routes10 "gateway-service/internal/generator/routes"
 	routes6 "gateway-service/internal/information/certificates/routes"
 	routes7 "gateway-service/internal/information/contacts/routes"
 	routes8 "gateway-service/internal/information/educations/routes"
@@ -25,6 +26,9 @@ func main() {
 
 	utils.InitLogs()
 	utils.LoadEnv()
+
+	utils.ConnectRabbitMQ()
+	utils.InitializeQueues()
 
 	authMiddleware := middlewares.NewAuthMiddleware()
 	cvMiddleware := middlewares2.NewCVMiddleware()
@@ -48,6 +52,8 @@ func main() {
 	routes7.CVContactsRoutes(r, authMiddleware, cvMiddleware)
 	routes8.CVEducationsRoutes(r, authMiddleware, cvMiddleware)
 	routes9.CVExperiencesRoutes(r, authMiddleware, cvMiddleware)
+	routes2.CVGeneratorRoutes(r, authMiddleware, cvMiddleware)
+	routes10.GeneratorRoutes(r, authMiddleware, cvMiddleware)
 
 	r.Run(fmt.Sprintf(":%s", os.Getenv("SERVICE_PORT")))
 	fmt.Println("Gateway service run successfully!")

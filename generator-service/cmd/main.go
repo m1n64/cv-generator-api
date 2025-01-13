@@ -1,11 +1,11 @@
 package main
 
 import (
+	generator "cv-generator-service/internal/generator/grpc"
+	"cv-generator-service/internal/generator/handlers"
+	"cv-generator-service/pkg/containers"
 	"fmt"
 	"google.golang.org/grpc"
-	generator "information-service/internal/generator/grpc"
-	"information-service/internal/generator/handlers"
-	"information-service/pkg/containers"
 	"log"
 	"net"
 	"os"
@@ -25,7 +25,7 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 
-	generatorServer := handlers.NewGeneratorServiceServer(dependencies.PdfGeneratorService, dependencies.Logger)
+	generatorServer := handlers.NewGeneratorServiceServer(dependencies.PdfGeneratorService, dependencies.MinioClient, dependencies.Logger)
 	generator.RegisterGeneratorServiceServer(grpcServer, generatorServer)
 
 	log.Printf("gRPC server is running on port %s", port)

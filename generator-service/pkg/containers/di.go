@@ -1,13 +1,13 @@
 package containers
 
 import (
+	"cv-generator-service/internal/generator/consumers"
+	"cv-generator-service/internal/generator/repositories"
+	"cv-generator-service/internal/generator/services"
+	"cv-generator-service/pkg/utils"
 	"github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"information-service/internal/generator/consumers"
-	"information-service/internal/generator/repositories"
-	"information-service/internal/generator/services"
-	"information-service/pkg/utils"
 	"log"
 	"os"
 )
@@ -54,7 +54,7 @@ func InitializeDependencies() (*Dependencies, error) {
 
 	// Services
 	pdfGeneratorService := services.NewPdfGeneratorService(pdfGeneratorRepo, db)
-	generatorPdfService := services.NewGeneratePdfService(pdfGeneratorService)
+	generatorPdfService := services.NewGeneratePdfService(pdfGeneratorService, minioClient)
 
 	// Dependencies
 	return &Dependencies{

@@ -2,14 +2,15 @@ package handlers
 
 import (
 	"context"
+	"cv-generator-service/internal/generator/enums"
+	generator "cv-generator-service/internal/generator/grpc"
+	"cv-generator-service/internal/generator/models"
+	"cv-generator-service/internal/generator/services"
+	"cv-generator-service/pkg/utils"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	generator "information-service/internal/generator/grpc"
-	"information-service/internal/generator/models"
-	"information-service/internal/generator/services"
-	"information-service/pkg/utils"
 )
 
 type GeneratorServiceServer struct {
@@ -19,9 +20,10 @@ type GeneratorServiceServer struct {
 	logger           *zap.Logger
 }
 
-func NewGeneratorServiceServer(generatorService *services.PdfGeneratorService, logger *zap.Logger) *GeneratorServiceServer {
+func NewGeneratorServiceServer(generatorService *services.PdfGeneratorService, minio *utils.MinioClient, logger *zap.Logger) *GeneratorServiceServer {
 	return &GeneratorServiceServer{
 		generatorService: generatorService,
+		minio:            minio,
 		logger:           logger,
 	}
 }
@@ -39,7 +41,7 @@ func (s *GeneratorServiceServer) GetAllListGenerated(ctx context.Context, req *g
 
 	var pdfs []*generator.GeneratedPdf
 	for _, f := range fs {
-		pdfs = append(pdfs, s.getGeneratedResponse(ctx, f))
+		pdfs = append(pdfs, s.getGeneratedResponse(ctx, f, false))
 	}
 
 	return &generator.ListGeneratedPdf{Pdfs: pdfs}, nil
@@ -57,7 +59,7 @@ func (s *GeneratorServiceServer) GetListGenerated(ctx context.Context, req *gene
 
 	var pdfs []*generator.GeneratedPdf
 	for _, f := range pdf {
-		pdfs = append(pdfs, s.getGeneratedResponse(ctx, f))
+		pdfs = append(pdfs, s.getGeneratedResponse(ctx, f, false))
 	}
 
 	return &generator.ListGeneratedPdf{Pdfs: pdfs}, nil
@@ -73,7 +75,7 @@ func (s *GeneratorServiceServer) GetGeneratedPDF(ctx context.Context, req *gener
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return s.getGeneratedResponse(ctx, pdf), nil
+	return s.getGeneratedResponse(ctx, pdf, true), nil
 }
 
 func (s *GeneratorServiceServer) DeleteGenerated(ctx context.Context, req *generator.GeneratedPDFRequest) (*generator.DeleteGeneratedResponse, error) {
@@ -89,17 +91,63 @@ func (s *GeneratorServiceServer) DeleteGenerated(ctx context.Context, req *gener
 	return &generator.DeleteGeneratedResponse{Success: true}, nil
 }
 
-func (s *GeneratorServiceServer) getGeneratedResponse(ctx context.Context, model *models.GeneratedPdf) *generator.GeneratedPdf {
-	pdfFile, err := s.minio.GetFileAsBytes(ctx, model.FileOrigin)
-	if err != nil {
-		s.logger.Error("error getting pdf file", zap.Error(err))
-		return nil
+func (s *GeneratorServiceServer) GetPDFLink(ctx context.Context, req *generator.GeneratedPDFRequest) (*generator.PDFLink, error) {
+	if uuid.Validate(req.Id) != nil || uuid.Validate(req.UserId) != nil || uuid.Validate(req.CvId) != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid user id or cv id")
 	}
 
-	pdfLink, err := s.minio.GetFileURL(ctx, model.FileOrigin)
+	pdf, err := s.generatorService.GetGeneratedPDF(uuid.MustParse(req.Id), uuid.MustParse(req.UserId), uuid.MustParse(req.CvId))
 	if err != nil {
-		s.logger.Error("error getting pdf link", zap.Error(err))
-		return nil
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	if pdf.FileOrigin == nil || pdf.Status != enums.StatusCompleted {
+		return nil, status.Error(codes.NotFound, "pdf file not found")
+	}
+
+	var pdfFile []byte
+	var pdfLink *string
+
+	if pdf.FileOrigin != nil {
+		var err error
+		pdfFile, err = s.minio.GetFileAsBytes(ctx, *pdf.FileOrigin)
+		if err != nil {
+			s.logger.Error("Error getting PDF file", zap.Error(err))
+		}
+
+		pdfGenLink, err := s.minio.GetFileURL(ctx, *pdf.FileOrigin)
+		if err != nil {
+			s.logger.Error("Error getting PDF link", zap.Error(err))
+		}
+
+		pdfLink = &pdfGenLink
+	}
+
+	return &generator.PDFLink{
+		Id:      pdf.ID.String(),
+		Title:   pdf.Title,
+		PdfFile: pdfFile,
+		PdfUrl:  pdfLink,
+	}, nil
+}
+
+func (s *GeneratorServiceServer) getGeneratedResponse(ctx context.Context, model *models.GeneratedPdf, generatePdf bool) *generator.GeneratedPdf {
+	var pdfFile []byte
+	var pdfLink *string
+
+	if generatePdf && model.FileOrigin != nil {
+		var err error
+		pdfFile, err = s.minio.GetFileAsBytes(ctx, *model.FileOrigin)
+		if err != nil {
+			s.logger.Error("Error getting PDF file", zap.Error(err))
+		}
+
+		pdfGenLink, err := s.minio.GetFileURL(ctx, *model.FileOrigin)
+		if err != nil {
+			s.logger.Error("Error getting PDF link", zap.Error(err))
+		}
+
+		pdfLink = &pdfGenLink
 	}
 
 	return &generator.GeneratedPdf{

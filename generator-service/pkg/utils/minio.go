@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/minio/minio-go/v7"
@@ -86,14 +87,20 @@ func (m *MinioClient) GetFileAsBytes(ctx context.Context, objectName string) ([]
 	if err != nil {
 		return nil, fmt.Errorf("failed to get object: %v", err)
 	}
-	defer object.Close()
 
-	data, err := io.ReadAll(object)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read object data: %v", err)
+	if object == nil {
+		return nil, fmt.Errorf("received nil object for %s", objectName)
 	}
 
-	return data, nil
+	defer object.Close()
+
+	buf := bytes.NewBuffer(nil)
+	_, err = io.Copy(buf, object)
+	if err != nil {
+		return nil, fmt.Errorf("failed to copy object data: %v", err)
+	}
+
+	return buf.Bytes(), nil
 }
 
 func (m *MinioClient) GetFileURL(ctx context.Context, objectName string) (string, error) {

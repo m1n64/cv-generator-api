@@ -34,12 +34,6 @@ func ConnectRabbitMQ() *RabbitMQConnection {
 			log.Fatalf("Failed to open a channel: %s", err)
 		}
 
-		ch.Qos(
-			10,
-			0,
-			false,
-		)
-
 		instance = &RabbitMQConnection{
 			Connection: conn,
 			Channel:    ch,
@@ -94,7 +88,7 @@ func ListenToQueue(queueName string, handlerFunc func(msg amqp.Delivery)) error 
 	msgs, err := instance.Channel.Consume(
 		queueName,
 		"",
-		false,
+		true,
 		false,
 		false,
 		false,
@@ -104,9 +98,11 @@ func ListenToQueue(queueName string, handlerFunc func(msg amqp.Delivery)) error 
 		return err
 	}
 
-	for msg := range msgs {
-		go handlerFunc(msg)
-	}
+	go func() {
+		for msg := range msgs {
+			handlerFunc(msg)
+		}
+	}()
 
 	log.Printf("Started listening to queue: %s", queueName)
 	return nil
