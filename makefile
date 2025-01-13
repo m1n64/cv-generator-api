@@ -1,5 +1,5 @@
 # Variables
-SERVICES = shared-network user-service cv-service information-service gateway-service
+SERVICES = shared-network user-service cv-service information-service generator-service gateway-service
 
 .PHONY: help
 help:
@@ -18,7 +18,7 @@ init:
 	$(MAKE) network
 	$(MAKE) up
 
-# Инициализация всех сервисов
+# Init all services
 #.PHONY: init
 #init:
 #	@echo "🛠️  Initialization all services..."
@@ -27,13 +27,18 @@ init:
 #		(cd $$service && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d || echo "❌ Error initialization $$service"); \
 #	done
 
-# Запуск всех сервисов
+# Start all services
 .PHONY: up
 up:
 	@echo "🚀 Start all serviceS..."
 	@for service in $(SERVICES); do \
-    		echo "🟢  Starting $$service..."; \
+    	if [ "$$service" = "shared-network" ]; then \
+    		echo "🟢 Starting $$service with default compose file..."; \
+    		(cd $$service && docker-compose up -d || echo "❌ Error starting $$service"); \
+    	else \
+    		echo "🟢 Starting $$service with dev compose file..."; \
     		(cd $$service && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d || echo "❌ Error starting $$service"); \
+    	fi; \
     done
 
 .PHONY: stop
@@ -68,7 +73,11 @@ up-service:
 		exit 1; \
 	fi
 	@echo "🚀 Starting service: $(SERVICE)..."
-	@(cd $(SERVICE) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d || echo "❌ Error starting $(SERVICE)")
+	@if [ "$(SERVICE)" = "shared-network" ]; then \
+    	(cd $(SERVICE) && docker-compose up -d || echo "❌ Error starting $(SERVICE)"); \
+    else \
+    	(cd $(SERVICE) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d || echo "❌ Error starting $(SERVICE)"); \
+    fi
 
 .PHONY: stop-service
 stop-service:
