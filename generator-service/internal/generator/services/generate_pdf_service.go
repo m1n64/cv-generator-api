@@ -26,7 +26,7 @@ func NewGeneratePdfService(service *PdfGeneratorService, minio *utils.MinioClien
 
 func (s *GeneratePdfService) GeneratePDF(cvInfo models.CvInfo) error {
 	cvName := fmt.Sprintf("%s - %s", cvInfo.CV.Title, time.Now().Format(time.DateOnly))
-	generated, _ := s.pdfGeneratorService.CreateGeneratedPDF(cvInfo.CvID, cvInfo.UserID, cvName, nil, enums.StatusInProgress)
+	generated, _ := s.pdfGeneratorService.CreateGeneratedPDF(cvInfo.CvID, cvInfo.UserID, cvName, nil, enums.StatusPending)
 
 	ctx, cancel := chromedp.NewExecAllocator(context.Background(),
 		append(chromedp.DefaultExecAllocatorOptions[:],
@@ -52,6 +52,8 @@ func (s *GeneratePdfService) GeneratePDF(cvInfo models.CvInfo) error {
 	</html>`
 
 	os.MkdirAll("tmp/", os.ModePerm)
+
+	_ = s.pdfGeneratorService.UpdateStatus(generated.ID, enums.StatusInProgress)
 
 	err := chromedp.Run(ctx, chromedp.Tasks{
 		chromedp.Navigate("data:text/html," + html),
