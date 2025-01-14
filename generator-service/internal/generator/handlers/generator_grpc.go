@@ -105,7 +105,8 @@ func (s *GeneratorServiceServer) GetPDFLink(ctx context.Context, req *generator.
 		return nil, status.Error(codes.NotFound, "pdf file not found")
 	}
 
-	pdfFile, pdfLink := s.getPdfFile(ctx, pdf.FileOrigin)
+	pdfFile := s.getPdfFile(ctx, pdf.FileOrigin)
+	pdfLink := s.getPdfFileUrl(ctx, pdf.FileOrigin)
 
 	return &generator.PDFLink{
 		Id:      pdf.ID.String(),
