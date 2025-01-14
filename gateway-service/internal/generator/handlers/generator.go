@@ -179,7 +179,7 @@ func (h *GeneratorProxyHandler) DownloadGeneratedPdf(c *gin.Context) {
 		ID:      resp.Id,
 		Title:   resp.Title,
 		PdfFile: resp.PdfFile,
-		Link:    resp.PdfUrl,
+		Link:    utils.ChangeDomainFromMinio(resp.PdfUrl),
 	})
 }
 
