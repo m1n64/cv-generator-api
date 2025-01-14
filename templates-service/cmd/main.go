@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	fmt.Println("CV PDF Generator service started!")
+	fmt.Println("Templates service started!")
 
 	dependencies, _ := containers.InitializeDependencies()
 	go containers.InitializeQueuesConsumer(dependencies)

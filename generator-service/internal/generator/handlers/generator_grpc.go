@@ -117,10 +117,11 @@ func (s *GeneratorServiceServer) GetPDFLink(ctx context.Context, req *generator.
 
 func (s *GeneratorServiceServer) getGeneratedResponse(ctx context.Context, model *models.GeneratedPdf, generatePdf bool) *generator.GeneratedPdf {
 	var pdfFile []byte
-	var pdfLink *string
+
+	pdfLink := s.getPdfFileUrl(ctx, model.FileOrigin)
 
 	if generatePdf {
-		pdfFile, pdfLink = s.getPdfFile(ctx, model.FileOrigin)
+		pdfFile = s.getPdfFile(ctx, model.FileOrigin)
 	}
 
 	return &generator.GeneratedPdf{
@@ -136,9 +137,8 @@ func (s *GeneratorServiceServer) getGeneratedResponse(ctx context.Context, model
 	}
 }
 
-func (s *GeneratorServiceServer) getPdfFile(ctx context.Context, fileOrigin *string) ([]byte, *string) {
+func (s *GeneratorServiceServer) getPdfFile(ctx context.Context, fileOrigin *string) []byte {
 	var pdfFile []byte
-	var pdfLink *string
 
 	if fileOrigin != nil {
 		var err error
@@ -146,7 +146,15 @@ func (s *GeneratorServiceServer) getPdfFile(ctx context.Context, fileOrigin *str
 		if err != nil {
 			s.logger.Error("Error getting PDF file", zap.Error(err))
 		}
+	}
 
+	return pdfFile
+}
+
+func (s *GeneratorServiceServer) getPdfFileUrl(ctx context.Context, fileOrigin *string) *string {
+	var pdfLink *string
+
+	if fileOrigin != nil {
 		pdfGenLink, err := s.minio.GetFileURL(ctx, *fileOrigin)
 		if err != nil {
 			s.logger.Error("Error getting PDF link", zap.Error(err))
@@ -155,5 +163,5 @@ func (s *GeneratorServiceServer) getPdfFile(ctx context.Context, fileOrigin *str
 		pdfLink = &pdfGenLink
 	}
 
-	return pdfFile, pdfLink
+	return pdfLink
 }
