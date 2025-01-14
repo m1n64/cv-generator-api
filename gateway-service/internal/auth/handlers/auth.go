@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"gateway-service/internal/auth/services"
 	"gateway-service/internal/users/grpc/auth"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -25,11 +24,9 @@ type UserResponse struct {
 	Username string `json:"username"`
 }
 
-func NewUserProxy() *UserProxyHandler {
-	authConn := services.GetAuthConnection()
-
+func NewUserProxy(client auth.AuthServiceClient) *UserProxyHandler {
 	return &UserProxyHandler{
-		authClient: auth.NewAuthServiceClient(authConn),
+		authClient: client,
 	}
 }
 

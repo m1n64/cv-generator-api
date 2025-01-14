@@ -4,7 +4,6 @@ import (
 	"context"
 	services2 "gateway-service/internal/cv/services"
 	information "gateway-service/internal/information/information/grpc"
-	"gateway-service/internal/information/services"
 	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"io"
@@ -37,11 +36,9 @@ type CVInformationResponse struct {
 	UpdatedAt string  `json:"updated_at"`
 }
 
-func NewInformationProxy() *InformationProxyHandler {
-	informationConn := services.GetInformationConnection()
-
+func NewInformationProxy(infoClient information.InformationServiceClient) *InformationProxyHandler {
 	return &InformationProxyHandler{
-		informationClient: information.NewInformationServiceClient(informationConn),
+		informationClient: infoClient,
 	}
 }
 

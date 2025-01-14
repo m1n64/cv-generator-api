@@ -17,6 +17,7 @@ import (
 	"gateway-service/internal/system/consumers"
 	handlers2 "gateway-service/internal/system/handlers"
 	middlewares3 "gateway-service/internal/system/middlewares"
+	"gateway-service/pkg/container"
 	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -35,10 +36,12 @@ func main() {
 
 	logger := utils.GetLogger()
 
+	grpcConnections := container.NewGrpcConnections()
+
 	r := gin.Default()
 
 	webSocketManager := utils.NewWebSocketPrivateManager()
-	r.GET("/ws/private", handlers2.WebSocketPrivateHandler(webSocketManager))
+	r.GET("/ws/private", handlers2.WebSocketPrivateHandler(webSocketManager, grpcConnections.AuthClient))
 
 	go func() {
 		err := utils.ListenToQueue(utils.GatewayEventsQueue, consumers.NewEventConsumer(logger, webSocketManager).Handle)
@@ -47,8 +50,8 @@ func main() {
 		}
 	}()
 
-	authMiddleware := middlewares.NewAuthMiddleware()
-	cvMiddleware := middlewares2.NewCVMiddleware()
+	authMiddleware := middlewares.NewAuthMiddleware(grpcConnections.AuthClient)
+	cvMiddleware := middlewares2.NewCVMiddleware(grpcConnections.CVClient)
 
 	r.GET("/ping", handlers2.PingHandler)
 
@@ -64,17 +67,17 @@ func main() {
 		c.HTML(http.StatusOK, "./config/asyncapi/output/index.html", nil)
 	})
 
-	routes.AuthRoutes(r, authMiddleware)
-	routes2.CVRoutes(r, authMiddleware, cvMiddleware)
-	routes3.CVInfoRoutes(r, authMiddleware, cvMiddleware)
-	routes4.CVLanguagesRoutes(r, authMiddleware, cvMiddleware)
-	routes5.CVSkillsRoutes(r, authMiddleware, cvMiddleware)
-	routes6.CVCertificatesRoutes(r, authMiddleware, cvMiddleware)
-	routes7.CVContactsRoutes(r, authMiddleware, cvMiddleware)
-	routes8.CVEducationsRoutes(r, authMiddleware, cvMiddleware)
-	routes9.CVExperiencesRoutes(r, authMiddleware, cvMiddleware)
-	routes2.CVGeneratorRoutes(r, authMiddleware, cvMiddleware)
-	routes10.GeneratorRoutes(r, authMiddleware, cvMiddleware)
+	routes.AuthRoutes(r, authMiddleware, grpcConnections.AuthClient)
+	routes2.CVRoutes(r, authMiddleware, cvMiddleware, grpcConnections.CVClient)
+	routes3.CVInfoRoutes(r, authMiddleware, cvMiddleware, grpcConnections.MainInfoClient)
+	routes4.CVLanguagesRoutes(r, authMiddleware, cvMiddleware, grpcConnections.LanguagesClient)
+	routes5.CVSkillsRoutes(r, authMiddleware, cvMiddleware, grpcConnections.SkillsClient)
+	routes6.CVCertificatesRoutes(r, authMiddleware, cvMiddleware, grpcConnections.CertificatesClient)
+	routes7.CVContactsRoutes(r, authMiddleware, cvMiddleware, grpcConnections.ContactsClient)
+	routes8.CVEducationsRoutes(r, authMiddleware, cvMiddleware, grpcConnections.EducationsClient)
+	routes9.CVExperiencesRoutes(r, authMiddleware, cvMiddleware, grpcConnections.WorkExperiencesClient)
+	routes2.CVGeneratorRoutes(r, authMiddleware, cvMiddleware, grpcConnections)
+	routes10.GeneratorRoutes(r, authMiddleware, cvMiddleware, grpcConnections.GenerationsClient)
 
 	r.Run(fmt.Sprintf(":%s", os.Getenv("SERVICE_PORT")))
 	fmt.Println("Gateway service run successfully!")

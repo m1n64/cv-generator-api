@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	services2 "gateway-service/internal/cv/services"
-	"gateway-service/internal/information/services"
 	skills "gateway-service/internal/information/skills/grpc"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -25,11 +24,9 @@ type SkillResponse struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
-func NewSkillsProxy() *SkillsProxyHandler {
-	skillConn := services.GetInformationConnection()
-
+func NewSkillsProxy(skillsClient skills.SkillsServiceClient) *SkillsProxyHandler {
 	return &SkillsProxyHandler{
-		skillClient: skills.NewSkillsServiceClient(skillConn),
+		skillClient: skillsClient,
 	}
 }
 

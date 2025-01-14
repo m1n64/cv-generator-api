@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"gateway-service/internal/auth/services"
 	"gateway-service/internal/users/grpc/auth"
 	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
@@ -16,16 +15,13 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func WebSocketPrivateHandler(manager *utils.WebSocketPrivateManager) gin.HandlerFunc {
+func WebSocketPrivateHandler(manager *utils.WebSocketPrivateManager, authClient auth.AuthServiceClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Query("token")
 		if token == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "token is required"})
 			return
 		}
-
-		authConnection := services.GetAuthConnection()
-		authClient := auth.NewAuthServiceClient(authConnection)
 
 		response, err := authClient.ValidateToken(context.Background(), &auth.ValidateTokenRequest{Token: token})
 		if err != nil {

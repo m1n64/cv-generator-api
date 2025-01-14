@@ -4,7 +4,6 @@ import (
 	"context"
 	services2 "gateway-service/internal/cv/services"
 	languages "gateway-service/internal/information/languages/grpc"
-	"gateway-service/internal/information/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -27,11 +26,9 @@ type LanguageResponse struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
-func NewLanguagesProxy() *LanguagesProxyHandler {
-	languageConn := services.GetInformationConnection()
-
+func NewLanguagesProxy(langsClient languages.LanguagesServiceClient) *LanguagesProxyHandler {
 	return &LanguagesProxyHandler{
-		languageClient: languages.NewLanguagesServiceClient(languageConn),
+		languageClient: langsClient,
 	}
 }
 

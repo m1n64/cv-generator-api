@@ -4,7 +4,6 @@ import (
 	"context"
 	services2 "gateway-service/internal/cv/services"
 	educations "gateway-service/internal/information/educations/grpc"
-	"gateway-service/internal/information/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -37,11 +36,9 @@ type EducationResponse struct {
 	UpdatedAt   string  `json:"updated_at"`
 }
 
-func NewEducationsProxy() *EducationsProxyHandler {
-	educationsConn := services.GetInformationConnection()
-
+func NewEducationsProxy(educationsClient educations.EducationServiceClient) *EducationsProxyHandler {
 	return &EducationsProxyHandler{
-		educationsClient: educations.NewEducationServiceClient(educationsConn),
+		educationsClient: educationsClient,
 	}
 }
 

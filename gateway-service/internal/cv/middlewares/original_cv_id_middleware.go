@@ -3,7 +3,6 @@ package middlewares
 import (
 	"context"
 	"gateway-service/internal/cv/grpc/cv"
-	services2 "gateway-service/internal/cv/services"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"log"
@@ -15,11 +14,9 @@ type CVMiddleware struct {
 	cvClient cv.CVServiceClient
 }
 
-func NewCVMiddleware() *CVMiddleware {
-	cvConn := services2.GetCVConnection()
-
+func NewCVMiddleware(cvClient cv.CVServiceClient) *CVMiddleware {
 	return &CVMiddleware{
-		cvClient: cv.NewCVServiceClient(cvConn),
+		cvClient: cvClient,
 	}
 }
 

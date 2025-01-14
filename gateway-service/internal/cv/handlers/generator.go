@@ -11,10 +11,8 @@ import (
 	experiences "gateway-service/internal/information/experiences/grpc"
 	information "gateway-service/internal/information/information/grpc"
 	languages "gateway-service/internal/information/languages/grpc"
-	services2 "gateway-service/internal/information/services"
 	skills "gateway-service/internal/information/skills/grpc"
 	templates "gateway-service/internal/templates/grpc"
-	services3 "gateway-service/internal/templates/services"
 	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
@@ -44,23 +42,31 @@ type GenerateCVResponse struct {
 	Message string `json:"message"`
 }
 
-func NewGeneratorHandler(rabbitMq *utils.RabbitMQConnection, logger *zap.Logger) *GeneratorHandler {
-	cvConnection := services.GetCVConnection()
-	informationConnection := services2.GetInformationConnection()
-	templateConnection := services3.GetTemplatesConnection()
-
+func NewGeneratorHandler(
+	rabbitMq *utils.RabbitMQConnection,
+	logger *zap.Logger,
+	cvClient cv.CVServiceClient,
+	informationClient information.InformationServiceClient,
+	contactsClient contacts.ContactsServiceClient,
+	skillsClient skills.SkillsServiceClient,
+	languagesClient languages.LanguagesServiceClient,
+	experiencesClient experiences.ExperiencesServiceClient,
+	educationsClient educations.EducationServiceClient,
+	certificatesClient certificates.CertificatesServiceClient,
+	templatesClient templates.TemplateServiceClient,
+) *GeneratorHandler {
 	return &GeneratorHandler{
 		rabbitMq:           rabbitMq,
 		logger:             logger,
-		cvClient:           cv.NewCVServiceClient(cvConnection),
-		informationClient:  information.NewInformationServiceClient(informationConnection),
-		contactsClient:     contacts.NewContactsServiceClient(informationConnection),
-		skillsClient:       skills.NewSkillsServiceClient(informationConnection),
-		languagesClient:    languages.NewLanguagesServiceClient(informationConnection),
-		experiencesClient:  experiences.NewExperiencesServiceClient(informationConnection),
-		educationsClient:   educations.NewEducationServiceClient(informationConnection),
-		certificatesClient: certificates.NewCertificatesServiceClient(informationConnection),
-		templatesClient:    templates.NewTemplateServiceClient(templateConnection),
+		cvClient:           cvClient,
+		informationClient:  informationClient,
+		contactsClient:     contactsClient,
+		skillsClient:       skillsClient,
+		languagesClient:    languagesClient,
+		experiencesClient:  experiencesClient,
+		educationsClient:   educationsClient,
+		certificatesClient: certificatesClient,
+		templatesClient:    templatesClient,
 	}
 }
 

@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"gateway-service/internal/cv/grpc/cv"
-	services2 "gateway-service/internal/cv/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -19,11 +18,9 @@ type CVResponse struct {
 	CreatedAt string `json:"created_at"`
 }
 
-func NewCVProxy() *CVProxyHandler {
-	cvConn := services2.GetCVConnection()
-
+func NewCVProxy(cvClient cv.CVServiceClient) *CVProxyHandler {
 	return &CVProxyHandler{
-		cvClient: cv.NewCVServiceClient(cvConn),
+		cvClient: cvClient,
 	}
 }
 

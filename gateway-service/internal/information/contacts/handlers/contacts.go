@@ -4,7 +4,6 @@ import (
 	"context"
 	services2 "gateway-service/internal/cv/services"
 	contacts "gateway-service/internal/information/contacts/grpc"
-	"gateway-service/internal/information/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -27,11 +26,9 @@ type ContactResponse struct {
 	UpdatedAt string  `json:"updated_at"`
 }
 
-func NewContactsProxy() *ContactsProxyHandler {
-	contactConn := services.GetInformationConnection()
-
+func NewContactsProxy(contactsClient contacts.ContactsServiceClient) *ContactsProxyHandler {
 	return &ContactsProxyHandler{
-		contactClient: contacts.NewContactsServiceClient(contactConn),
+		contactClient: contactsClient,
 	}
 }
 

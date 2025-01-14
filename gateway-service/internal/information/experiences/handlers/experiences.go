@@ -4,7 +4,6 @@ import (
 	"context"
 	services2 "gateway-service/internal/cv/services"
 	experiences "gateway-service/internal/information/experiences/grpc"
-	"gateway-service/internal/information/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -35,11 +34,9 @@ type ExperienceResponse struct {
 	UpdatedAt   string  `json:"updated_at"`
 }
 
-func NewExperienceProxy() *ExperienceProxyHandler {
-	educationsConn := services.GetInformationConnection()
-
+func NewExperienceProxy(experiencesClient experiences.ExperiencesServiceClient) *ExperienceProxyHandler {
 	return &ExperienceProxyHandler{
-		experiencesClient: experiences.NewExperiencesServiceClient(educationsConn),
+		experiencesClient: experiencesClient,
 	}
 }
 

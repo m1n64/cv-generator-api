@@ -4,7 +4,6 @@ import (
 	"context"
 	services2 "gateway-service/internal/cv/services"
 	generator "gateway-service/internal/generator/grpc"
-	"gateway-service/internal/generator/services"
 	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -32,11 +31,9 @@ type GeneratedLinkResponse struct {
 	Link    *string `json:"link"`
 }
 
-func NewGeneratorProxy() *GeneratorProxyHandler {
-	generatorConnection := services.GetGeneratorConnection()
-
+func NewGeneratorProxy(generatorClient generator.GeneratorServiceClient) *GeneratorProxyHandler {
 	return &GeneratorProxyHandler{
-		generatorClient: generator.NewGeneratorServiceClient(generatorConnection),
+		generatorClient: generatorClient,
 	}
 }
 

@@ -4,7 +4,6 @@ import (
 	"context"
 	services2 "gateway-service/internal/cv/services"
 	certificates "gateway-service/internal/information/certificates/grpc"
-	"gateway-service/internal/information/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -33,11 +32,9 @@ type CertificateResponse struct {
 	UpdatedAt   *string `json:"updated_at"`
 }
 
-func NewCertificatesProxy() *CertificatesProxyHandler {
-	conn := services.GetInformationConnection()
-
+func NewCertificatesProxy(certificatesClient certificates.CertificatesServiceClient) *CertificatesProxyHandler {
 	return &CertificatesProxyHandler{
-		certificateClient: certificates.NewCertificatesServiceClient(conn),
+		certificateClient: certificatesClient,
 	}
 }
 
