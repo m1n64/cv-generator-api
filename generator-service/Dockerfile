@@ -7,7 +7,16 @@ FROM golang:${GO_VERSION}-alpine as dev
 WORKDIR /app/
 
 # Установка зависимостей для сборки
-RUN apk add --no-cache git bash protobuf
+RUN apk add --no-cache \
+    git bash protobuf build-base \
+    chromium \
+    harfbuzz \
+    freetype \
+    ttf-freefont \
+    ca-certificates \
+    nss \
+    && apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
+    chromium-chromedriver
 
 # Установка protoc-gen-go и protoc-gen-go-grpc
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
@@ -46,6 +55,16 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main ./cmd/main.go
 
 # Окончательный образ для продакшена
 FROM alpine:latest as prod
+
+RUN apk add --no-cache \
+    chromium \
+    harfbuzz \
+    freetype \
+    ttf-freefont \
+    ca-certificates \
+    nss \
+    && apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
+    chromium-chromedriver
 
 RUN apk --no-cache add ca-certificates
 

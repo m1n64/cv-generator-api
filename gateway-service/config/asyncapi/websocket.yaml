@@ -1,0 +1,97 @@
+asyncapi: 3.0.0
+info:
+  title: Simple CV Generator WebSocket API
+  version: 1.0.0
+  description: >
+    This WebSocket API sends notifications and updates to clients about CV
+    generation tasks. 
+
+    It requires a `token` parameter for authentication to connect.
+  externalDocs:
+    url: 'https://api.resumego.online/docs/'
+    description: Full API documentation
+servers:
+  local-private:
+    host: 'localhost:8000'
+    pathname: '/ws/private?token={token}'
+    protocol: ws
+    description: Local development server for testing WebSocket connections.
+    variables:
+      token:
+        description: Token for authentication.
+        default: your-token
+  production-private:
+    host: api.resumego.online
+    pathname: '/ws/private?token={token}'
+    protocol: wss
+    description: Production WebSocket server for private notifications.
+    variables:
+      token:
+        description: Token for authentication.
+        default: your-token
+channels:
+  private:
+    address: private
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/serverMessage'
+    description: Channel for receiving private messages and updates.
+operations:
+  private.subscribe:
+    action: receive
+    channel:
+      $ref: '#/channels/private'
+    summary: Listen to server messages.
+    description: >
+      The client subscribes to this channel to receive server-sent
+      notifications, 
+
+      such as success messages and task updates.
+    messages:
+      - $ref: '#/channels/private/messages/subscribe.message'
+components:
+  messages:
+    serverMessage:
+      summary: Server-to-client message.
+      description: >
+        This message is sent from the server to the client, typically to notify
+        about 
+
+        the status of a task or other important updates.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - user_id
+          - message
+        properties:
+          type:
+            type: string
+            description: 'The type of message (e.g., success, error).'
+            example: success
+          user_id:
+            type: string
+            format: uuid
+            description: Unique identifier of the user receiving the message.
+            example: 2f89414f-9e64-434c-908a-66b529d558b9
+          message:
+            type: string
+            description: A descriptive message about the update or event.
+            example: pdf.generated.success
+  schemas:
+    serverMessagePayload:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'Message type (e.g., success, error).'
+          example: success
+        user_id:
+          type: string
+          description: UUID of the user.
+          example: 2f89414f-9e64-434c-908a-66b529d558b9
+        message:
+          type: string
+          description: Detailed message about the server event.
+          example: pdf.generated.success

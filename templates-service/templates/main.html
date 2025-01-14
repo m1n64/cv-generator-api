@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Template</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+        :root {
+            --background-color: #f5f5f5;
+            --text-color: #212121;
+            --secondary-text-color: #616161;
+            --accent-color: #1976d2;
+            --divider-color: #c2c2c2;
+            --description-color: #424242;
+            --left-column-bg: var(--accent-color);
+            --left-column-location-color: #efefef;
+            --left-column-color: #f5f5f5;
+            --link-color: #d3e0ef;
+            --link-hover-color: #94b1d5;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            font-optical-sizing: auto;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            background: #ffffff;
+            /*border-radius: 8px;*/
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .left-column {
+            flex: 1;
+            padding: 20px;
+            max-width: 250px;
+            background-color: var(--left-column-bg);
+            color: var(--left-column-color);
+            box-sizing: border-box;
+            border-radius: 0 8px 8px 0 !important;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        a {
+            text-decoration: underline;
+            font-size: 15px;
+            color: var(--link-color);
+            font-weight: normal;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+
+        a:hover {
+            color: var(--link-hover-color);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-column a {
+            font-size: 18px !important;
+        }
+
+        .image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .left-column img {
+            width: 75%;
+            max-width: 200px;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .location {
+            font-size: 20px;
+            color: var(--left-column-location-color);
+            margin-top: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            word-break: break-word;
+            font-weight: 500;
+        }
+
+        .left-column h3 {
+            font-size: 18px;
+            color: var(--accent-color);
+            background-color: var(--left-column-color);
+            border-radius: 12px;
+            padding: 4px 6px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .left-column ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .left-column ul li {
+            margin-bottom: 10px;
+            font-size: 18px;
+            word-wrap: break-word;
+        }
+
+        .right-column {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .section {
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .main-section {
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .main-section h1 {
+            text-transform: uppercase;
+        }
+
+        .main-section h3 {
+            color: var(--secondary-text-color);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .divider {
+            height: 2px;
+            background-color: var(--divider-color);
+        }
+
+        .section h2 {
+            margin-bottom: 10px;
+            font-size: 20px;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .right-column ul > li {
+            margin-bottom: 30px !important;
+        }
+
+        .section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .section ul li {
+            margin-bottom: 10px;
+            word-wrap: break-word;
+        }
+
+        .section ul li h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .section ul li p {
+            margin: 5px 0 0;
+            font-size: 16px;
+            color: var(--secondary-text-color);
+            word-wrap: break-word;
+        }
+
+        .work-name {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .work-name h3 {
+            margin: 0;
+        }
+
+        .work-name .position {
+            color: var(--secondary-text-color);
+        }
+
+        .text-line {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 16px;
+            color: var(--secondary-text-color);
+            margin: 5px 0;
+        }
+
+        .text-line h4, .text-line p {
+            margin: 0;
+            color: var(--secondary-text-color);
+        }
+
+        .edu-description {
+            margin-top: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--description-color);
+        }
+
+        @media (max-width: 768px) {
+            .left-column, .right-column {
+                flex: 1 1 100%;
+                max-width: 100%;
+            }
+        }
+
+        @media print {
+            html, body {
+                height: auto;
+            }
+            .container {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            .section {
+                page-break-inside: avoid;
+                page-break-before: auto;
+                page-break-after: auto;
+            }
+            .section:last-child {
+                page-break-after: auto;
+            }
+            .right-column, .left-column {
+                page-break-inside: avoid;
+            }
+            img {
+                page-break-inside: avoid;
+                max-width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="left-column">
+        {{ if .Information.Photo }}
+        <div class="image">
+            <img src="data:image/jpeg;base64,{{ toBase64 .Information.Photo }}" alt="Profile Picture">
+        </div>
+        {{ end }}
+        {{ if .Information.Location }}
+        <div class="location">{{ .Information.Location }}</div>
+        {{ end }}
+
+        <h3>Contacts</h3>
+        <ul>
+            {{ range .Contacts }}
+            <li>
+                <a href="{{ .Link }}">{{ .Title }}</a>
+            </li>
+            {{ end }}
+        </ul>
+        <h3>Skills</h3>
+        <ul>
+            {{ range .Skills }}
+            <li>{{ .Name }}</li>
+            {{ end }}
+        </ul>
+        <h3>Languages</h3>
+        <ul>
+            {{ range .Languages }}
+            <li>{{ .Name }}: {{ .Level }}</li>
+            {{ end }}
+        </ul>
+    </div>
+
+    <div class="right-column">
+        <div class="main-section">
+            <h1>{{ .Information.FullName }}</h1>
+            {{ if .Information.Position }}
+            <h3>{{ .Information.Position }}</h3>
+            {{ end }}
+            {{ if .Information.Biography }}
+            <p>{{ .Information.Biography }}</p>
+            {{ end }}
+        </div>
+
+        {{ if .Educations }}
+        <div class="section">
+            <h2>Work Experience</h2>
+            <ul>
+                {{ range .WorkExperiences }}
+                <li>
+                    <div class="work-name">
+                        <h3>{{ .Company }}</h3> ●
+                        <h3 class="position">{{ .Position }}</h3>
+                    </div>
+                    <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}Present{{ end }}</p>
+                    <p>{{ .Location }}</p>
+                    <p>{{ .Description }}</p>
+                </li>
+                {{ end }}
+            </ul>
+        </div>
+        {{ end }}
+
+        {{ if .Educations }}
+        <div class="section">
+            <h2>Education</h2>
+            <ul>
+                {{ range .Educations }}
+                <li>
+                    <h3>{{ .Institution }}</h3>
+                    <div class="text-line">
+                        <h4>{{ .Faculty }}</h4> {{ if .Degree }}●
+                        <h4>{{ .Degree }}</h4> {{ end }}
+                    </div>
+                    <div class="text-line">
+                        <p>{{ .Location }}</p> ●
+                        <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}Present{{ end }}</p>
+                    </div>
+                    {{ if .Description }}
+                    <p class="edu-description">{{ .Description }}</p>
+                    {{ end }}
+                </li>
+                {{ end }}
+            </ul>
+        </div>
+        {{ end }}
+
+        {{ if .Certificates }}
+        <div class="section">
+            <h2>Certificates</h2>
+            <ul>
+                {{ range .Certificates }}
+                <li>
+                    <h3>{{ .Title }}</h3>
+                    <div class="text-line">
+                        <h4>{{ .Vendor }}</h4> ●
+                        <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}Present{{ end }}</p>
+                    </div>
+                    {{ if .Description }}
+                    <p class="edu-description">{{ .Description }}</p>
+                    {{ end }}
+                </li>
+                {{ end }}
+            </ul>
+        </div>
+        {{ end }}
+    </div>
+</div>
+</body>
+</html>

@@ -1,25 +1,34 @@
 package containers
 
 import (
+	"cv-generator-service/internal/generator/consumers"
+	"cv-generator-service/internal/generator/repositories"
+	"cv-generator-service/internal/generator/services"
+	services2 "cv-generator-service/internal/notifications/services"
+	"cv-generator-service/pkg/utils"
 	"github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"information-service/internal/generator/repositories"
-	"information-service/internal/generator/services"
-	"information-service/pkg/utils"
+	"log"
 	"os"
 )
 
-type Dependencies struct {
-	DB               *gorm.DB
-	RedisClient      *redis.Client
-	RedisAdapter     *utils.RedisAdapter
-	Logger           *zap.Logger
-	MinioClient      *utils.MinioClient
-	RabbitMQ         *utils.RabbitMQConnection
-	GeneratedPDFRepo repositories.GeneratedPDFRepository
+const (
+	maxPdfQueueWorkers = 10
+)
 
-	GeneratedPDFService *services.GeneratedPDFService
+type Dependencies struct {
+	DB                  *gorm.DB
+	RedisClient         *redis.Client
+	RedisAdapter        *utils.RedisAdapter
+	Logger              *zap.Logger
+	MinioClient         *utils.MinioClient
+	RabbitMQ            *utils.RabbitMQConnection
+	ChromeAllocator     *utils.ChromeAllocator
+	PdfGeneratorRepo    repositories.PdfGeneratorRepository
+	NotificationService *services2.NotificationService
+	PdfGeneratorService *services.PdfGeneratorService
+	GeneratePdfService  *services.GeneratePdfService
 }
 
 func InitializeDependencies() (*Dependencies, error) {
@@ -42,11 +51,16 @@ func InitializeDependencies() (*Dependencies, error) {
 
 	minioClient := utils.NewMinioClient(os.Getenv("MINIO_ENDPOINT"), os.Getenv("MINIO_ROOT_USER"), os.Getenv("MINIO_ROOT_PASSWORD"), "cv-pdf", os.Getenv("MINIO_SECURE") == "true")
 
+	chromeAllocator := utils.NewChromeAllocator()
+	chromeAllocator.Init()
+
 	// Repositories
-	generatedPDFRepo := repositories.NewGeneratedPDFGormRepository(db)
+	pdfGeneratorRepo := repositories.NewPdfGeneratorGormRepository(db)
 
 	// Services
-	generatorPDFService := services.NewGeneratedPDFService(generatedPDFRepo, db)
+	notificationService := services2.NewNotificationService(rabbitMQ, logger)
+	pdfGeneratorService := services.NewPdfGeneratorService(pdfGeneratorRepo, db)
+	generatorPdfService := services.NewGeneratePdfService(pdfGeneratorService, notificationService, minioClient, chromeAllocator)
 
 	// Dependencies
 	return &Dependencies{
@@ -56,10 +70,19 @@ func InitializeDependencies() (*Dependencies, error) {
 		Logger:              logger,
 		MinioClient:         minioClient,
 		RabbitMQ:            rabbitMQ,
-		GeneratedPDFRepo:    generatedPDFRepo,
-		GeneratedPDFService: generatorPDFService,
+		ChromeAllocator:     chromeAllocator,
+		PdfGeneratorRepo:    pdfGeneratorRepo,
+		NotificationService: notificationService,
+		PdfGeneratorService: pdfGeneratorService,
+		GeneratePdfService:  generatorPdfService,
 	}, nil
 }
 
 func InitializeQueuesConsumer(dependencies *Dependencies) {
+	generatorConsumer := consumers.NewGeneratorPdfConsumer(dependencies.GeneratePdfService, dependencies.Logger, maxPdfQueueWorkers)
+
+	err := utils.ListenToQueue(utils.PDFGenerateQueue, generatorConsumer.HandleGenerateCvToPdf)
+	if err != nil {
+		log.Fatalf("Error starting listener for PDFGenerateQueue: %v", err)
+	}
 }
