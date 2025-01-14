@@ -5,6 +5,7 @@ import (
 	services2 "gateway-service/internal/cv/services"
 	information "gateway-service/internal/information/information/grpc"
 	"gateway-service/internal/information/services"
+	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"io"
 	"mime/multipart"
@@ -28,6 +29,7 @@ type CVInformationResponse struct {
 	ID        string  `json:"id"`
 	FullName  string  `json:"full_name"`
 	Photo     []byte  `json:"photo"`
+	PhotoUrl  *string `json:"photo_url"`
 	Position  *string `json:"position"`
 	Location  *string `json:"location"`
 	Biography *string `json:"biography"`
@@ -143,6 +145,7 @@ func (h *InformationProxyHandler) getCVInfoResponse(gRPCResponse *information.In
 		ID:        gRPCResponse.Id,
 		FullName:  gRPCResponse.FullName,
 		Photo:     gRPCResponse.PhotoFile,
+		PhotoUrl:  utils.ChangeDomainFromMinio(gRPCResponse.PhotoUrl),
 		Position:  gRPCResponse.Position,
 		Location:  gRPCResponse.Location,
 		Biography: gRPCResponse.Biography,

@@ -14,10 +14,13 @@ import (
 	routes3 "gateway-service/internal/information/information/routes"
 	routes4 "gateway-service/internal/information/languages/routes"
 	routes5 "gateway-service/internal/information/skills/routes"
+	"gateway-service/internal/system/consumers"
 	handlers2 "gateway-service/internal/system/handlers"
 	middlewares3 "gateway-service/internal/system/middlewares"
 	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+	"net/http"
 	"os"
 )
 
@@ -30,17 +33,35 @@ func main() {
 	utils.ConnectRabbitMQ()
 	utils.InitializeQueues()
 
-	authMiddleware := middlewares.NewAuthMiddleware()
-	cvMiddleware := middlewares2.NewCVMiddleware()
+	logger := utils.GetLogger()
 
 	r := gin.Default()
 
+	webSocketManager := utils.NewWebSocketPrivateManager()
+	r.GET("/ws/private", handlers2.WebSocketPrivateHandler(webSocketManager))
+
+	go func() {
+		err := utils.ListenToQueue(utils.GatewayEventsQueue, consumers.NewEventConsumer(logger, webSocketManager).Handle)
+		if err != nil {
+			logger.Error("Error listening to queue", zap.Error(err))
+		}
+	}()
+
+	authMiddleware := middlewares.NewAuthMiddleware()
+	cvMiddleware := middlewares2.NewCVMiddleware()
+
 	r.GET("/ping", handlers2.PingHandler)
+
+	r.LoadHTMLFiles("./config/asyncapi/output/index.html")
+	r.Static("/ws-docs", "./config/asyncapi/output")
 
 	openApiDoc := r.Group("/documentation")
 	openApiDoc.Use(middlewares3.CORSMiddleware())
 	openApiDoc.GET("/openapi.json", func(c *gin.Context) {
 		c.File("./config/swagger/openapi.json")
+	})
+	openApiDoc.GET("/ws-docs", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "./config/asyncapi/output/index.html", nil)
 	})
 
 	routes.AuthRoutes(r, authMiddleware)

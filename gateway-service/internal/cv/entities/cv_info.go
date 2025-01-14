@@ -58,6 +58,7 @@ type CVCertificate struct {
 type CvInfo struct {
 	UserID          uuid.UUID           `json:"user_id"`
 	CvID            uuid.UUID           `json:"cv_id"`
+	Template        string              `json:"template"`
 	CV              CV                  `json:"cv"`
 	Information     *CVInformation      `json:"information"`
 	Contacts        []*CVContact        `json:"contacts"`

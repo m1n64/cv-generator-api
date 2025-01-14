@@ -13,6 +13,8 @@ import (
 	languages "gateway-service/internal/information/languages/grpc"
 	services2 "gateway-service/internal/information/services"
 	skills "gateway-service/internal/information/skills/grpc"
+	templates "gateway-service/internal/templates/grpc"
+	services3 "gateway-service/internal/templates/services"
 	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
@@ -34,6 +36,7 @@ type GeneratorHandler struct {
 	experiencesClient  experiences.ExperiencesServiceClient
 	educationsClient   educations.EducationServiceClient
 	certificatesClient certificates.CertificatesServiceClient
+	templatesClient    templates.TemplateServiceClient
 }
 
 type GenerateCVResponse struct {
@@ -44,6 +47,7 @@ type GenerateCVResponse struct {
 func NewGeneratorHandler(rabbitMq *utils.RabbitMQConnection, logger *zap.Logger) *GeneratorHandler {
 	cvConnection := services.GetCVConnection()
 	informationConnection := services2.GetInformationConnection()
+	templateConnection := services3.GetTemplatesConnection()
 
 	return &GeneratorHandler{
 		rabbitMq:           rabbitMq,
@@ -56,6 +60,7 @@ func NewGeneratorHandler(rabbitMq *utils.RabbitMQConnection, logger *zap.Logger)
 		experiencesClient:  experiences.NewExperiencesServiceClient(informationConnection),
 		educationsClient:   educations.NewEducationServiceClient(informationConnection),
 		certificatesClient: certificates.NewCertificatesServiceClient(informationConnection),
+		templatesClient:    templates.NewTemplateServiceClient(templateConnection),
 	}
 }
 
@@ -198,9 +203,16 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 		})
 	}
 
+	template, err := h.templatesClient.GetDefaultTemplate(ctx, &templates.Empty{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	data, err := json.Marshal(&entities.CvInfo{
-		UserID: uuid.MustParse(userId.(string)),
-		CvID:   uuid.MustParse(cvId),
+		UserID:   uuid.MustParse(userId.(string)),
+		CvID:     uuid.MustParse(cvId),
+		Template: template.Template,
 		CV: entities.CV{
 			Title: cvMain.Name,
 		},

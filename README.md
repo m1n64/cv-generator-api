@@ -6,6 +6,7 @@ This project is a simple CV generator API, written on Go in microservice archite
 ### Links:
 - [github](https://github.com/m1n64/cv-generator-api)
 - [API docs](https://api.resumego.online/docs/)
+- [WebSocket docs](https://api.resumego.online/ws-docs/)
 - [Base url](https://api.resumego.online)
 
 ### Checklist:
@@ -13,8 +14,9 @@ This project is a simple CV generator API, written on Go in microservice archite
 - [x] main cv-service (List of CV\'s, CRUD for CV\'s) (gRPC)
 - [x] cv information-service (biography, name, position, location, photo, education, work experience and skills) (gRPC) 
 - [x] file storage-service (minio) (Direct connection in services)
-- [ ] cv PDF generator-service (cv PDF generator) (gRPC, RabbitMQ)
-- [ ] gateway-service (proxy for services from gRPC to REST) (REST API, WebSocket)
+- [x] cv PDF generator-service (cv PDF generator) (gRPC, RabbitMQ)
+- [x] HTML templates-service (templates for PDF) (gRPC)
+- [x] gateway-service (proxy for services from gRPC to REST) (REST API, WebSocket)
 - [x] swagger docs service (or container in gateway-service) (REST API)
 - [x] shared-network service (network for all services, and nginx configuration)
 - [ ] log system and visualization service

@@ -4,6 +4,7 @@ import (
 	"cv-generator-service/internal/generator/consumers"
 	"cv-generator-service/internal/generator/repositories"
 	"cv-generator-service/internal/generator/services"
+	services2 "cv-generator-service/internal/notifications/services"
 	"cv-generator-service/pkg/utils"
 	"github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
@@ -17,14 +18,15 @@ const (
 )
 
 type Dependencies struct {
-	DB               *gorm.DB
-	RedisClient      *redis.Client
-	RedisAdapter     *utils.RedisAdapter
-	Logger           *zap.Logger
-	MinioClient      *utils.MinioClient
-	RabbitMQ         *utils.RabbitMQConnection
-	PdfGeneratorRepo repositories.PdfGeneratorRepository
-
+	DB                  *gorm.DB
+	RedisClient         *redis.Client
+	RedisAdapter        *utils.RedisAdapter
+	Logger              *zap.Logger
+	MinioClient         *utils.MinioClient
+	RabbitMQ            *utils.RabbitMQConnection
+	ChromeAllocator     *utils.ChromeAllocator
+	PdfGeneratorRepo    repositories.PdfGeneratorRepository
+	NotificationService *services2.NotificationService
 	PdfGeneratorService *services.PdfGeneratorService
 	GeneratePdfService  *services.GeneratePdfService
 }
@@ -49,12 +51,16 @@ func InitializeDependencies() (*Dependencies, error) {
 
 	minioClient := utils.NewMinioClient(os.Getenv("MINIO_ENDPOINT"), os.Getenv("MINIO_ROOT_USER"), os.Getenv("MINIO_ROOT_PASSWORD"), "cv-pdf", os.Getenv("MINIO_SECURE") == "true")
 
+	chromeAllocator := utils.NewChromeAllocator()
+	chromeAllocator.Init()
+
 	// Repositories
 	pdfGeneratorRepo := repositories.NewPdfGeneratorGormRepository(db)
 
 	// Services
+	notificationService := services2.NewNotificationService(rabbitMQ, logger)
 	pdfGeneratorService := services.NewPdfGeneratorService(pdfGeneratorRepo, db)
-	generatorPdfService := services.NewGeneratePdfService(pdfGeneratorService, minioClient)
+	generatorPdfService := services.NewGeneratePdfService(pdfGeneratorService, notificationService, minioClient, chromeAllocator)
 
 	// Dependencies
 	return &Dependencies{
@@ -64,7 +70,9 @@ func InitializeDependencies() (*Dependencies, error) {
 		Logger:              logger,
 		MinioClient:         minioClient,
 		RabbitMQ:            rabbitMQ,
+		ChromeAllocator:     chromeAllocator,
 		PdfGeneratorRepo:    pdfGeneratorRepo,
+		NotificationService: notificationService,
 		PdfGeneratorService: pdfGeneratorService,
 		GeneratePdfService:  generatorPdfService,
 	}, nil

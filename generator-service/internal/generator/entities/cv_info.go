@@ -1,4 +1,4 @@
-package models
+package entities
 
 import "github.com/google/uuid"
 
@@ -58,6 +58,7 @@ type cvCertificate struct {
 type CvInfo struct {
 	UserID          uuid.UUID           `json:"user_id"`
 	CvID            uuid.UUID           `json:"cv_id"`
+	Template        string              `json:"template"`
 	CV              cv                  `json:"cv"`
 	Information     *cvInformation      `json:"information"`
 	Contacts        []*cvContact        `json:"contacts"`

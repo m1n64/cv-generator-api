@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package templates;
+
+option go_package = "./internal/templates/grpc;templates";
+
+service TemplateService {
+  rpc GetDefaultTemplate(Empty) returns (Template);
+}
+
+message Empty {}
+
+message Template {
+  string template = 2;
+}

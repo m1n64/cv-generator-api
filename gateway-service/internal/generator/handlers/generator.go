@@ -5,6 +5,7 @@ import (
 	services2 "gateway-service/internal/cv/services"
 	generator "gateway-service/internal/generator/grpc"
 	"gateway-service/internal/generator/services"
+	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -209,7 +210,7 @@ func (h *GeneratorProxyHandler) getGeneratedPdfResponse(gRPCResponse *generator.
 		ID:        gRPCResponse.Id,
 		Title:     gRPCResponse.Title,
 		PdfFile:   gRPCResponse.PdfFile,
-		PdfUrl:    gRPCResponse.PdfUrl,
+		PdfUrl:    utils.ChangeDomainFromMinio(gRPCResponse.PdfUrl),
 		Status:    gRPCResponse.Status,
 		CreatedAt: gRPCResponse.CreatedAt,
 		UpdatedAt: gRPCResponse.UpdatedAt,

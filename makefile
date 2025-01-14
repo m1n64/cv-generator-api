@@ -1,5 +1,6 @@
 # Variables
 SERVICES = shared-network user-service cv-service information-service generator-service gateway-service
+SHARED_NETWORK_DELAY = 15
 
 .PHONY: help
 help:
@@ -35,6 +36,8 @@ up:
     	if [ "$$service" = "shared-network" ]; then \
     		echo "🟢 Starting $$service with default compose file..."; \
     		(cd $$service && docker-compose up -d || echo "❌ Error starting $$service"); \
+    		echo "⏳ Waiting for shared-network to be ready for $(SHARED_NETWORK_DELAY) seconds..."; \
+            sleep $(SHARED_NETWORK_DELAY); \
     	else \
     		echo "🟢 Starting $$service with dev compose file..."; \
     		(cd $$service && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d || echo "❌ Error starting $$service"); \
@@ -53,8 +56,15 @@ stop:
 restart:
 	@echo "🔄 Reload all services..."
 	@for service in $(SERVICES); do \
-		echo "🔄 Reload $$service..."; \
-		(cd $$service && docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart || echo "❌ Error restarting $$service"); \
+  		if [ "$$service" = "shared-network" ]; then \
+      		echo "🔄 Reload $$service with default compose file..."; \
+      		(cd $$service && docker-compose restart || echo "❌ Error restarting $$service"); \
+      		echo "⏳ Waiting for shared-network to be ready for $(SHARED_NETWORK_DELAY) seconds..."; \
+            sleep $(SHARED_NETWORK_DELAY); \
+      	else \
+      		echo "🔄 Reload $$service with dev compose file..."; \
+      		(cd $$service && docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart || echo "❌ Error restarting $$service"); \
+      	fi; \
 	done
 
 .PHONY: restart-service
@@ -64,7 +74,11 @@ restart-service:
 		exit 1; \
 	fi
 	@echo "🔄 Restarting service: $(SERVICE)..."
-	@(cd $(SERVICE) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml restart || echo "❌ Error restarting $(SERVICE)")
+	@if [ "$(SERVICE)" = "shared-network" ]; then \
+    	(cd $(SERVICE) && docker-compose up -d || echo "❌ Error starting $(SERVICE)"); \
+    else \
+    	(cd $(SERVICE) && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d || echo "❌ Error restarting $(SERVICE)"); \
+    fi
 
 .PHONY: up-service
 up-service:

@@ -1,65 +1,87 @@
 package services
 
 import (
+	"bytes"
 	"context"
+	"cv-generator-service/internal/generator/entities"
 	"cv-generator-service/internal/generator/enums"
-	"cv-generator-service/internal/generator/models"
+	"cv-generator-service/internal/notifications/services"
 	"cv-generator-service/pkg/utils"
+	"encoding/base64"
 	"fmt"
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
+	"html/template"
+	"net/url"
 	"os"
 	"time"
 )
 
 type GeneratePdfService struct {
 	pdfGeneratorService *PdfGeneratorService
+	notificationService *services.NotificationService
 	minio               *utils.MinioClient
+	chromeAllocator     *utils.ChromeAllocator
 }
 
-func NewGeneratePdfService(service *PdfGeneratorService, minio *utils.MinioClient) *GeneratePdfService {
+func NewGeneratePdfService(service *PdfGeneratorService, notificationService *services.NotificationService, minio *utils.MinioClient, chromeAllocator *utils.ChromeAllocator) *GeneratePdfService {
 	return &GeneratePdfService{
 		pdfGeneratorService: service,
+		notificationService: notificationService,
 		minio:               minio,
+		chromeAllocator:     chromeAllocator,
 	}
 }
 
-func (s *GeneratePdfService) GeneratePDF(cvInfo models.CvInfo) error {
+func (s *GeneratePdfService) GeneratePDF(cvInfo entities.CvInfo) error {
 	cvName := fmt.Sprintf("%s - %s", cvInfo.CV.Title, time.Now().Format(time.DateOnly))
 	generated, _ := s.pdfGeneratorService.CreateGeneratedPDF(cvInfo.CvID, cvInfo.UserID, cvName, nil, enums.StatusPending)
 
-	ctx, cancel := chromedp.NewExecAllocator(context.Background(),
-		append(chromedp.DefaultExecAllocatorOptions[:],
-			chromedp.Flag("headless", true),
-			chromedp.Flag("disable-gpu", true),
-			chromedp.Flag("disable-extensions", true),
-			chromedp.Flag("no-sandbox", true),
-			chromedp.Flag("disable-setuid-sandbox", true),
-		)...,
-	)
+	ctx, cancel := chromedp.NewContext(s.chromeAllocator.AllocatorCtx)
 	defer cancel()
 
-	ctx, cancel = chromedp.NewContext(ctx)
-	defer cancel()
+	var buf bytes.Buffer
+	t := template.Must(template.New("resume").Funcs(template.FuncMap{
+		"toBase64": func(data *[]byte) string {
+			if data == nil {
+				return ""
+			}
 
-	html := `<html>
-	<body>
-	<div>text</div>
-	<img src="https://pkg.go.dev/static/shared/gopher/package-search-700x300.jpeg"/>
-	<img src="https://go.dev/images/gophers/motorcycle.svg"/>
-	<img src="https://go.dev/images/go_google_case_study_carousel.png" />
-	</body>
-	</html>`
+			return base64.StdEncoding.EncodeToString(*data)
+		},
+		"formatDate": func(dateStr string) string {
+			layout := "2006-01-02 15:04:05 -0700 MST"
+			t, err := time.Parse(layout, dateStr)
+			if err != nil {
+				return dateStr
+			}
+			return t.Format("January 2, 2006")
+		},
+	}).Parse(cvInfo.Template))
+	err := t.Execute(&buf, map[string]interface{}{
+		"Information":     cvInfo.Information,
+		"Contacts":        cvInfo.Contacts,
+		"Skills":          cvInfo.Skills,
+		"Languages":       cvInfo.Languages,
+		"WorkExperiences": cvInfo.WorkExperiences,
+		"Educations":      cvInfo.Educations,
+		"Certificates":    cvInfo.Certificates,
+	})
+	if err != nil {
+		return err
+	}
+
+	escapedHTML := "data:text/html," + url.PathEscape(buf.String())
 
 	os.MkdirAll("tmp/", os.ModePerm)
 
 	_ = s.pdfGeneratorService.UpdateStatus(generated.ID, enums.StatusInProgress)
 
-	err := chromedp.Run(ctx, chromedp.Tasks{
-		chromedp.Navigate("data:text/html," + html),
+	err = chromedp.Run(ctx, chromedp.Tasks{
+		chromedp.Navigate(escapedHTML),
 		chromedp.WaitReady("body"),
 		chromedp.ActionFunc(func(ctx context.Context) error {
-			buf, _, err := page.PrintToPDF().WithPrintBackground(false).Do(ctx)
+			buf, _, err := page.PrintToPDF().WithPrintBackground(true).Do(ctx)
 			if err != nil {
 				return fmt.Errorf("failed to generate PDF: %w", err)
 			}
@@ -88,6 +110,8 @@ func (s *GeneratePdfService) GeneratePDF(cvInfo models.CvInfo) error {
 				return err
 			}
 
+			s.notificationService.SendSuccess(cvInfo.UserID, "")
+
 			return nil
 		}),
 	})
@@ -96,6 +120,9 @@ func (s *GeneratePdfService) GeneratePDF(cvInfo models.CvInfo) error {
 		if err != nil {
 			return err
 		}
+
+		s.notificationService.SendError(cvInfo.UserID, err)
+
 		return fmt.Errorf("chromedp execution failed: %w", err)
 	}
 

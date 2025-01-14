@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"github.com/streadway/amqp"
 	"log"
 	"os"
@@ -13,6 +14,10 @@ const (
 	PDFGenerateQueue   = "pdf_generate_queue"
 	GatewayEventsQueue = "gateway_events_queue"
 )
+
+type Consumer interface {
+	Handle(msg amqp.Delivery)
+}
 
 type RabbitMQConnection struct {
 	Connection *amqp.Connection
@@ -74,6 +79,17 @@ func GetRabbitMQInstance() *RabbitMQConnection {
 	return instance
 }
 
+func GetRabbitMQChannel() (*amqp.Channel, error) {
+	if instance.Channel == nil {
+		channel, err := instance.Connection.Channel()
+		if err != nil {
+			return nil, fmt.Errorf("failed to create channel: %w", err)
+		}
+		instance.Channel = channel
+	}
+	return instance.Channel, nil
+}
+
 func (r *RabbitMQConnection) CloseRabbitMQ() {
 	if r.Channel != nil {
 		r.Channel.Close()
@@ -98,11 +114,9 @@ func ListenToQueue(queueName string, handlerFunc func(msg amqp.Delivery)) error 
 		return err
 	}
 
-	go func() {
-		for msg := range msgs {
-			handlerFunc(msg)
-		}
-	}()
+	for msg := range msgs {
+		go handlerFunc(msg)
+	}
 
 	log.Printf("Started listening to queue: %s", queueName)
 	return nil
