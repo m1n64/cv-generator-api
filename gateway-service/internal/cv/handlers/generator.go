@@ -15,9 +15,9 @@ import (
 	templates "gateway-service/internal/templates/grpc"
 	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/goccy/go-json"
 	"github.com/google/uuid"
 	"github.com/streadway/amqp"
+	"github.com/vmihailenco/msgpack/v5"
 	"go.uber.org/zap"
 	"net/http"
 	"time"
@@ -215,7 +215,7 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 		return
 	}
 
-	data, err := json.Marshal(&entities.CvInfo{
+	data, err := msgpack.Marshal(&entities.CvInfo{
 		UserID:   uuid.MustParse(userId.(string)),
 		CvID:     uuid.MustParse(cvId),
 		Template: template.Template,

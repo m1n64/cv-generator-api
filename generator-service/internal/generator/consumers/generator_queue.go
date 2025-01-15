@@ -3,8 +3,8 @@ package consumers
 import (
 	"cv-generator-service/internal/generator/entities"
 	"cv-generator-service/internal/generator/services"
-	"github.com/goccy/go-json"
 	"github.com/streadway/amqp"
+	"github.com/vmihailenco/msgpack/v5"
 	"go.uber.org/zap"
 )
 
@@ -24,7 +24,7 @@ func NewGeneratorPdfConsumer(generatePdfService *services.GeneratePdfService, lo
 
 func (h *GeneratorPdfConsumer) HandleGenerateCvToPdf(msg amqp.Delivery) {
 	var cvInfo entities.CvInfo
-	if err := json.Unmarshal(msg.Body, &cvInfo); err != nil {
+	if err := msgpack.Unmarshal(msg.Body, &cvInfo); err != nil {
 		h.logger.Error("error unmarshalling cv info", zap.Error(err))
 		msg.Nack(false, false)
 		return
