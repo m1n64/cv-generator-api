@@ -16,7 +16,8 @@ pub async fn check_gateway(gateway_url: &str) -> (String, bool, Option<String>) 
         Ok(_) => {
             ("Gateway Service".to_string(), false, None)
         }
-        Err(_) => {
+        Err(err) => {
+            eprintln!("Error calling Gateway service: {:?}", err);
             ("Gateway Service".to_string(), false, None)
         }
     }
@@ -25,7 +26,8 @@ pub async fn check_gateway(gateway_url: &str) -> (String, bool, Option<String>) 
 async fn parse_gateway_response(response: Response) -> (String, bool, Option<String>) {
     match response.json::<GatewayResponse>().await {
         Ok(data) => ("Gateway Service".to_string(), true, Some(data.time)),
-        Err(_) => {
+        Err(err) => {
+            eprintln!("Error serializing Gateway service: {:?}", err);
             ("Gateway Service".to_string(), false, None)
         }
     }
