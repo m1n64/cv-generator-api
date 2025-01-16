@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  cv-health-check:
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - RUST_BACKTRACE=1
+    command: cargo watch -x build -x run

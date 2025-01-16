@@ -1,0 +1,20 @@
+[package]
+name = "cv_health_check"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+warp = "0.3"
+reqwest = { version = "0.12.12", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+dotenv = "0.15"
+lapin = { version = "2.0.0-beta.3" }
+minio-rsc = "0.2.3"
+chrono = "0.4.39"
+tonic = "0.12.3"
+prost = "0.13.4"
+base64 = "0.22.1"
+
+[build-dependencies]
+tonic-build = "0.12.0"

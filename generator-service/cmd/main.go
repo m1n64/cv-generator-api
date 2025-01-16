@@ -3,6 +3,8 @@ package main
 import (
 	generator "cv-generator-service/internal/generator/grpc"
 	"cv-generator-service/internal/generator/handlers"
+	health "cv-generator-service/internal/health/grpc"
+	handlers2 "cv-generator-service/internal/health/handlers"
 	"cv-generator-service/pkg/containers"
 	"fmt"
 	"google.golang.org/grpc"
@@ -27,6 +29,9 @@ func main() {
 
 	generatorServer := handlers.NewGeneratorServiceServer(dependencies.PdfGeneratorService, dependencies.MinioClient, dependencies.Logger)
 	generator.RegisterGeneratorServiceServer(grpcServer, generatorServer)
+
+	healthServer := handlers2.NewHealthServiceServer(dependencies.DB, dependencies.RedisClient)
+	health.RegisterHealthServiceServer(grpcServer, healthServer)
 
 	log.Printf("gRPC server is running on port %s", port)
 	if err := grpcServer.Serve(listener); err != nil {

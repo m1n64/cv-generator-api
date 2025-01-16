@@ -7,6 +7,8 @@ import (
 	"net"
 	"os"
 	"time"
+	health "user-service/internal/health/grpc"
+	handlers2 "user-service/internal/health/handlers"
 	"user-service/internal/users/grpc/auth"
 	"user-service/internal/users/handlers"
 	"user-service/internal/users/repositories"
@@ -34,6 +36,7 @@ func main() {
 	}
 
 	db := utils.GetDBConnection()
+	_, redis := utils.GetRedisConn()
 
 	userRepo := repositories.NewUserGormRepository(db)
 	tokenRepo := repositories.NewTokenGormRepository(db)
@@ -45,6 +48,9 @@ func main() {
 	grpcServer := grpc.NewServer()
 	authServiceServer := handlers.NewAuthServiceServer(authService)
 	auth.RegisterAuthServiceServer(grpcServer, authServiceServer)
+
+	healthServiceServer := handlers2.NewHealthServiceServer(db, redis)
+	health.RegisterHealthServiceServer(grpcServer, healthServiceServer)
 
 	log.Printf("gRPC server is running on port %s", port)
 	if err := grpcServer.Serve(listener); err != nil {
