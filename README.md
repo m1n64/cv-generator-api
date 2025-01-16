@@ -22,7 +22,7 @@ This project is a simple CV generator API, written on Go in microservice archite
 - [x] shared-network service (network for all services, and nginx configuration)
 - [ ] log system and visualization service
 - [ ] analytics service in separate repository, which my friend will develop in PHP, Laravel (RabbitMQ)
-- [ ] health check service (HTML page, gRPC, REST API) (?)
+- [x] health check service (HTML page, gRPC, REST API)
 
 ### Peculiarities:
 - Microservice architecture
