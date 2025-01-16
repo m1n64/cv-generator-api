@@ -11,6 +11,8 @@ import (
 	handlers6 "information-service/internal/educations/handlers"
 	experiences "information-service/internal/experiences/grpc"
 	handlers7 "information-service/internal/experiences/handlers"
+	health "information-service/internal/health/grpc"
+	handlers8 "information-service/internal/health/handlers"
 	information "information-service/internal/information/grpc"
 	"information-service/internal/information/handlers"
 	languages "information-service/internal/languages/grpc"
@@ -56,6 +58,9 @@ func main() {
 
 	experienceServer := handlers7.NewWorkExperienceServiceServer(dependencies.WorkExperienceService, dependencies.Logger)
 	experiences.RegisterExperiencesServiceServer(grpcServer, experienceServer)
+
+	healthServer := handlers8.NewHealthServiceServer(dependencies.DB, dependencies.RedisClient)
+	health.RegisterHealthServiceServer(grpcServer, healthServer)
 
 	log.Printf("gRPC server is running on port %s", port)
 	if err := grpcServer.Serve(listener); err != nil {

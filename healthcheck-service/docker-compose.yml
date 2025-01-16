@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  cv-health-check:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cv-healthcheck-service
+    ports:
+      - "${SERVICE_PORT}:${SERVICE_PORT}"
+    networks:
+      - cv-generator-network
+
+networks:
+  cv-generator-network:
+    external: true

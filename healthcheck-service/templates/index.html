@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Check</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        @import "https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap";.service-name,body{margin:0;color:#333}.container-item,.service,h1{text-align:center}.container-item .status-failed,.container-item .status-ok{padding:5px;border-radius:3px;display:inline-block}body{font-family:Inter,sans-serif;background-color:#f9f9f9;padding:0;box-sizing:border-box;overflow-x:hidden}h1{color:#4caf50;margin:20px 0}.flex-container{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;padding:20px;width:100%}.service{background-color:#f0f0f0;border-radius:8px;padding:20px 10px;box-shadow:0 2px 4px rgba(0,0,0,.1);flex:1 1 calc(20% - 15px);max-width:calc(20% - 15px)}@media (max-width:1200px){.service{flex:1 1 calc(33.33% - 15px);max-width:calc(33.33% - 15px)}}@media (max-width:768px){.service{flex:1 1 calc(50% - 15px);max-width:calc(50% - 15px)}}@media (max-width:480px){.service{flex:1 1 100%;max-width:100%}}.service-name{font-size:1.1rem;font-weight:700}.container-item .status-ok,.status-ok{background-color:#d4edda;color:#155724}.service-status{display:inline-block;margin-top:10px;padding:5px 10px;border-radius:5px;font-weight:700}.status-failed{background-color:#f8d7da;color:#721c24}.service-timestamp{margin-top:10px;font-size:.9rem;color:#555}.containers-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:15px}.container-item{padding:10px;background-color:#f9f9f9;border-radius:5px;font-size:.9rem}.container-item strong{display:block;font-size:1rem;margin-bottom:5px;color:#333}.container-item .status-failed{background-color:#f8d7da;color:#721c24}
+    </style>
+</head>
+<body>
+<div x-data="healthCheck()" x-init="fetchData()">
+    <h1>Health Check Service</h1>
+    <p x-show="loading" style="text-align: center;">Loading...</p>
+    <template x-if="!loading && error">
+        <p style="color: red; font-weight: bold; text-align: center;">Error: <span x-text="error"></span></p>
+    </template>
+    <template x-if="!loading && !error">
+        <div class="flex-container">
+            <template x-for="service in data" :key="service.name">
+                <div class="service">
+                    <h2 x-text="service.name" class="service-name"></h2>
+                    <span class="service-status"
+                          x-text="service.status ? 'OK' : 'FAILED'"
+                          :class="service.status ? 'status-ok' : 'status-failed'"></span>
+                    <p class="service-timestamp" x-text="formatTimestamp(service.timestamp)"></p>
+
+                    <template x-if="service.containers">
+                        <div class="containers-grid">
+                            <template x-for="container in service.containers" :key="container.layer">
+                                <div class="container-item">
+                                    <strong x-text="container.layer"></strong>
+                                    <span x-text="container.status ? 'OK' : 'FAILED'"
+                                          :class="container.status ? 'status-ok' : 'status-failed'"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </div>
+    </template>
+</div>
+
+<script>
+    function healthCheck(){return{loading:!0,error:null,data:null,fetchData(){fetch("/check").then(t=>{if(!t.ok)throw Error(`HTTP error! status: ${t.status}`);return t.json()}).then(t=>{this.data=t,this.loading=!1}).catch(t=>{this.error=t.message,this.loading=!1})},formatTimestamp(t){if(!t)return"N/A";let e=new Date(t),a=new Date,r=`${Math.floor((a-e)/1e3)} s`,n=String(e.getDate()).padStart(2,"0"),o=String(e.getMonth()+1).padStart(2,"0"),s=e.getFullYear(),h=String(e.getHours()).padStart(2,"0"),i=String(e.getMinutes()).padStart(2,"0"),l=String(e.getSeconds()).padStart(2,"0");return`${n}.${o}.${s} ${h}:${i}:${l} (${r})`}}}
+</script>
+</body>
+</html>

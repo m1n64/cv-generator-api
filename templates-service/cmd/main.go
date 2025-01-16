@@ -1,6 +1,8 @@
 package main
 
 import (
+	health "cv-templates-service/internal/health/grpc"
+	handlers2 "cv-templates-service/internal/health/handlers"
 	templates "cv-templates-service/internal/templates/grpc"
 	"cv-templates-service/internal/templates/handlers"
 	"cv-templates-service/pkg/containers"
@@ -27,6 +29,9 @@ func main() {
 
 	templateServer := handlers.NewTemplateServiceServer(dependencies.DefaultTemplateService, dependencies.MinioClient, dependencies.Logger)
 	templates.RegisterTemplateServiceServer(grpcServer, templateServer)
+
+	healthServer := handlers2.NewHealthServiceServer(dependencies.DB, dependencies.RedisClient)
+	health.RegisterHealthServiceServer(grpcServer, healthServer)
 
 	log.Printf("gRPC server is running on port %s", port)
 	if err := grpcServer.Serve(listener); err != nil {

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package health;
+
+service HealthService {
+  rpc Check(CheckRequest) returns (CheckResponse);
+  rpc Watch(CheckRequest) returns (stream CheckResponse);
+}
+
+message CheckRequest {
+  string service = 1;
+}
+
+message CheckResponse {
+  string service_name = 1;
+  bool status = 2;
+  bool status_db = 3;
+  bool status_redis = 4;
+  string timestamp = 5;
+}
