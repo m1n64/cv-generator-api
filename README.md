@@ -8,6 +8,7 @@ This project is a simple CV generator API, written on Go in microservice archite
 - [API docs](https://api.resumego.online/docs/)
 - [WebSocket docs](https://api.resumego.online/ws-docs/)
 - [Base url](https://api.resumego.online)
+- [Health Check](https://health.resumego.online)
 
 ### Checklist:
 - [x] user-service (Authorization, token validation, user info) (gRPC)
