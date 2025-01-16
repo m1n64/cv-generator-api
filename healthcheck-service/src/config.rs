@@ -22,7 +22,7 @@ impl Config {
     pub fn from_env() -> Self {
         let gateway_host = env::var("GATEWAY_SERVICE_HOST").unwrap_or_else(|_| "localhost".to_string());
         let gateway_port = env::var("GATEWAY_SERVICE_PORT").unwrap_or_else(|_| "8000".to_string());
-        let gateway_url = format!("http://{}:{}", gateway_host, gateway_port);
+        let gateway_url = env::var("GATEWAY_URL").unwrap_or_else(|_| "http://localhost:8000".to_string());
 
         let rabbitmq_url = env::var("RABBITMQ_URL").unwrap_or_else(|_| "amqp://localhost:5672/".to_string());
         let minio_url = env::var("MINIO_URL").unwrap_or_else(|_| "localhost:9000".to_string());
