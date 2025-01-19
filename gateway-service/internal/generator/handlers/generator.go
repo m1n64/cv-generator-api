@@ -6,8 +6,9 @@ import (
 	generator "gateway-service/internal/generator/grpc"
 	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc/metadata"
 	"net/http"
-	"time"
+	"os"
 )
 
 type GeneratorProxyHandler struct {
@@ -181,7 +182,11 @@ func (h *GeneratorProxyHandler) DownloadGeneratedPdf(c *gin.Context) {
 }
 
 func (h *GeneratorProxyHandler) createContext() (context.Context, context.CancelFunc) {
-	return context.WithTimeout(context.Background(), 5*time.Second)
+	md := metadata.New(map[string]string{
+		"authorization": "Bearer " + os.Getenv("GENERATOR_GRPC_TOKEN"),
+	})
+
+	return metadata.NewOutgoingContext(context.Background(), md), nil
 }
 
 func (h *GeneratorProxyHandler) getUserID(c *gin.Context) (string, bool) {

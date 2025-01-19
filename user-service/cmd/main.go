@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"log"
 	"net"
 	"os"
@@ -16,6 +19,20 @@ import (
 	"user-service/internal/users/workers"
 	"user-service/pkg/utils"
 )
+
+func tokenAuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, grpc.Errorf(codes.Unauthenticated, "Missing metadata")
+	}
+
+	tokens := md["authorization"]
+	if len(tokens) == 0 || tokens[0] != "Bearer "+os.Getenv("GRPC_TOKEN") {
+		return nil, grpc.Errorf(codes.Unauthenticated, "Invalid token")
+	}
+
+	return handler(ctx, req)
+}
 
 func main() {
 	fmt.Println("User service started!")
@@ -45,7 +62,9 @@ func main() {
 
 	go workers.StartRemoveExpiredTokensWorker(tokenRepo, 24*time.Hour)
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(tokenAuthInterceptor),
+	)
 	authServiceServer := handlers.NewAuthServiceServer(authService)
 	auth.RegisterAuthServiceServer(grpcServer, authServiceServer)
 

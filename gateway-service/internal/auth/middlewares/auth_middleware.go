@@ -1,13 +1,12 @@
 package middlewares
 
 import (
-	"context"
+	"gateway-service/internal/auth/services"
 	"gateway-service/internal/users/grpc/auth"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strings"
-	"time"
 )
 
 type AuthMiddleware struct {
@@ -22,7 +21,6 @@ func NewAuthMiddleware(client auth.AuthServiceClient) *AuthMiddleware {
 
 func (m *AuthMiddleware) ValidateToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Получаем токен из заголовка Authorization
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "missing Authorization header"})
@@ -37,8 +35,7 @@ func (m *AuthMiddleware) ValidateToken() gin.HandlerFunc {
 			return
 		}
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-		defer cancel()
+		ctx := services.GetAuthContextWithToken()
 
 		resp, err := m.authClient.ValidateToken(ctx, &auth.ValidateTokenRequest{
 			Token: token,
