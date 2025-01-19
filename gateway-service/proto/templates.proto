@@ -6,10 +6,25 @@ option go_package = "./internal/templates/grpc;templates";
 
 service TemplateService {
   rpc GetDefaultTemplate(Empty) returns (Template);
+  rpc GetColorScheme(Empty) returns (ColorScheme);
+  rpc GetColorSchemeByName(ColorSchemeByNameRequest) returns (Color);
 }
 
 message Empty {}
 
+message ColorSchemeByNameRequest {
+  string name = 1;
+}
+
 message Template {
   string template = 2;
+}
+
+message ColorScheme {
+  repeated Color colors = 1;
+}
+
+message Color {
+  string title = 1;
+  string accent_color = 2;
 }

@@ -19,7 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TemplateService_GetDefaultTemplate_FullMethodName = "/templates.TemplateService/GetDefaultTemplate"
+	TemplateService_GetDefaultTemplate_FullMethodName   = "/templates.TemplateService/GetDefaultTemplate"
+	TemplateService_GetColorScheme_FullMethodName       = "/templates.TemplateService/GetColorScheme"
+	TemplateService_GetColorSchemeByName_FullMethodName = "/templates.TemplateService/GetColorSchemeByName"
 )
 
 // TemplateServiceClient is the client API for TemplateService service.
@@ -27,6 +29,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TemplateServiceClient interface {
 	GetDefaultTemplate(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Template, error)
+	GetColorScheme(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ColorScheme, error)
+	GetColorSchemeByName(ctx context.Context, in *ColorSchemeByNameRequest, opts ...grpc.CallOption) (*Color, error)
 }
 
 type templateServiceClient struct {
@@ -47,11 +51,33 @@ func (c *templateServiceClient) GetDefaultTemplate(ctx context.Context, in *Empt
 	return out, nil
 }
 
+func (c *templateServiceClient) GetColorScheme(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ColorScheme, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ColorScheme)
+	err := c.cc.Invoke(ctx, TemplateService_GetColorScheme_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *templateServiceClient) GetColorSchemeByName(ctx context.Context, in *ColorSchemeByNameRequest, opts ...grpc.CallOption) (*Color, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Color)
+	err := c.cc.Invoke(ctx, TemplateService_GetColorSchemeByName_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TemplateServiceServer is the server API for TemplateService service.
 // All implementations must embed UnimplementedTemplateServiceServer
 // for forward compatibility.
 type TemplateServiceServer interface {
 	GetDefaultTemplate(context.Context, *Empty) (*Template, error)
+	GetColorScheme(context.Context, *Empty) (*ColorScheme, error)
+	GetColorSchemeByName(context.Context, *ColorSchemeByNameRequest) (*Color, error)
 	mustEmbedUnimplementedTemplateServiceServer()
 }
 
@@ -64,6 +90,12 @@ type UnimplementedTemplateServiceServer struct{}
 
 func (UnimplementedTemplateServiceServer) GetDefaultTemplate(context.Context, *Empty) (*Template, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDefaultTemplate not implemented")
+}
+func (UnimplementedTemplateServiceServer) GetColorScheme(context.Context, *Empty) (*ColorScheme, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetColorScheme not implemented")
+}
+func (UnimplementedTemplateServiceServer) GetColorSchemeByName(context.Context, *ColorSchemeByNameRequest) (*Color, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetColorSchemeByName not implemented")
 }
 func (UnimplementedTemplateServiceServer) mustEmbedUnimplementedTemplateServiceServer() {}
 func (UnimplementedTemplateServiceServer) testEmbeddedByValue()                         {}
@@ -104,6 +136,42 @@ func _TemplateService_GetDefaultTemplate_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TemplateService_GetColorScheme_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).GetColorScheme(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_GetColorScheme_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).GetColorScheme(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TemplateService_GetColorSchemeByName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ColorSchemeByNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).GetColorSchemeByName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_GetColorSchemeByName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).GetColorSchemeByName(ctx, req.(*ColorSchemeByNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TemplateService_ServiceDesc is the grpc.ServiceDesc for TemplateService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +182,14 @@ var TemplateService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDefaultTemplate",
 			Handler:    _TemplateService_GetDefaultTemplate_Handler,
+		},
+		{
+			MethodName: "GetColorScheme",
+			Handler:    _TemplateService_GetColorScheme_Handler,
+		},
+		{
+			MethodName: "GetColorSchemeByName",
+			Handler:    _TemplateService_GetColorSchemeByName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

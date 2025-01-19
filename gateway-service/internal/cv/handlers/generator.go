@@ -83,6 +83,8 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 		return
 	}
 
+	colorName := c.DefaultQuery("color", "blue")
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
@@ -215,10 +217,20 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 		return
 	}
 
+	color, err := h.templatesClient.GetColorSchemeByName(ctx, &templates.ColorSchemeByNameRequest{
+		Name: colorName,
+	})
+
+	accentColor := &color.AccentColor
+	if err != nil {
+		accentColor = nil
+	}
+
 	data, err := msgpack.Marshal(&entities.CvInfo{
 		UserID:   uuid.MustParse(userId.(string)),
 		CvID:     uuid.MustParse(cvId),
 		Template: template.Template,
+		Color:    accentColor,
 		CV: entities.CV{
 			Title: cvMain.Name,
 		},

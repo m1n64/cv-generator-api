@@ -4298,6 +4298,16 @@
           {
             "Authorization": []
           }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "color",
+            "description": "Title of color, optional"
+          }
         ]
       }
     },
@@ -4878,6 +4888,153 @@
           "id": "f2ipin8rq2n6r"
         },
         "description": "Get PDF Link by CV ID and PDF Generation ID",
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/templates/default": {
+      "get": {
+        "summary": "Get Default Template",
+        "tags": [
+          "Templates"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Default-Templates"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "html_template": "<html><head></head><body>BLAH BLAH BLAH</body></html>"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-templates-default",
+        "x-stoplight": {
+          "id": "rwnztirpw8398"
+        },
+        "description": "Get Default HTML template (With template scheme)",
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/templates/colors": {
+      "get": {
+        "summary": "Get Colors",
+        "tags": [
+          "Templates"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/List-of-Colors"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "colors": [
+                        {
+                          "title": "blue",
+                          "accent_color": "#asasas"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-templates-colors",
+        "x-stoplight": {
+          "id": "4eroo51a422kr"
+        },
+        "description": "Get colors",
         "security": [
           {
             "Authorization": []
@@ -5898,6 +6055,115 @@
           "link": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "Default-Templates": {
+        "title": "Default-Templates",
+        "x-stoplight": {
+          "id": "o05r96ng462g8"
+        },
+        "type": "object",
+        "properties": {
+          "html_template": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "v4hqozemm3ec0"
+            }
+          }
+        }
+      },
+      "Color": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "accent_color": {
+            "type": "string"
+          }
+        },
+        "x-examples": {
+          "Example 1": {
+            "title": "black",
+            "accent_color": "#262626"
+          }
+        }
+      },
+      "List-of-Colors": {
+        "type": "object",
+        "x-examples": {
+          "Example 1": {
+            "colors": [
+              {
+                "title": "black",
+                "accent_color": "#262626"
+              },
+              {
+                "title": "blue",
+                "accent_color": "#1976d2"
+              },
+              {
+                "title": "coral",
+                "accent_color": "#FF7F50"
+              },
+              {
+                "title": "cyan",
+                "accent_color": "#00bcd4"
+              },
+              {
+                "title": "green",
+                "accent_color": "#4caf50"
+              },
+              {
+                "title": "magenta",
+                "accent_color": "#FF00FF"
+              },
+              {
+                "title": "maroon",
+                "accent_color": "#800000"
+              },
+              {
+                "title": "navy",
+                "accent_color": "#000080"
+              },
+              {
+                "title": "orange",
+                "accent_color": "#FFA500"
+              },
+              {
+                "title": "purple",
+                "accent_color": "#a100a1"
+              },
+              {
+                "title": "red",
+                "accent_color": "#f44336"
+              },
+              {
+                "title": "salmon",
+                "accent_color": "#FA8072"
+              },
+              {
+                "title": "teal",
+                "accent_color": "#008080"
+              },
+              {
+                "title": "violet",
+                "accent_color": "#4B0082"
+              },
+              {
+                "title": "yellow",
+                "accent_color": "#b0a100"
+              }
+            ]
+          }
+        },
+        "properties": {
+          "colors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Color"
+            }
           }
         }
       }

@@ -17,6 +17,7 @@ import (
 	"gateway-service/internal/system/consumers"
 	handlers2 "gateway-service/internal/system/handlers"
 	middlewares3 "gateway-service/internal/system/middlewares"
+	routes11 "gateway-service/internal/templates/routes"
 	"gateway-service/pkg/container"
 	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
@@ -78,6 +79,7 @@ func main() {
 	routes9.CVExperiencesRoutes(r, authMiddleware, cvMiddleware, grpcConnections.WorkExperiencesClient)
 	routes2.CVGeneratorRoutes(r, authMiddleware, cvMiddleware, grpcConnections)
 	routes10.GeneratorRoutes(r, authMiddleware, cvMiddleware, grpcConnections.GenerationsClient)
+	routes11.TemplatesRoutes(r, authMiddleware, grpcConnections.TemplatesClient)
 
 	r.Run(fmt.Sprintf(":%s", os.Getenv("SERVICE_PORT")))
 	fmt.Println("Gateway service run successfully!")

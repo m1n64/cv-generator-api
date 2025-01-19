@@ -11,7 +11,7 @@
             --background-color: #f5f5f5;
             --text-color: #212121;
             --secondary-text-color: #616161;
-            --accent-color: #1976d2;
+            --accent-color: {{ if .AccentColor }}{{ .AccentColor }}{{ else }}#1976d2{{ end }};
             --divider-color: #c2c2c2;
             --description-color: #424242;
             --left-column-bg: var(--accent-color);
