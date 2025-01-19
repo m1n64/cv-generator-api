@@ -1,11 +1,10 @@
 package handlers
 
 import (
-	"context"
 	"gateway-service/internal/cv/grpc/cv"
+	"gateway-service/internal/cv/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 )
 
 type CVProxyHandler struct {
@@ -34,8 +33,7 @@ func (h *CVProxyHandler) CreateCVHandler(c *gin.Context) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	ctx := services.GetCvContextWithToken()
 
 	userID, exist := c.Get("user_id")
 	if !exist {
@@ -56,8 +54,7 @@ func (h *CVProxyHandler) CreateCVHandler(c *gin.Context) {
 }
 
 func (h *CVProxyHandler) GetCVListHandler(c *gin.Context) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	ctx := services.GetCvContextWithToken()
 
 	userID, exist := c.Get("user_id")
 	if !exist {
@@ -89,8 +86,7 @@ func (h *CVProxyHandler) GetCVListHandler(c *gin.Context) {
 }
 
 func (h *CVProxyHandler) GetCVHandler(c *gin.Context) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	ctx := services.GetCvContextWithToken()
 
 	originalID, exists := c.Get("original_cv_id")
 	if !exists {
@@ -126,8 +122,7 @@ func (h *CVProxyHandler) UpdateCVHandler(c *gin.Context) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	ctx := services.GetCvContextWithToken()
 
 	originalID, exists := c.Get("original_cv_id")
 	if !exists {
@@ -155,8 +150,7 @@ func (h *CVProxyHandler) UpdateCVHandler(c *gin.Context) {
 }
 
 func (h *CVProxyHandler) DeleteCV(c *gin.Context) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	ctx := services.GetCvContextWithToken()
 
 	originalID, exists := c.Get("original_cv_id")
 	if !exists {

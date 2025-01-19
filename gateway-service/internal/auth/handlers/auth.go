@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"context"
+	"gateway-service/internal/auth/services"
 	"gateway-service/internal/users/grpc/auth"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
-	"time"
 )
 
 type UserProxyHandler struct {
@@ -48,8 +48,7 @@ func (h *UserProxyHandler) RegisterHandler(c *gin.Context) {
 		Password: req.Password,
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	ctx := h.getContext()
 
 	resp, err := h.authClient.Register(ctx, grpcReq)
 	if err != nil {
@@ -76,8 +75,7 @@ func (h *UserProxyHandler) LoginHandler(c *gin.Context) {
 		Password: req.Password,
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	ctx := h.getContext()
 
 	resp, err := h.authClient.Login(ctx, grpcReq)
 	if err != nil {
@@ -96,8 +94,7 @@ func (h *UserProxyHandler) UserInfoHandler(c *gin.Context) {
 		Token: token,
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	ctx := h.getContext()
 
 	resp, err := h.authClient.GetUserInfo(ctx, grpcReq)
 	if err != nil {
@@ -121,4 +118,8 @@ func (h *UserProxyHandler) getUserResponse(resp *auth.GetUserInfoResponse) UserR
 		Email:    resp.Email,
 		Username: resp.Username,
 	}
+}
+
+func (h *UserProxyHandler) getContext() context.Context {
+	return services.GetAuthContextWithToken()
 }
