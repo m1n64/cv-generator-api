@@ -10,6 +10,9 @@ General Shared network and main containers
 
 ### How to start
 ```shell
+cp .env.example .env
+```
+```shell
 docker-compose up -d
 ```
 
