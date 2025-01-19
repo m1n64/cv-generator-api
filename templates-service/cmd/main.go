@@ -27,7 +27,7 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 
-	templateServer := handlers.NewTemplateServiceServer(dependencies.DefaultTemplateService, dependencies.MinioClient, dependencies.Logger)
+	templateServer := handlers.NewTemplateServiceServer(dependencies.DefaultTemplateService, dependencies.ColorService, dependencies.MinioClient, dependencies.Logger)
 	templates.RegisterTemplateServiceServer(grpcServer, templateServer)
 
 	healthServer := handlers2.NewHealthServiceServer(dependencies.DB, dependencies.RedisClient)

@@ -59,6 +59,7 @@ func (s *GeneratePdfService) GeneratePDF(cvInfo entities.CvInfo) error {
 		},
 	}).Parse(cvInfo.Template))
 	err := t.Execute(&buf, map[string]interface{}{
+		"AccentColor":     cvInfo.Color,
 		"Information":     cvInfo.Information,
 		"Contacts":        cvInfo.Contacts,
 		"Skills":          cvInfo.Skills,

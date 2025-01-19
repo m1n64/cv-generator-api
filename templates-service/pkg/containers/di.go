@@ -19,7 +19,9 @@ type Dependencies struct {
 	MinioClient            *utils.MinioClient
 	RabbitMQ               *utils.RabbitMQConnection
 	TemplateRepo           repositories.TemplateRepository
+	ColorRepo              repositories.ColorRepository
 	DefaultTemplateService *services.DefaultTemplateService
+	ColorService           *services.ColorService
 }
 
 func InitializeDependencies() (*Dependencies, error) {
@@ -44,9 +46,11 @@ func InitializeDependencies() (*Dependencies, error) {
 
 	// Repositories
 	templateRepo := repositories.NewTemplateGormRepository(db)
+	colorRepo := repositories.NewColorMapRepository()
 
 	// Services
 	defaultTemplateService := services.NewDefaultTemplateService(templateRepo, db)
+	colorService := services.NewColorService(colorRepo)
 
 	if os.Getenv("FIRST_START") == "true" {
 		utils.SeedDB([]utils.Seeder{
@@ -66,7 +70,9 @@ func InitializeDependencies() (*Dependencies, error) {
 		MinioClient:            minioClient,
 		RabbitMQ:               rabbitMQ,
 		TemplateRepo:           templateRepo,
+		ColorRepo:              colorRepo,
 		DefaultTemplateService: defaultTemplateService,
+		ColorService:           colorService,
 	}, nil
 }
 

@@ -59,6 +59,7 @@ type CvInfo struct {
 	UserID          uuid.UUID           `msgpack:"user_id"`
 	CvID            uuid.UUID           `msgpack:"cv_id"`
 	Template        string              `msgpack:"template"`
+	Color           *string             `msgpack:"color"`
 	CV              CV                  `msgpack:"cv"`
 	Information     *CVInformation      `msgpack:"information"`
 	Contacts        []*CVContact        `msgpack:"contacts"`
