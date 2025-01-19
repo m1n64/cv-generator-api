@@ -20,6 +20,7 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 	"go.uber.org/zap"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -88,28 +89,101 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	cvMain, err := h.cvClient.GetCVByID(ctx, &cv.GetCVByIDRequest{
-		CvId: cvId,
-	})
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "cv not found"})
-		return
+	var wg sync.WaitGroup
+	errorsChan := make(chan error, 10)
+
+	var (
+		cvMain         *cv.CVResponse
+		cvInformation  *information.InformationResponse
+		cvContacts     *contacts.AllContactsResponse
+		cvSkills       *skills.AllSkillsResponse
+		cvLanguages    *languages.AllLanguagesResponse
+		cvExperiences  *experiences.AllExperiencesResponse
+		cvEducations   *educations.AllEducationsResponse
+		cvCertificates *certificates.AllCertificatesResponse
+		template       *templates.Template
+		color          *templates.Color
+	)
+
+	runGRPC := func(fn func() error) {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			if err := fn(); err != nil {
+				errorsChan <- err
+			}
+		}()
 	}
 
-	cvInformation, err := h.informationClient.GetInformationByCvID(ctx, &information.GetInformationByCvIDRequest{
-		CvId: cvId,
+	runGRPC(func() error {
+		var err error
+		cvMain, err = h.cvClient.GetCVByID(ctx, &cv.GetCVByIDRequest{CvId: cvId})
+		return err
 	})
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
 
-	cvContacts, err := h.contactsClient.GetContacts(ctx, &contacts.GetContactsRequest{
-		CvId: cvId,
+	runGRPC(func() error {
+		var err error
+		cvInformation, err = h.informationClient.GetInformationByCvID(ctx, &information.GetInformationByCvIDRequest{CvId: cvId})
+		return err
 	})
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+
+	runGRPC(func() error {
+		var err error
+		cvContacts, err = h.contactsClient.GetContacts(ctx, &contacts.GetContactsRequest{CvId: cvId})
+		return err
+	})
+
+	runGRPC(func() error {
+		var err error
+		cvSkills, err = h.skillsClient.GetSkills(ctx, &skills.GetSkillsRequest{CvId: cvId})
+		return err
+	})
+
+	runGRPC(func() error {
+		var err error
+		cvLanguages, err = h.languagesClient.GetLanguages(ctx, &languages.GetLanguagesRequest{CvId: cvId})
+		return err
+	})
+
+	runGRPC(func() error {
+		var err error
+		cvExperiences, err = h.experiencesClient.GetExperiences(ctx, &experiences.GetExperiencesRequest{CvId: cvId})
+		return err
+	})
+
+	runGRPC(func() error {
+		var err error
+		cvEducations, err = h.educationsClient.GetEducations(ctx, &educations.GetEducationsRequest{CvId: cvId})
+		return err
+	})
+
+	runGRPC(func() error {
+		var err error
+		cvCertificates, err = h.certificatesClient.GetCertificates(ctx, &certificates.GetCertificatesRequest{CvId: cvId})
+		return err
+	})
+
+	runGRPC(func() error {
+		var err error
+		template, err = h.templatesClient.GetDefaultTemplate(ctx, &templates.Empty{})
+		return err
+	})
+
+	runGRPC(func() error {
+		var err error
+		color, err = h.templatesClient.GetColorSchemeByName(ctx, &templates.ColorSchemeByNameRequest{Name: colorName})
+		return err
+	})
+
+	wg.Wait()
+
+	close(errorsChan)
+	for err := range errorsChan {
+		if err != nil {
+			h.logger.Error("GRPC error", zap.Error(err))
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch data from services"})
+			return
+		}
 	}
 
 	var contactsInfo []*entities.CVContact
@@ -120,27 +194,11 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 		})
 	}
 
-	cvSkills, err := h.skillsClient.GetSkills(ctx, &skills.GetSkillsRequest{
-		CvId: cvId,
-	})
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
 	var skillsInfo []*entities.CVSkill
 	for _, skill := range cvSkills.Skills {
 		skillsInfo = append(skillsInfo, &entities.CVSkill{
 			Name: skill.Name,
 		})
-	}
-
-	cvLanguages, err := h.languagesClient.GetLanguages(ctx, &languages.GetLanguagesRequest{
-		CvId: cvId,
-	})
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
 	}
 
 	var languagesInfo []*entities.CVLanguage
@@ -149,14 +207,6 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 			Name:  language.Name,
 			Level: language.Level,
 		})
-	}
-
-	cvExperiences, err := h.experiencesClient.GetExperiences(ctx, &experiences.GetExperiencesRequest{
-		CvId: cvId,
-	})
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
 	}
 
 	var experiencesInfo []*entities.CVWorkExperience
@@ -169,14 +219,6 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 			Description: experience.Description,
 			Location:    experience.Location,
 		})
-	}
-
-	cvEducations, err := h.educationsClient.GetEducations(ctx, &educations.GetEducationsRequest{
-		CvId: cvId,
-	})
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
 	}
 
 	var educationsInfo []*entities.CVEducation
@@ -192,14 +234,6 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 		})
 	}
 
-	cvCertificates, err := h.certificatesClient.GetCertificates(ctx, &certificates.GetCertificatesRequest{
-		CvId: cvId,
-	})
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
 	var certificatesInfo []*entities.CVCertificate
 	for _, certificate := range cvCertificates.Certificates {
 		certificatesInfo = append(certificatesInfo, &entities.CVCertificate{
@@ -210,16 +244,6 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 			Description: certificate.Description,
 		})
 	}
-
-	template, err := h.templatesClient.GetDefaultTemplate(ctx, &templates.Empty{})
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	color, err := h.templatesClient.GetColorSchemeByName(ctx, &templates.ColorSchemeByNameRequest{
-		Name: colorName,
-	})
 
 	accentColor := &color.AccentColor
 	if err != nil {
