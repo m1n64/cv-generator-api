@@ -40,6 +40,7 @@ func main() {
 	grpcConnections := container.NewGrpcConnections()
 
 	r := gin.Default()
+	r.Use(middlewares3.CORSMiddleware())
 
 	webSocketManager := utils.NewWebSocketPrivateManager()
 	r.GET("/ws/private", handlers2.WebSocketPrivateHandler(webSocketManager, grpcConnections.AuthClient))
@@ -60,7 +61,6 @@ func main() {
 	r.Static("/ws-docs", "./config/asyncapi/output")
 
 	openApiDoc := r.Group("/documentation")
-	openApiDoc.Use(middlewares3.CORSMiddleware())
 	openApiDoc.GET("/openapi.json", func(c *gin.Context) {
 		c.File("./config/swagger/openapi.json")
 	})
