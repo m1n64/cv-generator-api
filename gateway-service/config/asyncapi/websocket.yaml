@@ -58,12 +58,16 @@ components:
         about 
 
         the status of a task or other important updates.
+
+        You can get a link to the PDF via the “Get generated PDF” endpoint (https://api.resumego.online/docs/#tag/Generated-PDF's/operation/get-generator-cv-cv_id-id)
       contentType: application/json
       payload:
         type: object
         required:
           - type
           - user_id
+          - cv_id
+          - generated_id
           - message
         properties:
           type:
@@ -74,6 +78,16 @@ components:
             type: string
             format: uuid
             description: Unique identifier of the user receiving the message.
+            example: 2f89414f-9e64-434c-908a-66b529d558b9
+          cv_id:
+            type: string
+            format: uuid
+            description: Unique identifier of the user\' CV.
+            example: 2f89414f-9e64-434c-908a-66b529d558b9
+          generated_id:
+            type: string
+            format: uuid
+            description: Unique identifier of the generated PDF.
             example: 2f89414f-9e64-434c-908a-66b529d558b9
           message:
             type: string
@@ -90,6 +104,14 @@ components:
         user_id:
           type: string
           description: UUID of the user.
+          example: 2f89414f-9e64-434c-908a-66b529d558b9
+        cv_id:
+          type: string
+          description: UUID of the CV.
+          example: 2f89414f-9e64-434c-908a-66b529d558b9
+        generated_id:
+          type: string
+          description: UUID of the Generated PDF.
           example: 2f89414f-9e64-434c-908a-66b529d558b9
         message:
           type: string

@@ -11,38 +11,209 @@
     </head>
   
     <body>
-      <div id="root"><section class="aui-root"><div class="container:xl relative md:flex bg-white leading-normal" id=""><div class="burger-menu rounded-full h-16 w-16 bg-white fixed bottom-16 right-8 flex items-center justify-center z-30 cursor-pointer shadow-md bg-teal-500" data-lol="false"><svg viewBox="0 0 100 70" width="40" height="30" class="fill-current text-gray-200"><rect width="100" height="10"></rect><rect y="30" width="100" height="10"></rect><rect y="60" width="100" height="10"></rect></svg></div><div class="hidden sidebar relative w-64 max-h-screen h-full bg-gray-200 shadow z-20"><div class=" block fixed max-h-screen h-full font-sans px-4 pt-8 pb-16 overflow-y-auto bg-gray-200"><div class="sidebar--content"><div><h1 class="text-2xl font-light">Simple CV Generator WebSocket API<!-- --> <!-- -->1.0.0</h1></div><ul class="text-sm mt-10 relative"><li class="mb-3"><a class="text-gray-700 no-underline hover:text-gray-900" href="#introduction">Introduction</a></li><li class="mb-3 mt-9"><a class="text-xs uppercase text-gray-700 mt-10 mb-4 font-thin hover:text-gray-900" href="#servers">Servers</a><ul class="text-sm mt-2"><li><a class="flex no-underline text-gray-700 mb-2 hover:text-gray-900" href="#server-local-private"><span class="break-all inline-block">local-private</span></a></li><li><a class="flex no-underline text-gray-700 mb-2 hover:text-gray-900" href="#server-production-private"><span class="break-all inline-block">production-private</span></a></li></ul></li><li class="mb-3 mt-9"><a class="text-xs uppercase text-gray-700 mt-10 mb-4 font-thin hover:text-gray-900" href="#operations">Operations</a><ul class="text-sm mt-2"><li><a class="flex no-underline text-gray-700 mb-2 hover:text-gray-900" href="#operation-send-private.subscribe"><span class="bg-blue-600 font-bold h-6 no-underline text-white uppercase p-1 mr-2 rounded text-xs" title="SEND">SEND</span><span class="break-all inline-block">private.subscribe</span></a></li></ul></li><li class="mb-3 mt-9"><a class="text-xs uppercase text-gray-700 mt-10 mb-4 font-thin hover:text-gray-900" href="#messages">Messages</a><ul class="text-sm mt-2"><li><a class="flex break-words no-underline text-gray-700 mt-2 hover:text-gray-900" href="#message-undefined"><div class="break-all inline-block">serverMessage</div></a></li></ul></li><li class="mb-3 mt-9"><a class="text-xs uppercase text-gray-700 mt-10 mb-4 font-thin hover:text-gray-900" href="#schemas">Schemas</a><ul class="text-sm mt-2"><li><a class="flex break-words no-underline text-gray-700 mt-2 hover:text-gray-900" href="#schema-serverMessagePayload"><div class="break-all inline-block">serverMessagePayload</div></a></li></ul></li></ul></div></div></div><div class="panel--center relative py-8 flex-1"><div class="relative z-10"><div class="panel-item"><div class="panel-item--center px-8 text-left" id="introduction"><div class="text-4xl">Simple CV Generator WebSocket API<!-- --> <!-- -->1.0.0</div><ul class="flex flex-wrap mt-2 leading-normal"><li class="inline-block mt-2 mr-2"><a href="https://api.resumego.online/docs/" class="border border-solid border-orange-300 hover:bg-orange-300 hover:text-orange-600 text-orange-500 font-bold no-underline text-xs uppercase rounded px-3 py-1" target="_blank" rel="nofollow noopener noreferrer"><span>External Docs</span></a></li></ul><div class="mt-4"><div class="prose max-w-none text-sm"><p>This WebSocket API sends notifications and updates to clients about CV generation tasks. 
+      <div id="root"><section class="aui-root"><div class="container:xl relative md:flex bg-white leading-normal" id=""><div class="burger-menu rounded-full h-16 w-16 bg-white fixed bottom-16 right-8 flex items-center justify-center z-30 cursor-pointer shadow-md bg-teal-500" data-lol="false"><svg viewBox="0 0 100 70" width="40" height="30" class="fill-current text-gray-200"><rect width="100" height="10"></rect><rect y="30" width="100" height="10"></rect><rect y="60" width="100" height="10"></rect></svg></div><div class="hidden sidebar relative w-64 max-h-screen h-full bg-gray-200 shadow z-20"><div class=" block fixed max-h-screen h-full font-sans px-4 pt-8 pb-16 overflow-y-auto bg-gray-200"><div class="sidebar--content"><div><h1 class="text-2xl font-light">Simple CV Generator WebSocket API<!-- --> <!-- -->1.0.0</h1></div><ul class="text-sm mt-10 relative"><li class="mb-3"><a class="text-gray-700 no-underline hover:text-gray-900" href="#introduction">Introduction</a></li><li class="mb-3 mt-9"><a class="text-xs uppercase text-gray-700 mt-10 mb-4 font-thin hover:text-gray-900" href="#servers">Servers</a><ul class="text-sm mt-2"><li><a class="flex no-underline text-gray-700 mb-2 hover:text-gray-900" href="#server-local-private"><span class="break-all inline-block">local-private</span></a></li><li><a class="flex no-underline text-gray-700 mb-2 hover:text-gray-900" href="#server-production-private"><span class="break-all inline-block">production-private</span></a></li></ul></li><li class="mb-3 mt-9"><a class="text-xs uppercase text-gray-700 mt-10 mb-4 font-thin hover:text-gray-900" href="#operations">Operations</a><ul class="text-sm mt-2"><li><a class="flex no-underline text-gray-700 mb-2 hover:text-gray-900" href="#operation-receive-private.subscribe"><span class="bg-green-600 font-bold h-6 no-underline text-white uppercase p-1 mr-2 rounded text-xs" title="RECEIVE">RECEIVE</span><span class="break-all inline-block">private.subscribe</span></a></li></ul></li><li class="mb-3 mt-9"><a class="text-xs uppercase text-gray-700 mt-10 mb-4 font-thin hover:text-gray-900" href="#messages">Messages</a><ul class="text-sm mt-2"><li><a class="flex break-words no-underline text-gray-700 mt-2 hover:text-gray-900" href="#message-undefined"><div class="break-all inline-block">serverMessage</div></a></li></ul></li><li class="mb-3 mt-9"><a class="text-xs uppercase text-gray-700 mt-10 mb-4 font-thin hover:text-gray-900" href="#schemas">Schemas</a><ul class="text-sm mt-2"><li><a class="flex break-words no-underline text-gray-700 mt-2 hover:text-gray-900" href="#schema-serverMessagePayload"><div class="break-all inline-block">serverMessagePayload</div></a></li></ul></li></ul></div></div></div><div class="panel--center relative py-8 flex-1"><div class="relative z-10"><div class="panel-item"><div class="panel-item--center px-8 text-left" id="introduction"><div class="text-4xl">Simple CV Generator WebSocket API<!-- --> <!-- -->1.0.0</div><ul class="flex flex-wrap mt-2 leading-normal"><li class="inline-block mt-2 mr-2"><a href="https://api.resumego.online/docs/" class="border border-solid border-orange-300 hover:bg-orange-300 hover:text-orange-600 text-orange-500 font-bold no-underline text-xs uppercase rounded px-3 py-1" target="_blank" rel="nofollow noopener noreferrer"><span>External Docs</span></a></li></ul><div class="mt-4"><div class="prose max-w-none text-sm"><p>This WebSocket API sends notifications and updates to clients about CV generation tasks. 
 It requires a <code>token</code> parameter for authentication to connect.</p>
 </div></div></div><div class="panel-item--right"></div></div><section id="servers" class="mt-16"><h2 class="2xl:w-7/12 text-3xl font-light mb-4 px-8">Servers</h2><ul><li class="mb-4" id="server-local-private"><div class="panel-item"><div class="panel-item--center px-8"><div class="shadow rounded bg-gray-200 p-4 border bg-gray-100"><div><span class="font-mono text-base">ws://localhost:8000/ws/private?token={token}</span><span class="bg-teal-500 font-bold no-underline text-white uppercase rounded mx-2 px-2 py-1 text-sm">ws</span><span class="bg-blue-500 font-bold no-underline text-white uppercase rounded px-2 py-1 text-sm">local-private</span></div><div class="mt-2"><div class="prose max-w-none text-sm"><p>Local development server for testing WebSocket connections.</p>
 </div></div><div class="mt-2" id="server-local-private-url-variables"><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><button class="focus:outline-none undefined" type="button"><div class="inline-block"><span class="break-anywhere text-sm ">URL Variables</span></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" class="inline-block align-baseline cursor-pointer ml-0.5 -mb-1 w-5 h-5 transform transition-transform duration-150 ease-linear -rotate-90 "><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></button><button type="button" class="ml-1 text-sm text-gray-500">Expand all</button></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">object</div><div class="inline-block"></div></div></div></div><div class="rounded p-4 py-2 border bg-gray-100  block"><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">token</span><div class="text-red-600 text-xs">required</div></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"></div><div><div class="prose max-w-none text-sm"><p>Token for authentication.</p>
 </div></div><div class="text-xs">Default value:<span class="border inline-block text-orange-600 rounded ml-1 py-0 px-2">&quot;your-token&quot;</span></div></div></div></div></div></div></div></div><div id="server-local-private-security"></div><div class="mt-2"></div></div></div><div class="panel-item--right"></div></div></li><li class="mb-4" id="server-production-private"><div class="panel-item"><div class="panel-item--center px-8"><div class="shadow rounded bg-gray-200 p-4 border bg-gray-100"><div><span class="font-mono text-base">wss://api.resumego.online/ws/private?token={token}</span><span class="bg-teal-500 font-bold no-underline text-white uppercase rounded mx-2 px-2 py-1 text-sm">wss</span><span class="bg-blue-500 font-bold no-underline text-white uppercase rounded px-2 py-1 text-sm">production-private</span></div><div class="mt-2"><div class="prose max-w-none text-sm"><p>Production WebSocket server for private notifications.</p>
 </div></div><div class="mt-2" id="server-production-private-url-variables"><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><button class="focus:outline-none undefined" type="button"><div class="inline-block"><span class="break-anywhere text-sm ">URL Variables</span></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" class="inline-block align-baseline cursor-pointer ml-0.5 -mb-1 w-5 h-5 transform transition-transform duration-150 ease-linear -rotate-90 "><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></button><button type="button" class="ml-1 text-sm text-gray-500">Expand all</button></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">object</div><div class="inline-block"></div></div></div></div><div class="rounded p-4 py-2 border bg-gray-100  block"><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">token</span><div class="text-red-600 text-xs">required</div></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"></div><div><div class="prose max-w-none text-sm"><p>Token for authentication.</p>
-</div></div><div class="text-xs">Default value:<span class="border inline-block text-orange-600 rounded ml-1 py-0 px-2">&quot;your-token&quot;</span></div></div></div></div></div></div></div></div><div id="server-production-private-security"></div><div class="mt-2"></div></div></div><div class="panel-item--right"></div></div></li></ul></section><section id="operations" class="mt-16"><h2 class="2xl:w-7/12 text-3xl font-light mb-4 px-8">Operations</h2><ul><li class="mb-12" id="operation-send-private.subscribe"><div><div class="panel-item--center px-8"><div class="mb-4"><h3><span class="font-mono border uppercase p-1 rounded mr-2 border-blue-600 text-blue-500" title="send">SEND</span> <span class="font-mono text-base">private</span></h3></div><div class="mt-2"><div class="prose max-w-none text-sm"><p>Channel for receiving private messages and updates.</p>
+</div></div><div class="text-xs">Default value:<span class="border inline-block text-orange-600 rounded ml-1 py-0 px-2">&quot;your-token&quot;</span></div></div></div></div></div></div></div></div><div id="server-production-private-security"></div><div class="mt-2"></div></div></div><div class="panel-item--right"></div></div></li></ul></section><section id="operations" class="mt-16"><h2 class="2xl:w-7/12 text-3xl font-light mb-4 px-8">Operations</h2><ul><li class="mb-12" id="operation-receive-private.subscribe"><div><div class="panel-item--center px-8"><div class="mb-4"><h3><span class="font-mono border uppercase p-1 rounded mr-2 border-green-600 text-green-600" title="receive">RECEIVE</span> <span class="font-mono text-base">private</span></h3></div><div class="mt-2"><div class="prose max-w-none text-sm"><p>Channel for receiving private messages and updates.</p>
 </div></div><p class="text-gray-600 text-sm mt-2">Listen to server messages.</p><div class="mt-2"><div class="prose max-w-none text-sm"><p>The client subscribes to this channel to receive server-sent notifications, 
 such as success messages and task updates.</p>
-</div></div><div class="border bg-gray-100 rounded px-4 py-2 mt-2"><div class="text-sm text-gray-700">Operation ID<span class="border text-orange-600 rounded text-xs ml-2 py-0 px-2">private.subscribe</span></div></div><div class="mt-2 text-sm"><p>Available only on servers:</p><ul class="flex flex-wrap leading-normal"><li class="inline-block mt-2 mr-2"><a href="#server-local-private" class="border border-solid border-blue-300 hover:bg-blue-300 hover:text-blue-600 text-blue-500 font-bold no-underline text-xs rounded px-3 py-1 cursor-pointer"><span class="underline">local-private</span></a></li><li class="inline-block mt-2 mr-2"><a href="#server-production-private" class="border border-solid border-blue-300 hover:bg-blue-300 hover:text-blue-600 text-blue-500 font-bold no-underline text-xs rounded px-3 py-1 cursor-pointer"><span class="underline">production-private</span></a></li></ul></div><div class="mt-2" id="operation-send-private-security"></div><div class="mt-2"></div><div class="mt-2"></div><div class="mt-2"></div></div><div class="w-full mt-4" id="operation-send-private-message"><div class="mt-2"><p class="px-8">Accepts the following message:</p><div class="mt-2"><div class="panel-item"><div class="panel-item--center px-8"><div class="shadow rounded bg-gray-200 p-4 border"><div><span class="border text-orange-600 rounded text-xs py-0 px-2">subscribe.message</span></div><p class="text-gray-600 text-sm">Server-to-client message.</p><ul class="leading-normal mt-2 mb-4 space-x-2 space-y-2"><li class="inline-block"><a href="https://www.iana.org/assignments/media-types/application/json" class="border border-solid border-orange-300 hover:bg-orange-300 hover:text-orange-600 text-orange-500 font-bold no-underline text-xs uppercase rounded px-3 py-1" target="_blank" rel="nofollow noopener noreferrer"><span>application/json</span></a></li></ul><div class="border bg-gray-100 rounded px-4 py-2 mt-2"><div class="text-sm text-gray-700">Message ID<span class="border text-orange-600 rounded text-xs ml-2 py-0 px-2">subscribe.message</span></div></div><div class="mt-2"><div class="prose max-w-none text-sm"><p>This message is sent from the server to the client, typically to notify about 
-the status of a task or other important updates.</p>
+</div></div><div class="border bg-gray-100 rounded px-4 py-2 mt-2"><div class="text-sm text-gray-700">Operation ID<span class="border text-orange-600 rounded text-xs ml-2 py-0 px-2">private.subscribe</span></div></div><div class="mt-2 text-sm"><p>Available only on servers:</p><ul class="flex flex-wrap leading-normal"><li class="inline-block mt-2 mr-2"><a href="#server-local-private" class="border border-solid border-blue-300 hover:bg-blue-300 hover:text-blue-600 text-blue-500 font-bold no-underline text-xs rounded px-3 py-1 cursor-pointer"><span class="underline">local-private</span></a></li><li class="inline-block mt-2 mr-2"><a href="#server-production-private" class="border border-solid border-blue-300 hover:bg-blue-300 hover:text-blue-600 text-blue-500 font-bold no-underline text-xs rounded px-3 py-1 cursor-pointer"><span class="underline">production-private</span></a></li></ul></div><div class="mt-2" id="operation-receive-private-security"></div><div class="mt-2"></div><div class="mt-2"></div><div class="mt-2"></div></div><div class="w-full mt-4" id="operation-receive-private-message"><div class="mt-2"><p class="px-8">Accepts the following message:</p><div class="mt-2"><div class="panel-item"><div class="panel-item--center px-8"><div class="shadow rounded bg-gray-200 p-4 border"><div><span class="border text-orange-600 rounded text-xs py-0 px-2">subscribe.message</span></div><p class="text-gray-600 text-sm">Server-to-client message.</p><ul class="leading-normal mt-2 mb-4 space-x-2 space-y-2"><li class="inline-block"><a href="https://www.iana.org/assignments/media-types/application/json" class="border border-solid border-orange-300 hover:bg-orange-300 hover:text-orange-600 text-orange-500 font-bold no-underline text-xs uppercase rounded px-3 py-1" target="_blank" rel="nofollow noopener noreferrer"><span>application/json</span></a></li></ul><div class="border bg-gray-100 rounded px-4 py-2 mt-2"><div class="text-sm text-gray-700">Message ID<span class="border text-orange-600 rounded text-xs ml-2 py-0 px-2">subscribe.message</span></div></div><div class="mt-2"><div class="prose max-w-none text-sm"><p>This message is sent from the server to the client, typically to notify about 
+the status of a task or other important updates.
+You can get a link to the PDF via the “Get generated PDF” endpoint (<a href="https://api.resumego.online/docs/#tag/Generated-PDF's/operation/get-generator-cv-cv_id-id">https://api.resumego.online/docs/#tag/Generated-PDF's/operation/get-generator-cv-cv_id-id</a>)</p>
 </div></div><div class="mt-2"><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><button class="focus:outline-none undefined" type="button"><div class="inline-block"><span class="break-anywhere text-sm ">Payload</span></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" class="inline-block align-baseline cursor-pointer ml-0.5 -mb-1 w-5 h-5 transform transition-transform duration-150 ease-linear  "><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></button><button type="button" class="ml-1 text-sm text-gray-500">Expand all</button></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">object</div><div class="inline-block"></div></div></div></div><div class="rounded p-4 py-2 border bg-gray-100  hidden"><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">type</span><div class="text-red-600 text-xs">required</div></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"></div><div><div class="prose max-w-none text-sm"><p>The type of message (e.g., success, error).</p>
 </div></div></div></div></div></div><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">user_id</span><div class="text-red-600 text-xs">required</div></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"><span class="bg-yellow-600 font-bold no-underline text-white rounded lowercase mr-2 p-1 text-xs">format: <!-- -->uuid</span></div><div><div class="prose max-w-none text-sm"><p>Unique identifier of the user receiving the message.</p>
+</div></div></div></div></div></div><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">cv_id</span><div class="text-red-600 text-xs">required</div></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"><span class="bg-yellow-600 font-bold no-underline text-white rounded lowercase mr-2 p-1 text-xs">format: <!-- -->uuid</span></div><div><div class="prose max-w-none text-sm"><p>Unique identifier of the user' CV.</p>
+</div></div></div></div></div></div><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">generated_id</span><div class="text-red-600 text-xs">required</div></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"><span class="bg-yellow-600 font-bold no-underline text-white rounded lowercase mr-2 p-1 text-xs">format: <!-- -->uuid</span></div><div><div class="prose max-w-none text-sm"><p>Unique identifier of the generated PDF.</p>
 </div></div></div></div></div></div><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">message</span><div class="text-red-600 text-xs">required</div></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"></div><div><div class="prose max-w-none text-sm"><p>A descriptive message about the update or event.</p>
 </div></div></div></div></div></div><p class="mt-2 text-xs text-gray-700">Additional properties are allowed.</p></div></div></div></div></div><div class="panel-item--right px-8"><div class="bg-gray-800 px-8 py-4 mt-4 -mx-8 2xl:mx-0 2xl:px-4 2xl:rounded examples"><h4 class="text-white text-lg">Examples</h4><div class="mt-4"><div><button class="focus:outline-none undefined" type="button"><div class="inline-block"><span class="inline-block w-20 py-0.5 mr-1 text-gray-200 text-sm border text-center rounded focus:outline-none">Payload</span></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" class="inline-block align-baseline cursor-pointer ml-0.5 -mb-1 w-5 h-5 transform transition-transform duration-150 ease-linear  fill-current text-gray-200"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></button></div><div class="hidden"><div class="mt-4"><div class="prose max-w-none text-sm"><pre><code class="hljs language-json">{
   <span class="hljs-attr">"type"</span>: <span class="hljs-string">"success"</span>,
   <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"2f89414f-9e64-434c-908a-66b529d558b9"</span>,
+  <span class="hljs-attr">"cv_id"</span>: <span class="hljs-string">"2f89414f-9e64-434c-908a-66b529d558b9"</span>,
+  <span class="hljs-attr">"generated_id"</span>: <span class="hljs-string">"2f89414f-9e64-434c-908a-66b529d558b9"</span>,
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"pdf.generated.success"</span>
 }
 </code></pre>
 </div><h6 class="text-xs font-bold text-gray-600 italic mt-2">This example has been generated automatically.</h6></div></div></div></div></div></div></div></div></div></div></li></ul></section><section id="messages" class="mt-16"><h2 class="2xl:w-7/12 text-3xl font-light mb-4 px-8">Messages</h2><ul><li class="mb-4" id="message-serverMessage"><div class="panel-item"><div class="panel-item--center px-8"><div class="shadow rounded bg-gray-200 p-4 border"><div><span class="text-gray-700 font-bold mr-2">#<!-- -->1</span><span class="border text-orange-600 rounded text-xs py-0 px-2">serverMessage</span></div><p class="text-gray-600 text-sm">Server-to-client message.</p><ul class="leading-normal mt-2 mb-4 space-x-2 space-y-2"><li class="inline-block"><a href="https://www.iana.org/assignments/media-types/application/json" class="border border-solid border-orange-300 hover:bg-orange-300 hover:text-orange-600 text-orange-500 font-bold no-underline text-xs uppercase rounded px-3 py-1" target="_blank" rel="nofollow noopener noreferrer"><span>application/json</span></a></li></ul><div class="border bg-gray-100 rounded px-4 py-2 mt-2"><div class="text-sm text-gray-700">Message ID<span class="border text-orange-600 rounded text-xs ml-2 py-0 px-2">serverMessage</span></div></div><div class="mt-2"><div class="prose max-w-none text-sm"><p>This message is sent from the server to the client, typically to notify about 
-the status of a task or other important updates.</p>
+the status of a task or other important updates.
+You can get a link to the PDF via the “Get generated PDF” endpoint (<a href="https://api.resumego.online/docs/#tag/Generated-PDF's/operation/get-generator-cv-cv_id-id">https://api.resumego.online/docs/#tag/Generated-PDF's/operation/get-generator-cv-cv_id-id</a>)</p>
 </div></div><div class="mt-2" id="message-serverMessage-payload"><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><button class="focus:outline-none undefined" type="button"><div class="inline-block"><span class="break-anywhere text-sm ">Payload</span></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" class="inline-block align-baseline cursor-pointer ml-0.5 -mb-1 w-5 h-5 transform transition-transform duration-150 ease-linear  "><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></button><button type="button" class="ml-1 text-sm text-gray-500">Expand all</button></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">object</div><div class="inline-block"></div></div></div></div><div class="rounded p-4 py-2 border bg-gray-100  hidden"><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">type</span><div class="text-red-600 text-xs">required</div></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"></div><div><div class="prose max-w-none text-sm"><p>The type of message (e.g., success, error).</p>
 </div></div></div></div></div></div><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">user_id</span><div class="text-red-600 text-xs">required</div></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"><span class="bg-yellow-600 font-bold no-underline text-white rounded lowercase mr-2 p-1 text-xs">format: <!-- -->uuid</span></div><div><div class="prose max-w-none text-sm"><p>Unique identifier of the user receiving the message.</p>
+</div></div></div></div></div></div><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">cv_id</span><div class="text-red-600 text-xs">required</div></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"><span class="bg-yellow-600 font-bold no-underline text-white rounded lowercase mr-2 p-1 text-xs">format: <!-- -->uuid</span></div><div><div class="prose max-w-none text-sm"><p>Unique identifier of the user' CV.</p>
+</div></div></div></div></div></div><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">generated_id</span><div class="text-red-600 text-xs">required</div></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"><span class="bg-yellow-600 font-bold no-underline text-white rounded lowercase mr-2 p-1 text-xs">format: <!-- -->uuid</span></div><div><div class="prose max-w-none text-sm"><p>Unique identifier of the generated PDF.</p>
 </div></div></div></div></div></div><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">message</span><div class="text-red-600 text-xs">required</div></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"></div><div><div class="prose max-w-none text-sm"><p>A descriptive message about the update or event.</p>
 </div></div></div></div></div></div><p class="mt-2 text-xs text-gray-700">Additional properties are allowed.</p></div></div></div></div></div></div></li></ul></section><section id="schemas" class="mt-16"><h2 class="2xl:w-7/12 text-3xl font-light mb-4 px-8">Schemas</h2><ul><li class="mb-4" id="schema-serverMessagePayload"><div><div class="panel-item--center px-8"><div class="shadow rounded px-4 py-2 border bg-gray-200"><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><button class="focus:outline-none undefined" type="button"><div class="inline-block"><span class="break-anywhere text-sm ">serverMessagePayload</span></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" class="inline-block align-baseline cursor-pointer ml-0.5 -mb-1 w-5 h-5 transform transition-transform duration-150 ease-linear  "><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></button><button type="button" class="ml-1 text-sm text-gray-500">Expand all</button></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">object</div><div class="inline-block"></div></div></div></div><div class="rounded p-4 py-2 border bg-gray-100  hidden"><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">type</span></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"></div><div><div class="prose max-w-none text-sm"><p>Message type (e.g., success, error).</p>
 </div></div></div></div></div></div><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">user_id</span></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"></div><div><div class="prose max-w-none text-sm"><p>UUID of the user.</p>
+</div></div></div></div></div></div><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">cv_id</span></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"></div><div><div class="prose max-w-none text-sm"><p>UUID of the CV.</p>
+</div></div></div></div></div></div><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">generated_id</span></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"></div><div><div class="prose max-w-none text-sm"><p>UUID of the Generated PDF.</p>
 </div></div></div></div></div></div><div><div class="flex py-2"><div class="min-w-1/4 mr-2"><span class="break-anywhere text-sm italic">message</span></div><div><div><div class="capitalize text-sm text-teal-500 font-bold inline-block mr-2">string</div><div class="inline-block"></div><div><div class="prose max-w-none text-sm"><p>Detailed message about the server event.</p>
 </div></div></div></div></div></div><p class="mt-2 text-xs text-gray-700">Additional properties are allowed.</p></div></div></div></div><div class="w-full mt-4"></div></div></li></ul></section></div><div class="panel--right absolute top-0 right-0 h-full bg-gray-800"></div></div></div></section></div>
   
       <script src="js/asyncapi-ui.min.js" type="application/javascript"></script>
   
-      <script type="application/javascript" src="js/app.js"></script>
+      <script>
+        const schema = {
+  "asyncapi": "3.0.0",
+  "info": {
+    "title": "Simple CV Generator WebSocket API",
+    "version": "1.0.0",
+    "description": "This WebSocket API sends notifications and updates to clients about CV generation tasks. \nIt requires a `token` parameter for authentication to connect.\n",
+    "externalDocs": {
+      "url": "https://api.resumego.online/docs/",
+      "description": "Full API documentation"
+    }
+  },
+  "servers": {
+    "local-private": {
+      "host": "localhost:8000",
+      "pathname": "/ws/private?token={token}",
+      "protocol": "ws",
+      "description": "Local development server for testing WebSocket connections.",
+      "variables": {
+        "token": {
+          "description": "Token for authentication.",
+          "default": "your-token"
+        }
+      }
+    },
+    "production-private": {
+      "host": "api.resumego.online",
+      "pathname": "/ws/private?token={token}",
+      "protocol": "wss",
+      "description": "Production WebSocket server for private notifications.",
+      "variables": {
+        "token": {
+          "description": "Token for authentication.",
+          "default": "your-token"
+        }
+      }
+    }
+  },
+  "channels": {
+    "private": {
+      "address": "private",
+      "messages": {
+        "subscribe.message": {
+          "summary": "Server-to-client message.",
+          "description": "This message is sent from the server to the client, typically to notify about \nthe status of a task or other important updates.\nYou can get a link to the PDF via the “Get generated PDF” endpoint (https://api.resumego.online/docs/#tag/Generated-PDF's/operation/get-generator-cv-cv_id-id)\n",
+          "contentType": "application/json",
+          "payload": {
+            "type": "object",
+            "required": [
+              "type",
+              "user_id",
+              "cv_id",
+              "generated_id",
+              "message"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "The type of message (e.g., success, error).",
+                "example": "success",
+                "x-parser-schema-id": "<anonymous-schema-2>"
+              },
+              "user_id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Unique identifier of the user receiving the message.",
+                "example": "2f89414f-9e64-434c-908a-66b529d558b9",
+                "x-parser-schema-id": "<anonymous-schema-3>"
+              },
+              "cv_id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Unique identifier of the user\\' CV.",
+                "example": "2f89414f-9e64-434c-908a-66b529d558b9",
+                "x-parser-schema-id": "<anonymous-schema-4>"
+              },
+              "generated_id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Unique identifier of the generated PDF.",
+                "example": "2f89414f-9e64-434c-908a-66b529d558b9",
+                "x-parser-schema-id": "<anonymous-schema-5>"
+              },
+              "message": {
+                "type": "string",
+                "description": "A descriptive message about the update or event.",
+                "example": "pdf.generated.success",
+                "x-parser-schema-id": "<anonymous-schema-6>"
+              }
+            },
+            "x-parser-schema-id": "<anonymous-schema-1>"
+          },
+          "x-parser-unique-object-id": "subscribe.message",
+          "x-parser-message-name": "serverMessage"
+        }
+      },
+      "description": "Channel for receiving private messages and updates.",
+      "x-parser-unique-object-id": "private"
+    }
+  },
+  "operations": {
+    "private.subscribe": {
+      "action": "receive",
+      "channel": "$ref:$.channels.private",
+      "summary": "Listen to server messages.",
+      "description": "The client subscribes to this channel to receive server-sent notifications, \nsuch as success messages and task updates.\n",
+      "messages": [
+        "$ref:$.channels.private.messages.subscribe.message"
+      ],
+      "x-parser-unique-object-id": "private.subscribe"
+    }
+  },
+  "components": {
+    "messages": {
+      "serverMessage": "$ref:$.channels.private.messages.subscribe.message"
+    },
+    "schemas": {
+      "serverMessagePayload": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Message type (e.g., success, error).",
+            "example": "success",
+            "x-parser-schema-id": "<anonymous-schema-7>"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "UUID of the user.",
+            "example": "2f89414f-9e64-434c-908a-66b529d558b9",
+            "x-parser-schema-id": "<anonymous-schema-8>"
+          },
+          "cv_id": {
+            "type": "string",
+            "description": "UUID of the CV.",
+            "example": "2f89414f-9e64-434c-908a-66b529d558b9",
+            "x-parser-schema-id": "<anonymous-schema-9>"
+          },
+          "generated_id": {
+            "type": "string",
+            "description": "UUID of the Generated PDF.",
+            "example": "2f89414f-9e64-434c-908a-66b529d558b9",
+            "x-parser-schema-id": "<anonymous-schema-10>"
+          },
+          "message": {
+            "type": "string",
+            "description": "Detailed message about the server event.",
+            "example": "pdf.generated.success",
+            "x-parser-schema-id": "<anonymous-schema-11>"
+          }
+        },
+        "x-parser-schema-id": "serverMessagePayload"
+      }
+    }
+  },
+  "x-parser-spec-parsed": true,
+  "x-parser-api-version": 3,
+  "x-parser-spec-stringified": true
+};
+        const config = {"show":{"sidebar":true},"sidebar":{"showOperations":"byDefault"}};
+        AsyncApiStandalone.hydrate({ schema, config }, document.getElementById("root"));
+      </script>
     </body>
   </html>

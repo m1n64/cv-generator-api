@@ -22,21 +22,25 @@ func NewNotificationService(rabbitmq *utils.RabbitMQConnection, logger *zap.Logg
 	}
 }
 
-func (s *NotificationService) SendSuccess(userID uuid.UUID, message string) {
+func (s *NotificationService) SendSuccess(userID uuid.UUID, cvID uuid.UUID, generatedID uuid.UUID, message string) {
 	event := entities.NotificationEvent{
-		Type:    enums.TypeSuccess,
-		UserID:  userID.String(),
-		Message: message,
+		Type:        enums.TypeSuccess,
+		UserID:      userID.String(),
+		CvID:        cvID.String(),
+		GeneratedID: generatedID.String(),
+		Message:     message,
 	}
 
 	s.sendEvent(event)
 }
 
-func (s *NotificationService) SendError(userID uuid.UUID, err error) {
+func (s *NotificationService) SendError(userID uuid.UUID, cvID uuid.UUID, generatedID uuid.UUID, err error) {
 	event := entities.NotificationEvent{
-		Type:    enums.TypeError,
-		UserID:  userID.String(),
-		Message: err.Error(),
+		Type:        enums.TypeError,
+		UserID:      userID.String(),
+		CvID:        cvID.String(),
+		GeneratedID: generatedID.String(),
+		Message:     err.Error(),
 	}
 
 	s.sendEvent(event)

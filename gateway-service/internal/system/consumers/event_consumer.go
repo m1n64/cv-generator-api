@@ -1,6 +1,8 @@
 package consumers
 
 import (
+	"context"
+	"gateway-service/internal/cv/grpc/cv"
 	"gateway-service/internal/system/entities"
 	"gateway-service/internal/system/enums"
 	"gateway-service/pkg/utils"
@@ -12,12 +14,14 @@ import (
 type eventConsumer struct {
 	logger           *zap.Logger
 	webSocketManager *utils.WebSocketPrivateManager
+	cvClient         cv.CVServiceClient
 }
 
-func NewEventConsumer(logger *zap.Logger, webSocketManager *utils.WebSocketPrivateManager) utils.Consumer {
+func NewEventConsumer(logger *zap.Logger, webSocketManager *utils.WebSocketPrivateManager, cvClient cv.CVServiceClient) utils.Consumer {
 	return &eventConsumer{
 		logger:           logger,
 		webSocketManager: webSocketManager,
+		cvClient:         cvClient,
 	}
 }
 
@@ -38,6 +42,12 @@ func (c *eventConsumer) Handle(msg amqp.Delivery) {
 		message = utils.Translate("pdf.generated.error")
 	}
 
+	cvResp, err := c.cvClient.GetCVByID(context.Background(), &cv.GetCVByIDRequest{CvId: notification.CvID})
+	if err != nil {
+		c.logger.Error("Error getting cv", zap.Error(err))
+	}
+
+	notification.CvID = cvResp.ExternalId
 	notification.Message = utils.Translate(message)
 
 	c.webSocketManager.BroadcastToUser(notification.UserID, notification)

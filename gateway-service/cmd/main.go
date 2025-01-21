@@ -46,7 +46,7 @@ func main() {
 	r.GET("/ws/private", handlers2.WebSocketPrivateHandler(webSocketManager, grpcConnections.AuthClient))
 
 	go func() {
-		err := utils.ListenToQueue(utils.GatewayEventsQueue, consumers.NewEventConsumer(logger, webSocketManager).Handle)
+		err := utils.ListenToQueue(utils.GatewayEventsQueue, consumers.NewEventConsumer(logger, webSocketManager, grpcConnections.CVClient).Handle)
 		if err != nil {
 			logger.Error("Error listening to queue", zap.Error(err))
 		}

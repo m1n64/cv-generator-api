@@ -111,7 +111,7 @@ func (s *GeneratePdfService) GeneratePDF(cvInfo entities.CvInfo) error {
 				return err
 			}
 
-			s.notificationService.SendSuccess(cvInfo.UserID, "")
+			s.notificationService.SendSuccess(cvInfo.UserID, cvInfo.CvID, generated.ID, "")
 
 			return nil
 		}),
@@ -122,7 +122,7 @@ func (s *GeneratePdfService) GeneratePDF(cvInfo entities.CvInfo) error {
 			return err
 		}
 
-		s.notificationService.SendError(cvInfo.UserID, err)
+		s.notificationService.SendError(cvInfo.UserID, cvInfo.CvID, generated.ID, err)
 
 		return fmt.Errorf("chromedp execution failed: %w", err)
 	}
