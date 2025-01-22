@@ -61,3 +61,6 @@ cd ../gateway-service
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 ```
 and all the services will be started. (yep, in future i will add k8s support, because I know that this is a "crutch" solution).
+
+### Schema of relations
+![CV Generator API App Diagram (Current)](https://github.com/user-attachments/assets/829217c2-d087-47f9-af56-1bd181fd0e65)
