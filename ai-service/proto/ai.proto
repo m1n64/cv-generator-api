@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package ai;
+
+option go_package = "./internal/ai/grpc;ai";
+
+service AiService {
+  rpc Generate(GenerateRequest) returns (GenerateResponse);
+  rpc StreamGenerate(GenerateRequest) returns (stream GenerateResponse);
+  rpc GetServices(GetServicesRequest) returns (GetServicesResponse);
+}
+
+message GetServicesRequest {
+}
+
+message GetServicesResponse {
+  repeated Services services = 1;
+}
+
+message Services {
+  string service_id = 1;
+  string service_name = 2;
+}
+
+message GenerateRequest {
+  string prompt = 1;
+  string service_id = 2;
+}
+
+message GenerateResponse {
+  string response = 1;
+}
