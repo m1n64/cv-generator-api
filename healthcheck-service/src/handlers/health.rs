@@ -28,6 +28,7 @@ pub async fn check_health(
     info_client: HealthServiceClient<Channel>,
     generator_client: HealthServiceClient<Channel>,
     templates_client: HealthServiceClient<Channel>,
+    ai_client: HealthServiceClient<Channel>
 ) -> Result<impl Reply, Rejection> {
     let mut results = Vec::new();
 
@@ -75,6 +76,7 @@ pub async fn check_health(
         ("CV Information Service", info_client),
         ("CV Generator Service", generator_client),
         ("Templates Service", templates_client),
+        ("AI Service", ai_client),
     ];
 
     for (name, client) in services {

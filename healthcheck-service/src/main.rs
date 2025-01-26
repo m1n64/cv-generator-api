@@ -23,12 +23,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config = config::Config::from_env();
     let port = env::var("SERVICE_PORT").unwrap_or_else(|_| "3030".to_string());
 
-    let (user_client, cv_client, info_client, generator_client, templates_client) = join!(
+    let (user_client, cv_client, info_client, generator_client, templates_client, ai_client) = join!(
         create_grpc_client(&config.auth_service_host, &config.auth_service_port),
         create_grpc_client(&config.cv_service_host, &config.cv_service_port),
         create_grpc_client(&config.information_service_host, &config.information_service_port),
         create_grpc_client(&config.generator_service_host, &config.generator_service_port),
         create_grpc_client(&config.templates_service_host, &config.templates_service_port),
+        create_grpc_client(&config.ai_service_host, &config.ai_service_port)
     );
 
     let user_client = user_client?;
@@ -36,6 +37,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let info_client = info_client?;
     let generator_client = generator_client?;
     let templates_client = templates_client?;
+    let ai_client = ai_client?;
 
     let index_route = warp::path::end()
         .and(warp::get())
@@ -51,6 +53,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .and(warp::any().map(move || info_client.clone()))
         .and(warp::any().map(move || generator_client.clone()))
         .and(warp::any().map(move || templates_client.clone()))
+        .and(warp::any().map(move || ai_client.clone()))
         .and_then(handlers::health::check_health);
 
     let routes = index_route.or(check_route);

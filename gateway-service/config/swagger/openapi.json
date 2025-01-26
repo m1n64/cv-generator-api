@@ -5041,6 +5041,545 @@
           }
         ]
       }
+    },
+    "/ai/generate/information": {
+      "post": {
+        "summary": "AI Generate Biography",
+        "tags": [
+          "AI"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AI-Response"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "response": "**Certificate**  \nSuccessfully completed the \"Разработка веб-приложений на Go\" course on Stepik, gaining in-depth knowledge and practical skills in building web applications using the Go programming language. Mastered key concepts such as HTTP server development, routing, middleware implementation, and database integration. Leveraged tools like Go modules, Gin framework, and PostgreSQL to create efficient and scalable web applications. Demonstrated ability to write clean, maintainable code and implement RESTful APIs. This certification highlights my commitment to continuous learning and expertise in backend development, enabling me to deliver high-performance solutions for modern web applications."
+                    }
+                  }
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/AI-Response"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "response": "**Ce"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "post-ai-generate-information",
+        "x-stoplight": {
+          "id": "lwx7kyi37knzg"
+        },
+        "description": "Generate Biography in Information by AI",
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AI-Request"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "prompt": "степик, курс по разработке веб приложений на го ланге (на русском языке)",
+                    "stream": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/generate/certificates": {
+      "post": {
+        "summary": "AI Generate Certificate Description",
+        "tags": [
+          "AI"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AI-Response"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "response": "**Certificate**  \nSuccessfully completed the \"Разработка веб-приложений на Go\" course on Stepik, gaining in-depth knowledge and practical skills in building web applications using the Go programming language. Mastered key concepts such as HTTP server development, routing, middleware implementation, and database integration. Leveraged tools like Go modules, Gin framework, and PostgreSQL to create efficient and scalable web applications. Demonstrated ability to write clean, maintainable code and implement RESTful APIs. This certification highlights my commitment to continuous learning and expertise in backend development, enabling me to deliver high-performance solutions for modern web applications."
+                    }
+                  }
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/AI-Response"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "response": "**Ce"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "post-ai-generate-certificate",
+        "description": "Generate Certificate Description in Information by AI",
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AI-Request"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "prompt": "степик, курс по разработке веб приложений на го ланге (на русском языке)",
+                    "stream": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "614hlylhoxjwo"
+        }
+      },
+      "parameters": []
+    },
+    "/ai/generate/educations": {
+      "post": {
+        "summary": "AI Generate Education Description",
+        "tags": [
+          "AI"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AI-Response"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "response": "**Certificate**  \nSuccessfully completed the \"Разработка веб-приложений на Go\" course on Stepik, gaining in-depth knowledge and practical skills in building web applications using the Go programming language. Mastered key concepts such as HTTP server development, routing, middleware implementation, and database integration. Leveraged tools like Go modules, Gin framework, and PostgreSQL to create efficient and scalable web applications. Demonstrated ability to write clean, maintainable code and implement RESTful APIs. This certification highlights my commitment to continuous learning and expertise in backend development, enabling me to deliver high-performance solutions for modern web applications."
+                    }
+                  }
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/AI-Response"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "response": "**Ce"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "post-ai-generate-education",
+        "description": "Generate Education Description in Information by AI",
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AI-Request"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "prompt": "степик, курс по разработке веб приложений на го ланге (на русском языке)",
+                    "stream": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "iu327os3mgs37"
+        }
+      },
+      "parameters": []
+    },
+    "/ai/generate/experiences": {
+      "post": {
+        "summary": "AI Generate Work Experience Description",
+        "tags": [
+          "AI"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AI-Response"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "response": "**Certificate**  \nSuccessfully completed the \"Разработка веб-приложений на Go\" course on Stepik, gaining in-depth knowledge and practical skills in building web applications using the Go programming language. Mastered key concepts such as HTTP server development, routing, middleware implementation, and database integration. Leveraged tools like Go modules, Gin framework, and PostgreSQL to create efficient and scalable web applications. Demonstrated ability to write clean, maintainable code and implement RESTful APIs. This certification highlights my commitment to continuous learning and expertise in backend development, enabling me to deliver high-performance solutions for modern web applications."
+                    }
+                  }
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/AI-Response"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "response": "**Ce"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "post-ai-generate-experience",
+        "description": "Generate Work Experience Description in Information by AI",
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AI-Request"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "prompt": "степик, курс по разработке веб приложений на го ланге (на русском языке)",
+                    "stream": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "35os6c3wvme6e"
+        }
+      },
+      "parameters": []
     }
   },
   "components": {
@@ -6164,6 +6703,40 @@
             "items": {
               "$ref": "#/components/schemas/Color"
             }
+          }
+        }
+      },
+      "AI-Request": {
+        "type": "object",
+        "x-examples": {
+          "Example 1": {
+            "prompt": "оптимизировал SQL запросы, написал инфраструктурный модуль для создания РЕСТ АПИ, сделал ещё сервис для калькуляции кратчайших маршрутов от точки до полигона на Go и OSRM",
+            "stream": false
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string"
+          },
+          "stream": {
+            "type": "boolean",
+            "description": "Stream (text/event-stream) or classic response (application/json). Default - false"
+          }
+        }
+      },
+      "AI-Response": {
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "string"
+          }
+        },
+        "x-examples": {
+          "Example 1": {
+            "response": "**Education**  \n**Bachelor of Computer Science**  \n*[University Name], [Graduation Date]*  \n- Graduated with a degree in Computer Science, specializing in backend development and software engineering.  \n- Completed a capstone project: **Web Application (Backend)**, where I designed and implemented a scalable backend system using [specific tools/technologies, e.g., Python, Django, Flask, Node.js, etc.].  \n- Developed RESTful APIs, optimized database queries, and integrated third-party services to enhance functionality.  \n- Achieved [specific accomplishments, e.g., reduced API response time by X%, improved server efficiency by Y%, or successfully handled Z concurrent users].  \n- Gained hands-on experience with tools such as [list tools, e.g., Docker, Git, PostgreSQL, AWS, etc.] and methodologies like Agile development.  \n- The project improved [specific impact, e.g., user experience, system performance, or business processes] and showcased my ability to deliver robust, high-quality solutions.  \n- Strengthened skills in problem-solving, collaboration, and technical documentation.  \n\n*Relevant Coursework:* Data Structures, Algorithms, Database Management, Software Engineering, Web Development, Cloud Computing."
           }
         }
       }

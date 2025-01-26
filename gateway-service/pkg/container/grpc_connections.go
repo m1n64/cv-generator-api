@@ -2,6 +2,8 @@ package container
 
 import (
 	"fmt"
+	ai "gateway-service/internal/ai/grpc"
+	services6 "gateway-service/internal/ai/services"
 	"gateway-service/internal/auth/services"
 	"gateway-service/internal/cv/grpc/cv"
 	services2 "gateway-service/internal/cv/services"
@@ -32,6 +34,7 @@ type GrpcConnections struct {
 	WorkExperiencesClient experiences.ExperiencesServiceClient
 	TemplatesClient       templates.TemplateServiceClient
 	GenerationsClient     generator.GeneratorServiceClient
+	AiClient              ai.AiServiceClient
 }
 
 func NewGrpcConnections() *GrpcConnections {
@@ -42,6 +45,7 @@ func NewGrpcConnections() *GrpcConnections {
 	informationConn := services3.GetInformationConnection()
 	templatesConn := services4.GetTemplatesConnection()
 	generatorConn := services5.GetGeneratorConnection()
+	aiConn := services6.GetAIConnection()
 
 	return &GrpcConnections{
 		AuthClient:            auth.NewAuthServiceClient(authConn),
@@ -55,5 +59,6 @@ func NewGrpcConnections() *GrpcConnections {
 		WorkExperiencesClient: experiences.NewExperiencesServiceClient(informationConn),
 		TemplatesClient:       templates.NewTemplateServiceClient(templatesConn),
 		GenerationsClient:     generator.NewGeneratorServiceClient(generatorConn),
+		AiClient:              ai.NewAiServiceClient(aiConn),
 	}
 }

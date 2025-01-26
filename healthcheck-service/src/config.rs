@@ -15,7 +15,9 @@ pub struct Config {
     pub generator_service_host: String,
     pub generator_service_port: String,
     pub templates_service_host: String,
-    pub templates_service_port: String
+    pub templates_service_port: String,
+    pub ai_service_host: String,
+    pub ai_service_port: String
 }
 
 impl Config {
@@ -44,6 +46,9 @@ impl Config {
         let templates_service_host = env::var("TEMPLATES_SERVICE_HOST").unwrap_or_else(|_| "localhost".to_string());
         let templates_service_port = env::var("TEMPLATES_SERVICE_PORT").unwrap_or_else(|_| "50051".to_string());
 
+        let ai_service_host = env::var("AI_SERVICE_HOST").unwrap_or_else(|_| "localhost".to_string());
+        let ai_service_port = env::var("AI_SERVICE_PORT").unwrap_or_else(|_| "50051".to_string());
+
         Config {
             gateway_url,
             rabbitmq_url,
@@ -59,7 +64,9 @@ impl Config {
             generator_service_host,
             generator_service_port,
             templates_service_host,
-            templates_service_port
+            templates_service_port,
+            ai_service_host,
+            ai_service_port
         }
     }
 }

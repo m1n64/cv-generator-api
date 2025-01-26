@@ -44,7 +44,7 @@
 </div>
 
 <script>
-    function healthCheck(){return{loading:!0,error:null,data:null,fetchData(){fetch("/check").then(t=>{if(!t.ok)throw Error(`HTTP error! status: ${t.status}`);return t.json()}).then(t=>{this.data=t,this.loading=!1}).catch(t=>{this.error=t.message,this.loading=!1})},formatTimestamp(t){if(!t)return"N/A";let e=new Date(t),a=new Date,r=`${Math.floor((a-e)/1e3)} s`,n=String(e.getDate()).padStart(2,"0"),o=String(e.getMonth()+1).padStart(2,"0"),s=e.getFullYear(),h=String(e.getHours()).padStart(2,"0"),i=String(e.getMinutes()).padStart(2,"0"),l=String(e.getSeconds()).padStart(2,"0");return`${n}.${o}.${s} ${h}:${i}:${l} (${r * -1})`}}}
+    function healthCheck(){return{loading:!0,error:null,data:null,fetchData(){fetch("/check").then(t=>{if(!t.ok)throw Error(`HTTP error! status: ${t.status}`);return t.json()}).then(t=>{this.data=t,this.loading=!1}).catch(t=>{this.error=t.message,this.loading=!1})},formatTimestamp(t){if(!t)return"N/A";let e=new Date(t),a=new Date,r=`${Math.floor((a-e)/1e3)} s`,n=String(e.getDate()).padStart(2,"0"),o=String(e.getMonth()+1).padStart(2,"0"),s=e.getFullYear(),h=String(e.getHours()).padStart(2,"0"),i=String(e.getMinutes()).padStart(2,"0"),l=String(e.getSeconds()).padStart(2,"0");return`${n}.${o}.${s} ${h}:${i}:${l} (${r})`}}}
 </script>
 </body>
 </html>

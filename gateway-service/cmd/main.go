@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	routes12 "gateway-service/internal/ai/routes"
 	"gateway-service/internal/auth/middlewares"
 	"gateway-service/internal/auth/routes"
 	middlewares2 "gateway-service/internal/cv/middlewares"
@@ -80,6 +81,7 @@ func main() {
 	routes2.CVGeneratorRoutes(r, authMiddleware, cvMiddleware, grpcConnections)
 	routes10.GeneratorRoutes(r, authMiddleware, cvMiddleware, grpcConnections.GenerationsClient)
 	routes11.TemplatesRoutes(r, authMiddleware, grpcConnections.TemplatesClient)
+	routes12.AIRoutes(r, authMiddleware, grpcConnections.AiClient)
 
 	r.Run(fmt.Sprintf(":%s", os.Getenv("SERVICE_PORT")))
 	fmt.Println("Gateway service run successfully!")
