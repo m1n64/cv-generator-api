@@ -65,4 +65,4 @@ and all the services will be started. (yep, in future i will add k8s support, be
 
 ### Schema of relations
 
-![CV Generator API App Diagram (Current) (1)](https://github.com/user-attachments/assets/e1050c30-4441-41aa-aa49-3234b2bffe9c)
+![CV Generator API App Diagram (Current) (2)](https://github.com/user-attachments/assets/f71f74d3-c723-4054-a461-00addaf8c764)
