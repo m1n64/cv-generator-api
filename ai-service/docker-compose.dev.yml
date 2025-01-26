@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  cvai-backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: dev
+    container_name: cv-ai-backend
+    volumes:
+      - ./:/app:cached
+    command: air
+    ports:
+      - "5870:5864"
+      - "${SERVICE_PORT:-8000}:${SERVICE_PORT:-8000}"
+    networks:
+      - cv-generator-network

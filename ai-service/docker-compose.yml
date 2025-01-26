@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  cvai-db:
+    image: postgres:latest
+    container_name: cv-ai-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - cv-generator-network
+
+  cvai-redis:
+    container_name: cv-ai-redis
+    hostname: redis
+    image: redis:latest
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - cv-generator-network
+
+  cvai-backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: prod
+    container_name: cv-ai-backend
+    ports:
+      - "${SERVICE_PORT:-8000}:${SERVICE_PORT:-8000}"
+    volumes:
+      - ./:/app:cached
+    depends_on:
+      - cvai-db
+      - cvai-redis
+    environment:
+      REDIS_ADDRESS: cvai-redis:${REDIS_PORT:-6379}
+      DB_HOST: cvai-db
+      DB_PORT: ${POSTGRES_PORT:-5432}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASS: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+      GIN_MODE: "release"
+    restart: unless-stopped
+    networks:
+      - cv-generator-network
+
+volumes:
+  db_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  cv-generator-network:
+    external: true

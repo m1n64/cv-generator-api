@@ -1,5 +1,5 @@
 # Variables
-SERVICES = shared-network user-service cv-service information-service templates-service generator-service gateway-service healthcheck-service
+SERVICES = shared-network user-service cv-service information-service templates-service generator-service ai-service gateway-service healthcheck-service
 SHARED_NETWORK_DELAY = 15
 
 .PHONY: help
