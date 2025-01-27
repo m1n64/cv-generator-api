@@ -92,6 +92,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AuthResponse"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                      "expires_at": "2024-12-31T23:59:59Z",
+                      "ws_token": "F5GU66SMN42TGTZYJJSWKODE..."
+                    }
+                  }
                 }
               }
             },
@@ -129,7 +138,8 @@
         "description": "Register new user.",
         "x-stoplight": {
           "id": "fn79uqi5vjpt9"
-        }
+        },
+        "operationId": "user-register"
       }
     },
     "/auth/login": {
@@ -153,6 +163,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AuthResponse"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                      "expires_at": "2024-12-31T23:59:59Z",
+                      "ws_token": "F5GU66SMN42TGTZYJJSWKODE..."
+                    }
+                  }
                 }
               }
             },
@@ -214,7 +233,104 @@
         "description": "Login user.",
         "x-stoplight": {
           "id": "1a40qvusvdvi6"
-        }
+        },
+        "operationId": "user-login"
+      }
+    },
+    "/auth/logout": {
+      "delete": {
+        "summary": "Logout",
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "x-stoplight": {
+                        "id": "v2rlnq9j88iw9"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "success": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "error": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "delete-auth-logout",
+        "x-stoplight": {
+          "id": "f5s359n25g9nx"
+        },
+        "description": "Logout user",
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
       }
     },
     "/user/info": {
@@ -229,6 +345,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "uuid",
+                      "username": "John Doe",
+                      "email": "john.doe@example.com"
+                    }
+                  }
                 }
               }
             },
@@ -254,7 +379,8 @@
           {
             "Authorization": []
           }
-        ]
+        ],
+        "operationId": "user-info"
       }
     },
     "/cv": {
@@ -5631,6 +5757,9 @@
       },
       "AuthResponse": {
         "type": "object",
+        "x-stoplight": {
+          "id": "l2mmvmn924j7x"
+        },
         "properties": {
           "token": {
             "type": "string",
@@ -5639,10 +5768,14 @@
           "expires_at": {
             "type": "string",
             "example": "2024-12-31T23:59:59Z"
+          },
+          "ws_token": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "6ra6p5g5ia1jc"
+            },
+            "example": "F5GU66SMN42TGTZYJJSWKODE..."
           }
-        },
-        "x-stoplight": {
-          "id": "l2mmvmn924j7x"
         }
       },
       "User": {

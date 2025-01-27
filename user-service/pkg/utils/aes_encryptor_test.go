@@ -7,7 +7,7 @@ import (
 )
 
 func TestAESEncryptor_Encrypt(t *testing.T) {
-	os.Setenv("LARAVEL_APP_KEY", "base64:Y3qM+TZfAf7Be41uqOeGwhwTRrLAkSYW7nsVlBYa3XA=")
+	os.Setenv("APP_SECRET_KEY", "base64:Y3qM+TZfAf7Be41uqOeGwhwTRrLAkSYW7nsVlBYa3XA=")
 
 	encryptor := NewAESEncryptor()
 
@@ -33,7 +33,7 @@ func TestAESEncryptor_Encrypt(t *testing.T) {
 }
 
 func TestAESEncryptor_Decrypt(t *testing.T) {
-	os.Setenv("LARAVEL_APP_KEY", "base64:Y3qM+TZfAf7Be41uqOeGwhwTRrLAkSYW7nsVlBYa3XA=")
+	os.Setenv("APP_SECRET_KEY", "base64:Y3qM+TZfAf7Be41uqOeGwhwTRrLAkSYW7nsVlBYa3XA=")
 
 	encryptor := NewAESEncryptor()
 

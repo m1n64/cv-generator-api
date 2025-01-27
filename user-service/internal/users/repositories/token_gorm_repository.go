@@ -22,6 +22,10 @@ func (r *tokenGormRepository) DeleteTokenByID(id string) error {
 	return r.db.Delete(&models.Token{}, "id = ?", id).Error
 }
 
+func (r *tokenGormRepository) DeleteTokenByUserID(userID string) error {
+	return r.db.Delete(&models.Token{}, "user_id = ?", userID).Error
+}
+
 func (r *tokenGormRepository) DeleteTokenByValue(token string) error {
 	return r.db.Delete(&models.Token{}, "token = ?", token).Error
 }

@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"context"
+	"encoding/base32"
 	"gateway-service/internal/users/grpc/auth"
+	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
@@ -10,11 +12,13 @@ import (
 )
 
 type UserProxyHandler struct {
-	authClient auth.AuthServiceClient
+	authClient   auth.AuthServiceClient
+	aesEncryptor *utils.AESEncryptor
 }
 
 type AuthResponse struct {
 	Token     string `json:"token"`
+	WsToken   string `json:"ws_token"`
 	ExpiresAt string `json:"expires_at"`
 }
 
@@ -24,9 +28,10 @@ type UserResponse struct {
 	Username string `json:"username"`
 }
 
-func NewUserProxy(client auth.AuthServiceClient) *UserProxyHandler {
+func NewUserProxy(client auth.AuthServiceClient, aesEncryptor *utils.AESEncryptor) *UserProxyHandler {
 	return &UserProxyHandler{
-		authClient: client,
+		authClient:   client,
+		aesEncryptor: aesEncryptor,
 	}
 }
 
@@ -89,8 +94,7 @@ func (h *UserProxyHandler) LoginHandler(c *gin.Context) {
 }
 
 func (h *UserProxyHandler) UserInfoHandler(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	token := strings.TrimPrefix(authHeader, "Bearer ")
+	token := h.getToken(c)
 
 	grpcReq := &auth.GetUserInfoRequest{
 		Token: token,
@@ -108,9 +112,43 @@ func (h *UserProxyHandler) UserInfoHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, h.getUserResponse(resp))
 }
 
+func (h *UserProxyHandler) LogoutHandler(c *gin.Context) {
+	token := h.getToken(c)
+
+	request := &auth.ValidateTokenRequest{
+		Token: token,
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	resp, err := h.authClient.Logout(ctx, request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": resp.Valid,
+	})
+}
+
+func (h *UserProxyHandler) getToken(c *gin.Context) string {
+	authHeader := c.GetHeader("Authorization")
+	return strings.TrimPrefix(authHeader, "Bearer ")
+}
+
 func (h *UserProxyHandler) getAuthResponse(resp *auth.TokenResponse) AuthResponse {
+	key := h.aesEncryptor.GetKey()
+	iv, _ := h.aesEncryptor.GenerateIV()
+
+	wsToken, _ := h.aesEncryptor.Encrypt(resp.Token, key, iv)
+
+	safeWsToken := base32.StdEncoding.EncodeToString([]byte(wsToken))
+
 	return AuthResponse{
 		Token:     resp.Token,
+		WsToken:   safeWsToken,
 		ExpiresAt: resp.ExpiresAt,
 	}
 }
