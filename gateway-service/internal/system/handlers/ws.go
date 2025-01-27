@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"context"
+	"encoding/base32"
 	"gateway-service/internal/users/grpc/auth"
 	"gateway-service/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -15,11 +17,27 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func WebSocketPrivateHandler(manager *utils.WebSocketPrivateManager, authClient auth.AuthServiceClient) gin.HandlerFunc {
+func WebSocketPrivateHandler(manager *utils.WebSocketPrivateManager, authClient auth.AuthServiceClient, aesEncryptor *utils.AESEncryptor) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.Query("token")
-		if token == "" {
+		encryptedToken := c.Query("token")
+		if encryptedToken == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "token is required"})
+			return
+		}
+
+		urlDecodedToken, err := base32.StdEncoding.DecodeString(encryptedToken)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		key := aesEncryptor.GetKey()
+		iv, encodedString := aesEncryptor.GetIVAndCipher(string(urlDecodedToken))
+
+		token, err := aesEncryptor.Decrypt(encodedString, key, iv)
+		if err != nil {
+			utils.GetLogger().Error("Error decrypting token", zap.Error(err))
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 

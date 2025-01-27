@@ -95,3 +95,20 @@ func (s *AuthServiceServer) GetUserInfo(ctx context.Context, req *auth.GetUserIn
 		Email:    user.Email,
 	}, nil
 }
+
+func (s *AuthServiceServer) Logout(ctx context.Context, req *auth.ValidateTokenRequest) (*auth.ValidateTokenResponse, error) {
+	if req.Token == "" {
+		return nil, status.Error(codes.InvalidArgument, "token is required")
+	}
+
+	err := s.authService.Logout(req.Token)
+	if err != nil {
+		utils.GetLogger().Info(fmt.Sprintf("Error logging out user: %v", err))
+		return nil, err
+	}
+
+	return &auth.ValidateTokenResponse{
+		UserId: "",
+		Valid:  true,
+	}, nil
+}

@@ -4,57 +4,43 @@ package auth;
 
 option go_package = "./internal/users/grpc/auth;auth";
 
-// AuthService содержит методы для работы с авторизацией
 service AuthService {
-  // Метод для регистрации
   rpc Register(RegisterRequest) returns (TokenResponse);
-
-  // Метод для логина
   rpc Login(LoginRequest) returns (TokenResponse);
-
-  // Метод для валидации токена
   rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
-
-  // Метод для получения информации о пользователе по токену
   rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
+  rpc Logout(ValidateTokenRequest) returns (ValidateTokenResponse);
 }
 
-// Запрос на регистрацию
 message RegisterRequest {
   string username = 1;
   string email = 2;
   string password = 3;
 }
 
-// Запрос на логин
 message LoginRequest {
   string email = 1;
   string password = 2;
 }
 
-// Ответ на логин
 message TokenResponse {
   string token = 1;
   string expires_at = 2;
 }
 
-// Запрос на валидацию токена
 message ValidateTokenRequest {
   string token = 1;
 }
 
-// Ответ на валидацию токена
 message ValidateTokenResponse {
   string user_id = 1;
   bool valid = 2;
 }
 
-// Запрос на получение информации о пользователе
 message GetUserInfoRequest {
   string token = 1;
 }
 
-// Ответ с информацией о пользователе
 message GetUserInfoResponse {
   string user_id = 1;
   string username = 2;

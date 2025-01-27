@@ -6,12 +6,10 @@ option go_package = "./internal/users/grpc/auth;auth";
 
 service AuthService {
   rpc Register(RegisterRequest) returns (TokenResponse);
-
   rpc Login(LoginRequest) returns (TokenResponse);
-
   rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
-
   rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
+  rpc Logout(ValidateTokenRequest) returns (ValidateTokenResponse);
 }
 
 message RegisterRequest {

@@ -18,7 +18,7 @@ servers:
     description: Local development server for testing WebSocket connections.
     variables:
       token:
-        description: Token for authentication.
+        description: Token for authentication. ("ws_token" from Login/Register response)
         default: your-token
   production-private:
     host: api.resumego.online
@@ -27,7 +27,7 @@ servers:
     description: Production WebSocket server for private notifications.
     variables:
       token:
-        description: Token for authentication.
+        description: Token for authentication. ("ws_token" from Login/Register response)
         default: your-token
 channels:
   private:

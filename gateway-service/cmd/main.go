@@ -37,6 +37,7 @@ func main() {
 	utils.InitializeQueues()
 
 	logger := utils.GetLogger()
+	aesEncryptor := utils.NewAESEncryptor()
 
 	grpcConnections := container.NewGrpcConnections()
 
@@ -44,7 +45,7 @@ func main() {
 	r.Use(middlewares3.CORSMiddleware())
 
 	webSocketManager := utils.NewWebSocketPrivateManager()
-	r.GET("/ws/private", handlers2.WebSocketPrivateHandler(webSocketManager, grpcConnections.AuthClient))
+	r.GET("/ws/private", handlers2.WebSocketPrivateHandler(webSocketManager, grpcConnections.AuthClient, aesEncryptor))
 
 	go func() {
 		err := utils.ListenToQueue(utils.GatewayEventsQueue, consumers.NewEventConsumer(logger, webSocketManager, grpcConnections.CVClient).Handle)
@@ -69,7 +70,7 @@ func main() {
 		c.HTML(http.StatusOK, "./config/asyncapi/output/index.html", nil)
 	})
 
-	routes.AuthRoutes(r, authMiddleware, grpcConnections.AuthClient)
+	routes.AuthRoutes(r, authMiddleware, grpcConnections.AuthClient, aesEncryptor)
 	routes2.CVRoutes(r, authMiddleware, cvMiddleware, grpcConnections.CVClient)
 	routes3.CVInfoRoutes(r, authMiddleware, cvMiddleware, grpcConnections.MainInfoClient)
 	routes4.CVLanguagesRoutes(r, authMiddleware, cvMiddleware, grpcConnections.LanguagesClient)
