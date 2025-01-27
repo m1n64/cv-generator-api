@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Templates service started!")
+	fmt.Println("AI service started!")
 
 	dependencies, _ := containers.InitializeDependencies()
 	go containers.InitializeQueuesConsumer(dependencies)

@@ -19,6 +19,7 @@ type Dependencies struct {
 	RabbitMQ            *utils.RabbitMQConnection
 	DeepSeek            *deepseek.Client
 	AiServiceRepository repositories.AiServicesRepository
+	ConfigManager       *services.ConfigManager
 	AiService           *services.AiService
 }
 
@@ -44,8 +45,13 @@ func InitializeDependencies() (*Dependencies, error) {
 	aiServiceRepository := repositories.NewAiServicesMapRepository()
 
 	// Services
+	configManager, err := services.NewConfigManager("config/ai_config.json", logger)
+	if err != nil {
+		logger.Fatal("error creating config manager", zap.Error(err))
+	}
+
 	deepSeek := deepseek.NewClient(os.Getenv("DEEPSEEK_TOKEN"))
-	aiService := services.NewAiService(aiServiceRepository, deepSeek)
+	aiService := services.NewAiService(aiServiceRepository, deepSeek, configManager)
 
 	// Dependencies
 	return &Dependencies{
@@ -56,6 +62,7 @@ func InitializeDependencies() (*Dependencies, error) {
 		RabbitMQ:            rabbitMQ,
 		DeepSeek:            deepSeek,
 		AiServiceRepository: aiServiceRepository,
+		ConfigManager:       configManager,
 		AiService:           aiService,
 	}, nil
 }

@@ -1,0 +1,6 @@
+{
+  "base_prompt": "Generate a professional and structured description for the 'description' field in the '%s' section of a resume.\n\nFocus on accomplishments, the use of technologies, and the impact of the candidate's work.\\n\\n**Requirements for the text:**\\n1. Highlight achievements, tools, methodologies, and results to emphasize the candidate's contributions.\n2. Use keywords and phrases to ensure compatibility with ATS filters (e.g., mention relevant technologies and methodologies).\n3. Deliver the output in the same language as the input request.",
+  "temperature": 1.35,
+  "top_p": 1,
+  "frequency_penalty": 1.5
+}

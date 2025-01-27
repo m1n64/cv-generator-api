@@ -13,17 +13,17 @@ import (
 	"time"
 )
 
-const Temperature = 1.35
-
 type AiService struct {
 	aiServiceRepository repositories.AiServicesRepository
 	deepSeek            *deepseek.Client
+	configManager       *ConfigManager
 }
 
-func NewAiService(aiServiceRepository repositories.AiServicesRepository, deepSeek *deepseek.Client) *AiService {
+func NewAiService(aiServiceRepository repositories.AiServicesRepository, deepSeek *deepseek.Client, configManager *ConfigManager) *AiService {
 	return &AiService{
 		aiServiceRepository: aiServiceRepository,
 		deepSeek:            deepSeek,
+		configManager:       configManager,
 	}
 }
 
@@ -45,9 +45,11 @@ func (s *AiService) GenerateDescription(prompt string, serviceId string) (string
 
 	go func() {
 		completion, err := s.deepSeek.CreateChatCompletion(ctx, &deepseek.ChatCompletionRequest{
-			Model:       deepseek.DeepSeekChat,
-			Messages:    s.getDeepSeekMessages(prompt, service),
-			Temperature: Temperature,
+			Model:            deepseek.DeepSeekChat,
+			Messages:         s.getDeepSeekMessages(prompt, service),
+			Temperature:      s.configManager.GetConfig().Temperature,
+			TopP:             s.configManager.GetConfig().TopP,
+			FrequencyPenalty: s.configManager.GetConfig().FrequencyPenalty,
 		})
 		if err != nil {
 			errorChan <- err
@@ -75,10 +77,12 @@ func (s *AiService) StreamGenerateDescription(prompt string, serviceId string, s
 	ctx := context.Background()
 
 	deepSeekStream, err := s.deepSeek.CreateChatCompletionStream(ctx, &deepseek.StreamChatCompletionRequest{
-		Model:       deepseek.DeepSeekChat,
-		Messages:    s.getDeepSeekMessages(prompt, service),
-		Stream:      true,
-		Temperature: Temperature,
+		Model:            deepseek.DeepSeekChat,
+		Messages:         s.getDeepSeekMessages(prompt, service),
+		Stream:           true,
+		Temperature:      s.configManager.GetConfig().Temperature,
+		TopP:             s.configManager.GetConfig().TopP,
+		FrequencyPenalty: s.configManager.GetConfig().FrequencyPenalty,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create stream with DeepSeek: %w", err)
@@ -114,7 +118,7 @@ func (s *AiService) getServiceName(serviceId string) (string, error) {
 
 func (s *AiService) getDeepSeekMessages(prompt string, service string) []deepseek.ChatCompletionMessage {
 	return []deepseek.ChatCompletionMessage{
-		{Role: constants.ChatMessageRoleSystem, Content: fmt.Sprintf("Generate description for the '%s' section of a resume. Focus on accomplishments, tools, and impact.", service)},
+		{Role: constants.ChatMessageRoleSystem, Content: fmt.Sprintf(s.configManager.GetConfig().BasePrompt, service)},
 		{Role: constants.ChatMessageRoleUser, Content: prompt},
 	}
 }
