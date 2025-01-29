@@ -14,11 +14,11 @@ func CVEducationsRoutes(r *gin.Engine, authMiddleware *middlewares.AuthMiddlewar
 	educationsGroup := r.Group("/information/educations/:cv_id")
 	educationsGroup.Use(authMiddleware.ValidateToken())
 	educationsGroup.Use(cvMiddleware.GetCVOriginalID())
-	educationsGroup.GET("/", educationHandler.GetEducations)
-	educationsGroup.POST("/", educationHandler.CreateEducation)
+	educationsGroup.GET("", educationHandler.GetEducations)
+	educationsGroup.POST("", educationHandler.CreateEducation)
 
 	educationIdGroup := educationsGroup.Group("/:id")
-	educationIdGroup.GET("/", educationHandler.GetEducation)
-	educationIdGroup.POST("/", educationHandler.UpdateEducation)
-	educationIdGroup.DELETE("/", educationHandler.DeleteEducation)
+	educationIdGroup.GET("", educationHandler.GetEducation)
+	educationIdGroup.POST("", educationHandler.UpdateEducation)
+	educationIdGroup.DELETE("", educationHandler.DeleteEducation)
 }

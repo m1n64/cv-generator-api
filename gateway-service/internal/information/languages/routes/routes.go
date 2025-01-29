@@ -14,11 +14,11 @@ func CVLanguagesRoutes(r *gin.Engine, authMiddleware *middlewares.AuthMiddleware
 	languagesGroup := r.Group("/information/languages/:cv_id")
 	languagesGroup.Use(authMiddleware.ValidateToken())
 	languagesGroup.Use(cvMiddleware.GetCVOriginalID())
-	languagesGroup.GET("/", languageHandler.GetLanguages)
-	languagesGroup.POST("/", languageHandler.CreateLanguage)
+	languagesGroup.GET("", languageHandler.GetLanguages)
+	languagesGroup.POST("", languageHandler.CreateLanguage)
 
 	languagesIDGroup := languagesGroup.Group("/:id")
-	languagesIDGroup.GET("/", languageHandler.GetLanguage)
-	languagesIDGroup.POST("/", languageHandler.UpdateLanguage)
-	languagesIDGroup.DELETE("/", languageHandler.DeleteLanguage)
+	languagesIDGroup.GET("", languageHandler.GetLanguage)
+	languagesIDGroup.POST("", languageHandler.UpdateLanguage)
+	languagesIDGroup.DELETE("", languageHandler.DeleteLanguage)
 }

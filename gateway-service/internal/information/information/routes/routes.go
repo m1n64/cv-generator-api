@@ -14,7 +14,7 @@ func CVInfoRoutes(r *gin.Engine, authMiddleware *middlewares.AuthMiddleware, cvM
 	informationGroup := r.Group("/information/main/:cv_id")
 	informationGroup.Use(authMiddleware.ValidateToken())
 	informationGroup.Use(cvMiddleware.GetCVOriginalID())
-	informationGroup.GET("/", cvInfoHandler.GetCVInformation)
-	informationGroup.POST("/", cvInfoHandler.CreateOrUpdateCVInformation)
-	informationGroup.DELETE("/", cvInfoHandler.DeleteCVInformation)
+	informationGroup.GET("", cvInfoHandler.GetCVInformation)
+	informationGroup.POST("", cvInfoHandler.CreateOrUpdateCVInformation)
+	informationGroup.DELETE("", cvInfoHandler.DeleteCVInformation)
 }

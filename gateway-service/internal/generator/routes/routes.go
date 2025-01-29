@@ -13,14 +13,14 @@ func GeneratorRoutes(r *gin.Engine, authMiddleware *middlewares.AuthMiddleware, 
 
 	generatorGroup := r.Group("/generator/cv")
 	generatorGroup.Use(authMiddleware.ValidateToken())
-	generatorGroup.GET("/", generatorHandler.GetAllGeneratedPdfs)
+	generatorGroup.GET("", generatorHandler.GetAllGeneratedPdfs)
 
 	generatorWithIDMiddleware := generatorGroup.Group("/:cv_id")
 	generatorWithIDMiddleware.Use(cvMiddleware.GetCVOriginalID())
-	generatorWithIDMiddleware.GET("/", generatorHandler.GetGeneratedPdfByCV)
+	generatorWithIDMiddleware.GET("", generatorHandler.GetGeneratedPdfByCV)
 
 	generatorWithGenID := generatorWithIDMiddleware.Group("/:id")
-	generatorWithGenID.GET("/", generatorHandler.GeneratePdf)
-	generatorWithGenID.DELETE("/", generatorHandler.DeleteGeneratedPdf)
+	generatorWithGenID.GET("", generatorHandler.GeneratePdf)
+	generatorWithGenID.DELETE("", generatorHandler.DeleteGeneratedPdf)
 	generatorWithGenID.GET("/link", generatorHandler.DownloadGeneratedPdf)
 }

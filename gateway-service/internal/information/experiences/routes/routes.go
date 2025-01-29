@@ -14,11 +14,11 @@ func CVExperiencesRoutes(r *gin.Engine, authMiddleware *middlewares.AuthMiddlewa
 	experienceGroup := r.Group("/information/experiences/:cv_id")
 	experienceGroup.Use(authMiddleware.ValidateToken())
 	experienceGroup.Use(cvMiddleware.GetCVOriginalID())
-	experienceGroup.GET("/", experienceHandler.GetExperiences)
-	experienceGroup.POST("/", experienceHandler.CreateExperience)
+	experienceGroup.GET("", experienceHandler.GetExperiences)
+	experienceGroup.POST("", experienceHandler.CreateExperience)
 
 	experienceIdGroup := experienceGroup.Group("/:id")
-	experienceIdGroup.GET("/", experienceHandler.GetExperience)
-	experienceIdGroup.POST("/", experienceHandler.UpdateExperience)
-	experienceIdGroup.DELETE("/", experienceHandler.DeleteExperience)
+	experienceIdGroup.GET("", experienceHandler.GetExperience)
+	experienceIdGroup.POST("", experienceHandler.UpdateExperience)
+	experienceIdGroup.DELETE("", experienceHandler.DeleteExperience)
 }

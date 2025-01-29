@@ -15,11 +15,11 @@ func CVCertificatesRoutes(r *gin.Engine, authMiddleware *middlewares.AuthMiddlew
 
 	certsGroup.Use(authMiddleware.ValidateToken())
 	certsGroup.Use(cvMiddleware.GetCVOriginalID())
-	certsGroup.GET("/", certsHandler.GetCertificates)
-	certsGroup.POST("/", certsHandler.CreateCertificate)
+	certsGroup.GET("", certsHandler.GetCertificates)
+	certsGroup.POST("", certsHandler.CreateCertificate)
 
 	certsIdGroup := certsGroup.Group("/:id")
-	certsIdGroup.GET("/", certsHandler.GetCertificate)
-	certsIdGroup.POST("/", certsHandler.UpdateCertificate)
-	certsIdGroup.DELETE("/", certsHandler.DeleteCertificate)
+	certsIdGroup.GET("", certsHandler.GetCertificate)
+	certsIdGroup.POST("", certsHandler.UpdateCertificate)
+	certsIdGroup.DELETE("", certsHandler.DeleteCertificate)
 }

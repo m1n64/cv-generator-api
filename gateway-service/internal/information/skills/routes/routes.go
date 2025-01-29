@@ -14,11 +14,11 @@ func CVSkillsRoutes(r *gin.Engine, authMiddleware *middlewares.AuthMiddleware, c
 	skillGroup := r.Group("/information/skills/:cv_id")
 	skillGroup.Use(authMiddleware.ValidateToken())
 	skillGroup.Use(cvMiddleware.GetCVOriginalID())
-	skillGroup.GET("/", skillHandler.GetSkills)
-	skillGroup.POST("/", skillHandler.CreateSkill)
+	skillGroup.GET("", skillHandler.GetSkills)
+	skillGroup.POST("", skillHandler.CreateSkill)
 
 	skillIDGroup := skillGroup.Group("/:id")
-	skillIDGroup.GET("/", skillHandler.GetSkill)
-	skillIDGroup.POST("/", skillHandler.UpdateSkill)
-	skillIDGroup.DELETE("/", skillHandler.DeleteSkill)
+	skillIDGroup.GET("", skillHandler.GetSkill)
+	skillIDGroup.POST("", skillHandler.UpdateSkill)
+	skillIDGroup.DELETE("", skillHandler.DeleteSkill)
 }
