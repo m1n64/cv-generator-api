@@ -15,14 +15,14 @@ func CVRoutes(r *gin.Engine, authMiddleware *middlewares2.AuthMiddleware, cvMidd
 
 	cvGroup := r.Group("/cv")
 	cvGroup.Use(authMiddleware.ValidateToken())
-	cvGroup.POST("/", cvHandler.CreateCVHandler)
-	cvGroup.GET("/", cvHandler.GetCVListHandler)
+	cvGroup.POST("", cvHandler.CreateCVHandler)
+	cvGroup.GET("", cvHandler.GetCVListHandler)
 
 	cvWithIDMiddleware := cvGroup.Group("/:cv_id")
 	cvWithIDMiddleware.Use(cvMiddleware.GetCVOriginalID())
-	cvWithIDMiddleware.GET("/", cvHandler.GetCVHandler)
-	cvWithIDMiddleware.POST("/", cvHandler.UpdateCVHandler)
-	cvWithIDMiddleware.DELETE("/", cvHandler.DeleteCV)
+	cvWithIDMiddleware.GET("", cvHandler.GetCVHandler)
+	cvWithIDMiddleware.POST("", cvHandler.UpdateCVHandler)
+	cvWithIDMiddleware.DELETE("", cvHandler.DeleteCV)
 }
 
 func CVGeneratorRoutes(r *gin.Engine, authMiddleware *middlewares2.AuthMiddleware, cvMiddleware *middlewares.CVMiddleware, grpcClients *container.GrpcConnections) {
@@ -43,5 +43,5 @@ func CVGeneratorRoutes(r *gin.Engine, authMiddleware *middlewares2.AuthMiddlewar
 	cvGeneratorGroup := r.Group("/cv/generate/:cv_id")
 	cvGeneratorGroup.Use(authMiddleware.ValidateToken())
 	cvGeneratorGroup.Use(cvMiddleware.GetCVOriginalID())
-	cvGeneratorGroup.POST("/", cvGeneratorHandler.GenerateCV)
+	cvGeneratorGroup.POST("", cvGeneratorHandler.GenerateCV)
 }
