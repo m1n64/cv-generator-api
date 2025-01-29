@@ -42,6 +42,8 @@ func main() {
 	grpcConnections := container.NewGrpcConnections()
 
 	r := gin.Default()
+	r.RedirectTrailingSlash = false
+	r.RemoveExtraSlash = true
 	//r.Use(middlewares3.CORSMiddleware())
 
 	webSocketManager := utils.NewWebSocketPrivateManager()
