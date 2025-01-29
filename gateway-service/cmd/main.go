@@ -17,7 +17,7 @@ import (
 	routes5 "gateway-service/internal/information/skills/routes"
 	"gateway-service/internal/system/consumers"
 	handlers2 "gateway-service/internal/system/handlers"
-	middlewares3 "gateway-service/internal/system/middlewares"
+	//middlewares3 "gateway-service/internal/system/middlewares"
 	routes11 "gateway-service/internal/templates/routes"
 	"gateway-service/pkg/container"
 	"gateway-service/pkg/utils"
@@ -42,7 +42,7 @@ func main() {
 	grpcConnections := container.NewGrpcConnections()
 
 	r := gin.Default()
-	r.Use(middlewares3.CORSMiddleware())
+	//r.Use(middlewares3.CORSMiddleware())
 
 	webSocketManager := utils.NewWebSocketPrivateManager()
 	r.GET("/ws/private", handlers2.WebSocketPrivateHandler(webSocketManager, grpcConnections.AuthClient, aesEncryptor))
