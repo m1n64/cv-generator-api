@@ -172,7 +172,7 @@ func (s *AuthService) GetUserInfo(token string) (*models.User, error) {
 
 func (s *AuthService) Logout(token string) error {
 	return s.db.Transaction(func(tx *gorm.DB) error {
-		userID, isValid, err := s.ValidateToken(token)
+		_, isValid, err := s.ValidateToken(token)
 		if err != nil {
 			return err
 		}
@@ -181,6 +181,6 @@ func (s *AuthService) Logout(token string) error {
 			return status.Error(codes.Unauthenticated, "token is invalid")
 		}
 
-		return s.tokenRepo.DeleteTokenByUserID(*userID)
+		return s.tokenRepo.DeleteTokenByValue(token)
 	})
 }
