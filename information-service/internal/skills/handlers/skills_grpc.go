@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -90,6 +91,7 @@ func (s *SkillServiceServer) DeleteSkillByID(ctx context.Context, request *skill
 	}
 
 	err := s.skillService.DeleteSkill(uuid.MustParse(request.Id), uuid.MustParse(request.CvId))
+	fmt.Println(err, request)
 	if err != nil {
 		s.logger.Error("error deleting skill", zap.Error(err))
 		return nil, err

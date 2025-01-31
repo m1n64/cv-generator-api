@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	services2 "gateway-service/internal/cv/services"
 	skills "gateway-service/internal/information/skills/grpc"
 	"github.com/gin-gonic/gin"
@@ -170,6 +171,7 @@ func (h *SkillsProxyHandler) DeleteSkill(c *gin.Context) {
 		CvId: cvID,
 		Id:   skillID,
 	})
+	fmt.Println(response, err)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
