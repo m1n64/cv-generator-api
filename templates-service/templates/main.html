@@ -301,7 +301,7 @@
             <h3>{{ .Information.Position }}</h3>
             {{ end }}
             {{ if .Information.Biography }}
-            <p>{{ .Information.Biography }}</p>
+            <p>{{ renderMd .Information.Biography }}</p>
             {{ end }}
         </div>
 
@@ -317,7 +317,7 @@
                     </div>
                     <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}Present{{ end }}</p>
                     <p>{{ .Location }}</p>
-                    <p>{{ .Description }}</p>
+                    <p>{{ renderMd .Description }}</p>
                 </li>
                 {{ end }}
             </ul>
@@ -340,7 +340,7 @@
                         <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}Present{{ end }}</p>
                     </div>
                     {{ if .Description }}
-                    <p class="edu-description">{{ .Description }}</p>
+                    <p class="edu-description">{{ renderMd .Description }}</p>
                     {{ end }}
                 </li>
                 {{ end }}
@@ -360,7 +360,7 @@
                         <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}Present{{ end }}</p>
                     </div>
                     {{ if .Description }}
-                    <p class="edu-description">{{ .Description }}</p>
+                    <p class="edu-description">{{ renderMd .Description }}</p>
                     {{ end }}
                 </li>
                 {{ end }}

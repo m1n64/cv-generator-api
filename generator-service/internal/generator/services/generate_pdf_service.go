@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
+	"github.com/gomarkdown/markdown"
 	"html/template"
 	"net/url"
 	"os"
@@ -56,6 +57,11 @@ func (s *GeneratePdfService) GeneratePDF(cvInfo entities.CvInfo) error {
 				return dateStr
 			}
 			return t.Format("January 2, 2006")
+		},
+		"renderMd": func(data string) template.HTML {
+			htmlContent := markdown.ToHTML([]byte(data), nil, nil)
+
+			return template.HTML(htmlContent)
 		},
 	}).Parse(cvInfo.Template))
 	err := t.Execute(&buf, map[string]interface{}{
