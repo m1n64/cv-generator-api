@@ -35,7 +35,7 @@ func NewGeneratePdfService(service *PdfGeneratorService, notificationService *se
 }
 
 func (s *GeneratePdfService) GeneratePDF(cvInfo entities.CvInfo) error {
-	cvName := fmt.Sprintf("%s - %s", cvInfo.CV.Title, time.Now().Format(time.DateOnly))
+	cvName := fmt.Sprintf("%s - %s (%s)", cvInfo.CV.Title, time.Now().Format(time.DateOnly), *cvInfo.Color)
 	generated, _ := s.pdfGeneratorService.CreateGeneratedPDF(cvInfo.CvID, cvInfo.UserID, cvName, nil, enums.StatusPending)
 
 	ctx, cancel := chromedp.NewContext(s.chromeAllocator.AllocatorCtx)
@@ -84,13 +84,22 @@ func (s *GeneratePdfService) GeneratePDF(cvInfo entities.CvInfo) error {
 
 	_ = s.pdfGeneratorService.UpdateStatus(generated.ID, enums.StatusInProgress)
 
+	var pageHeight float64
+
 	err = chromedp.Run(ctx, chromedp.Tasks{
 		chromedp.Navigate(escapedHTML),
 		chromedp.WaitReady("body"),
+		chromedp.Evaluate(`document.body.scrollHeight / 96`, &pageHeight),
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			buf, _, err := page.PrintToPDF().
 				WithPrintBackground(true).
-				WithPaperHeight(0).
+				WithPreferCSSPageSize(false).
+				WithPaperWidth(8.5).
+				WithPaperHeight(pageHeight).
+				WithMarginTop(0).
+				WithMarginBottom(0).
+				WithMarginLeft(0).
+				WithMarginRight(0).
 				Do(ctx)
 
 			if err != nil {
