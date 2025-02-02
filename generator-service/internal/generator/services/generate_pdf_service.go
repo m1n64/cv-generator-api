@@ -88,7 +88,11 @@ func (s *GeneratePdfService) GeneratePDF(cvInfo entities.CvInfo) error {
 		chromedp.Navigate(escapedHTML),
 		chromedp.WaitReady("body"),
 		chromedp.ActionFunc(func(ctx context.Context) error {
-			buf, _, err := page.PrintToPDF().WithPrintBackground(true).Do(ctx)
+			buf, _, err := page.PrintToPDF().
+				WithPrintBackground(true).
+				WithPaperHeight(0).
+				Do(ctx)
+
 			if err != nil {
 				return fmt.Errorf("failed to generate PDF: %w", err)
 			}
