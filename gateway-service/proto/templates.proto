@@ -6,6 +6,8 @@ option go_package = "./internal/templates/grpc;templates";
 
 service TemplateService {
   rpc GetDefaultTemplate(Empty) returns (Template);
+  rpc GetTemplates(Empty) returns (Templates);
+  rpc GetTemplateById(TemplateByIdRequest) returns (TemplateResponse);
   rpc GetColorScheme(Empty) returns (ColorScheme);
   rpc GetColorSchemeByName(ColorSchemeByNameRequest) returns (Color);
 }
@@ -16,8 +18,22 @@ message ColorSchemeByNameRequest {
   string name = 1;
 }
 
+message TemplateByIdRequest {
+  string id = 1;
+}
+
 message Template {
   string template = 2;
+}
+
+message TemplateResponse {
+  string id = 1;
+  string template = 2;
+  string title = 3;
+}
+
+message Templates {
+  repeated TemplateResponse templates = 1;
 }
 
 message ColorScheme {

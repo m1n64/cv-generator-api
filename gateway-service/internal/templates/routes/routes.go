@@ -14,5 +14,7 @@ func TemplatesRoutes(r *gin.Engine, authMiddleware *middlewares.AuthMiddleware, 
 
 	templatesRoutes.Use(authMiddleware.ValidateToken())
 	templatesRoutes.GET("/default", templatesHandler.GetDefaultTemplate)
+	templatesRoutes.GET("/all", templatesHandler.GetTemplates)
+	templatesRoutes.GET("/:id", templatesHandler.GetTemplate)
 	templatesRoutes.GET("/colors", templatesHandler.GetColors)
 }

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"gateway-service/internal/cv/entities"
 	"gateway-service/internal/cv/grpc/cv"
 	"gateway-service/internal/cv/services"
@@ -85,6 +86,7 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 	}
 
 	colorName := c.DefaultQuery("color", "blue")
+	templateId := c.DefaultQuery("template", "")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -101,7 +103,7 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 		cvExperiences  *experiences.AllExperiencesResponse
 		cvEducations   *educations.AllEducationsResponse
 		cvCertificates *certificates.AllCertificatesResponse
-		template       *templates.Template
+		template       string
 		color          *templates.Color
 	)
 
@@ -109,6 +111,14 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
+			defer func() {
+				if r := recover(); r != nil {
+					err := fmt.Errorf("panic recovered: %v", r)
+					h.logger.Error("Panic in GRPC call", zap.Error(err))
+					errorsChan <- err
+				}
+			}()
+
 			if err := fn(); err != nil {
 				errorsChan <- err
 			}
@@ -165,7 +175,18 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 
 	runGRPC(func() error {
 		var err error
-		template, err = h.templatesClient.GetDefaultTemplate(ctx, &templates.Empty{})
+		if templateId != "" {
+			var templateResp *templates.TemplateResponse
+			templateResp, err = h.templatesClient.GetTemplateById(ctx, &templates.TemplateByIdRequest{Id: templateId})
+
+			template = templateResp.Template
+		} else {
+			var templateResp *templates.Template
+			templateResp, err = h.templatesClient.GetDefaultTemplate(ctx, &templates.Empty{})
+
+			template = templateResp.Template
+		}
+
 		return err
 	})
 
@@ -253,7 +274,7 @@ func (h *GeneratorHandler) GenerateCV(c *gin.Context) {
 	data, err := msgpack.Marshal(&entities.CvInfo{
 		UserID:   uuid.MustParse(userId.(string)),
 		CvID:     uuid.MustParse(cvId),
-		Template: template.Template,
+		Template: template,
 		Color:    accentColor,
 		CV: entities.CV{
 			Title: cvMain.Name,

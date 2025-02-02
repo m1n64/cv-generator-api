@@ -44,3 +44,9 @@ func (s *DefaultTemplateService) CreateDefaultTemplate(fileOrigin string) (*mode
 func (s *DefaultTemplateService) GetDefaultTemplate() (*models.Template, error) {
 	return s.TemplateRepo.GetDefaultTemplate()
 }
+
+func (s *DefaultTemplateService) UpdateName(name string) error {
+	return s.db.Transaction(func(tx *gorm.DB) error {
+		return s.TemplateRepo.UpdateNameDefault(name)
+	})
+}

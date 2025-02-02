@@ -5,6 +5,7 @@ import (
 	templates "cv-templates-service/internal/templates/grpc"
 	"cv-templates-service/internal/templates/services"
 	"cv-templates-service/pkg/utils"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -14,14 +15,16 @@ import (
 type TemplateServiceServer struct {
 	templates.UnimplementedTemplateServiceServer
 	DefaultTemplateService *services.DefaultTemplateService
+	TemplatesService       *services.TemplatesService
 	ColorService           *services.ColorService
 	minio                  *utils.MinioClient
 	logger                 *zap.Logger
 }
 
-func NewTemplateServiceServer(defaultTemplateService *services.DefaultTemplateService, colorService *services.ColorService, minio *utils.MinioClient, logger *zap.Logger) *TemplateServiceServer {
+func NewTemplateServiceServer(defaultTemplateService *services.DefaultTemplateService, templatesService *services.TemplatesService, colorService *services.ColorService, minio *utils.MinioClient, logger *zap.Logger) *TemplateServiceServer {
 	return &TemplateServiceServer{
 		DefaultTemplateService: defaultTemplateService,
+		TemplatesService:       templatesService,
 		ColorService:           colorService,
 		minio:                  minio,
 		logger:                 logger,
@@ -43,6 +46,55 @@ func (s *TemplateServiceServer) GetDefaultTemplate(ctx context.Context, _ *templ
 	}
 
 	return &templates.Template{Template: string(bytes)}, nil
+}
+
+func (s *TemplateServiceServer) GetTemplates(ctx context.Context, _ *templates.Empty) (*templates.Templates, error) {
+	templatesList, err := s.TemplatesService.GetTemplates()
+	if err != nil {
+		s.logger.Error("Failed to get templates", zap.Error(err))
+		return nil, status.Error(codes.Internal, "Failed to get templates")
+	}
+
+	var templatesResp []*templates.TemplateResponse
+	for _, template := range templatesList {
+		bytes, err := s.minio.GetFileAsBytes(ctx, template.TemplateOrigin)
+		if err != nil {
+			s.logger.Error("Failed to get template from minio", zap.Error(err))
+			return nil, status.Error(codes.Internal, "Failed to get template")
+		}
+
+		templatesResp = append(templatesResp, &templates.TemplateResponse{
+			Id:       template.ID.String(),
+			Template: string(bytes),
+			Title:    template.Title,
+		})
+	}
+
+	return &templates.Templates{Templates: templatesResp}, nil
+}
+
+func (s *TemplateServiceServer) GetTemplateById(ctx context.Context, req *templates.TemplateByIdRequest) (*templates.TemplateResponse, error) {
+	if uuid.Validate(req.Id) != nil {
+		return nil, status.Error(codes.InvalidArgument, "Id is required")
+	}
+
+	template, err := s.TemplatesService.GetTemplate(uuid.MustParse(req.Id))
+	if err != nil {
+		s.logger.Error("Failed to get template", zap.Error(err))
+		return nil, status.Error(codes.Internal, "Failed to get template")
+	}
+
+	bytes, err := s.minio.GetFileAsBytes(ctx, template.TemplateOrigin)
+	if err != nil {
+		s.logger.Error("Failed to get template from minio", zap.Error(err))
+		return nil, status.Error(codes.Internal, "Failed to get template")
+	}
+
+	return &templates.TemplateResponse{
+		Id:       template.ID.String(),
+		Template: string(bytes),
+		Title:    template.Title,
+	}, nil
 }
 
 func (s *TemplateServiceServer) GetColorScheme(ctx context.Context, _ *templates.Empty) (*templates.ColorScheme, error) {

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package infrastructure;
+
+option go_package = "./pkg/infrastructure/grpc;infrastructure";
+
+service SeederService {
+  rpc SeedByName(SeedByNameRequest) returns (Empty);
+}
+
+message SeedByNameRequest {
+  string name = 1;
+}
+
+message Empty {}

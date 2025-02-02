@@ -21,6 +21,7 @@ type Dependencies struct {
 	TemplateRepo           repositories.TemplateRepository
 	ColorRepo              repositories.ColorRepository
 	DefaultTemplateService *services.DefaultTemplateService
+	TemplateService        *services.TemplatesService
 	ColorService           *services.ColorService
 }
 
@@ -51,6 +52,7 @@ func InitializeDependencies() (*Dependencies, error) {
 	// Services
 	defaultTemplateService := services.NewDefaultTemplateService(templateRepo, db)
 	colorService := services.NewColorService(colorRepo)
+	templateService := services.NewTemplatesService(templateRepo, db)
 
 	if os.Getenv("FIRST_START") == "true" {
 		utils.SeedDB([]utils.Seeder{
@@ -72,6 +74,7 @@ func InitializeDependencies() (*Dependencies, error) {
 		TemplateRepo:           templateRepo,
 		ColorRepo:              colorRepo,
 		DefaultTemplateService: defaultTemplateService,
+		TemplateService:        templateService,
 		ColorService:           colorService,
 	}, nil
 }

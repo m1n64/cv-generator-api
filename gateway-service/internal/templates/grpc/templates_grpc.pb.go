@@ -20,6 +20,8 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	TemplateService_GetDefaultTemplate_FullMethodName   = "/templates.TemplateService/GetDefaultTemplate"
+	TemplateService_GetTemplates_FullMethodName         = "/templates.TemplateService/GetTemplates"
+	TemplateService_GetTemplateById_FullMethodName      = "/templates.TemplateService/GetTemplateById"
 	TemplateService_GetColorScheme_FullMethodName       = "/templates.TemplateService/GetColorScheme"
 	TemplateService_GetColorSchemeByName_FullMethodName = "/templates.TemplateService/GetColorSchemeByName"
 )
@@ -29,6 +31,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TemplateServiceClient interface {
 	GetDefaultTemplate(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Template, error)
+	GetTemplates(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Templates, error)
+	GetTemplateById(ctx context.Context, in *TemplateByIdRequest, opts ...grpc.CallOption) (*TemplateResponse, error)
 	GetColorScheme(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ColorScheme, error)
 	GetColorSchemeByName(ctx context.Context, in *ColorSchemeByNameRequest, opts ...grpc.CallOption) (*Color, error)
 }
@@ -45,6 +49,26 @@ func (c *templateServiceClient) GetDefaultTemplate(ctx context.Context, in *Empt
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Template)
 	err := c.cc.Invoke(ctx, TemplateService_GetDefaultTemplate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *templateServiceClient) GetTemplates(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Templates, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Templates)
+	err := c.cc.Invoke(ctx, TemplateService_GetTemplates_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *templateServiceClient) GetTemplateById(ctx context.Context, in *TemplateByIdRequest, opts ...grpc.CallOption) (*TemplateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TemplateResponse)
+	err := c.cc.Invoke(ctx, TemplateService_GetTemplateById_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,6 +100,8 @@ func (c *templateServiceClient) GetColorSchemeByName(ctx context.Context, in *Co
 // for forward compatibility.
 type TemplateServiceServer interface {
 	GetDefaultTemplate(context.Context, *Empty) (*Template, error)
+	GetTemplates(context.Context, *Empty) (*Templates, error)
+	GetTemplateById(context.Context, *TemplateByIdRequest) (*TemplateResponse, error)
 	GetColorScheme(context.Context, *Empty) (*ColorScheme, error)
 	GetColorSchemeByName(context.Context, *ColorSchemeByNameRequest) (*Color, error)
 	mustEmbedUnimplementedTemplateServiceServer()
@@ -90,6 +116,12 @@ type UnimplementedTemplateServiceServer struct{}
 
 func (UnimplementedTemplateServiceServer) GetDefaultTemplate(context.Context, *Empty) (*Template, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDefaultTemplate not implemented")
+}
+func (UnimplementedTemplateServiceServer) GetTemplates(context.Context, *Empty) (*Templates, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTemplates not implemented")
+}
+func (UnimplementedTemplateServiceServer) GetTemplateById(context.Context, *TemplateByIdRequest) (*TemplateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTemplateById not implemented")
 }
 func (UnimplementedTemplateServiceServer) GetColorScheme(context.Context, *Empty) (*ColorScheme, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetColorScheme not implemented")
@@ -132,6 +164,42 @@ func _TemplateService_GetDefaultTemplate_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TemplateServiceServer).GetDefaultTemplate(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TemplateService_GetTemplates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).GetTemplates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_GetTemplates_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).GetTemplates(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TemplateService_GetTemplateById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TemplateByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).GetTemplateById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_GetTemplateById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).GetTemplateById(ctx, req.(*TemplateByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -182,6 +250,14 @@ var TemplateService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDefaultTemplate",
 			Handler:    _TemplateService_GetDefaultTemplate_Handler,
+		},
+		{
+			MethodName: "GetTemplates",
+			Handler:    _TemplateService_GetTemplates_Handler,
+		},
+		{
+			MethodName: "GetTemplateById",
+			Handler:    _TemplateService_GetTemplateById_Handler,
 		},
 		{
 			MethodName: "GetColorScheme",

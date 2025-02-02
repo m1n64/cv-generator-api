@@ -7,6 +7,7 @@ import (
 
 type Template struct {
 	ID             uuid.UUID `gorm:"type:uuid;primaryKey"`
+	Title          string    `gorm:"type:varchar(255);"`
 	TemplateOrigin string    `gorm:"type:varchar(255);not null"`
 	IsDefault      bool      `gorm:"type:boolean;not null;default:false"`
 	IsPremium      bool      `gorm:"type:boolean;not null;default:false"`

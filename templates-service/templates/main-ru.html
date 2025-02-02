@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Template</title>
+    <title>Шаблон Резюме</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
@@ -272,7 +272,7 @@
         <div class="location">{{ .Information.Location }}</div>
         {{ end }}
 
-        <h3>Contacts</h3>
+        <h3>Контакты</h3>
         <ul>
             {{ range .Contacts }}
             <li>
@@ -280,13 +280,13 @@
             </li>
             {{ end }}
         </ul>
-        <h3>Skills</h3>
+        <h3>Навыки</h3>
         <ul>
             {{ range .Skills }}
             <li>{{ .Name }}</li>
             {{ end }}
         </ul>
-        <h3>Languages</h3>
+        <h3>Языки</h3>
         <ul>
             {{ range .Languages }}
             <li>{{ .Name }}: {{ .Level }}</li>
@@ -307,7 +307,7 @@
 
         {{ if .WorkExperiences }}
         <div class="section">
-            <h2>Work Experience</h2>
+            <h2>Опыт работы</h2>
             <ul>
                 {{ range .WorkExperiences }}
                 <li>
@@ -315,7 +315,7 @@
                         <h3>{{ .Company }}</h3> ●
                         <h3 class="position">{{ .Position }}</h3>
                     </div>
-                    <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}Present{{ end }}</p>
+                    <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}н.в.{{ end }}</p>
                     <p>{{ .Location }}</p>
                     <p>{{ renderMd .Description }}</p>
                 </li>
@@ -326,7 +326,7 @@
 
         {{ if .Educations }}
         <div class="section">
-            <h2>Education</h2>
+            <h2>Образование</h2>
             <ul>
                 {{ range .Educations }}
                 <li>
@@ -337,7 +337,7 @@
                     </div>
                     <div class="text-line">
                         <p>{{ .Location }}</p> ●
-                        <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}Present{{ end }}</p>
+                        <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}н.в.{{ end }}</p>
                     </div>
                     {{ if .Description }}
                     <p class="edu-description">{{ renderMd .Description }}</p>
@@ -350,14 +350,14 @@
 
         {{ if .Certificates }}
         <div class="section">
-            <h2>Certificates</h2>
+            <h2>Сертификаты</h2>
             <ul>
                 {{ range .Certificates }}
                 <li>
                     <h3>{{ .Title }}</h3>
                     <div class="text-line">
                         <h4>{{ .Vendor }}</h4> ●
-                        <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}Present{{ end }}</p>
+                        <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}н.в.{{ end }}</p>
                     </div>
                     {{ if .Description }}
                     <p class="edu-description">{{ renderMd .Description }}</p>
