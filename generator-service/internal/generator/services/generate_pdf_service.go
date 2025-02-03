@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
-	"github.com/gomarkdown/markdown"
+	"github.com/yuin/goldmark"
 	"html/template"
 	"net/url"
 	"os"
@@ -59,9 +59,12 @@ func (s *GeneratePdfService) GeneratePDF(cvInfo entities.CvInfo) error {
 			return t.Format("January 2, 2006")
 		},
 		"renderMd": func(data string) template.HTML {
-			htmlContent := markdown.ToHTML([]byte(data), nil, nil)
+			var buf bytes.Buffer
+			if err := goldmark.Convert([]byte(data), &buf); err != nil {
+				return template.HTML("Error MD rendering")
+			}
 
-			return template.HTML(htmlContent)
+			return template.HTML(buf.String())
 		},
 	}).Parse(cvInfo.Template))
 	err := t.Execute(&buf, map[string]interface{}{

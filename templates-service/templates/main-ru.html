@@ -221,9 +221,30 @@
 
         .edu-description {
             margin-top: 10px;
-            font-size: 14px;
-            line-height: 1.6;
+            /*font-size: 14px;*/
             color: var(--description-color);
+        }
+
+        .section .description {
+            line-height: 1.6;
+        }
+
+        .biography {
+            line-height: 1.6;
+        }
+
+        .section .description ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            color: var(--secondary-text-color);
+        }
+
+        .section .description ul li {
+            margin-bottom: 5px !important;
+        }
+
+        .section .description ul li::marker {
+            color: var(--secondary-text-color);
         }
 
         @media (max-width: 768px) {
@@ -301,7 +322,7 @@
             <h3>{{ .Information.Position }}</h3>
             {{ end }}
             {{ if .Information.Biography }}
-            <p>{{ renderMd .Information.Biography }}</p>
+            <div class="biography">{{ renderMd .Information.Biography }}</div>
             {{ end }}
         </div>
 
@@ -317,7 +338,7 @@
                     </div>
                     <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}н.в.{{ end }}</p>
                     <p>{{ .Location }}</p>
-                    <p>{{ renderMd .Description }}</p>
+                    <div class="description">{{ renderMd .Description }}</div>
                 </li>
                 {{ end }}
             </ul>
@@ -340,7 +361,7 @@
                         <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}н.в.{{ end }}</p>
                     </div>
                     {{ if .Description }}
-                    <p class="edu-description">{{ renderMd .Description }}</p>
+                    <div class="edu-description description">{{ renderMd .Description }}</div>
                     {{ end }}
                 </li>
                 {{ end }}
@@ -360,7 +381,7 @@
                         <p>{{ formatDate .StartDate }} - {{ if .EndDate }}{{ formatDate .EndDate }}{{ else }}н.в.{{ end }}</p>
                     </div>
                     {{ if .Description }}
-                    <p class="edu-description">{{ renderMd .Description }}</p>
+                    <div class="edu-description description">{{ renderMd .Description }}</div>
                     {{ end }}
                 </li>
                 {{ end }}
