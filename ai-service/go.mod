@@ -5,7 +5,7 @@ go 1.23.3
 toolchain go1.23.5
 
 require (
-	github.com/cohesion-org/deepseek-go v0.0.0-20250125185641-7c0a2e72ee60
+	github.com/cohesion-org/deepseek-go v0.1.1
 	github.com/go-playground/validator/v10 v10.23.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/joho/godotenv v1.5.1

@@ -53,14 +53,14 @@ func (s *AiServiceServer) StreamGenerate(req *ai.GenerateRequest, stream ai.AiSe
 }
 
 func (s *AiServiceServer) GetServices(ctx context.Context, req *ai.GetServicesRequest) (*ai.GetServicesResponse, error) {
-	services, err := s.aiService.GetServices()
+	servicesList, err := s.aiService.GetServices()
 	if err != nil {
 		s.logger.Error("error getting services", zap.Error(err))
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	var servicesResp []*ai.Services
-	for _, service := range services {
+	for _, service := range servicesList {
 		servicesResp = append(servicesResp, &ai.Services{
 			ServiceId:   service.ID,
 			ServiceName: service.Name,
