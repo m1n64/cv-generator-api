@@ -15,13 +15,15 @@ import (
 
 type AiService struct {
 	aiServiceRepository repositories.AiServicesRepository
+	aiAnalyticsService  *AiAnalyticsService
 	deepSeek            *deepseek.Client
 	configManager       *ConfigManager
 }
 
-func NewAiService(aiServiceRepository repositories.AiServicesRepository, deepSeek *deepseek.Client, configManager *ConfigManager) *AiService {
+func NewAiService(aiServiceRepository repositories.AiServicesRepository, aiAnalyticsService *AiAnalyticsService, deepSeek *deepseek.Client, configManager *ConfigManager) *AiService {
 	return &AiService{
 		aiServiceRepository: aiServiceRepository,
+		aiAnalyticsService:  aiAnalyticsService,
 		deepSeek:            deepSeek,
 		configManager:       configManager,
 	}
@@ -60,6 +62,7 @@ func (s *AiService) GenerateDescription(prompt string, serviceId string) (string
 
 	select {
 	case res := <-resultChan:
+		err = s.aiAnalyticsService.SendAiAnalyticsGenerateEvent(prompt, res, service)
 		return res, nil
 	case err := <-errorChan:
 		return "", err
@@ -90,6 +93,7 @@ func (s *AiService) StreamGenerateDescription(prompt string, serviceId string, s
 
 	defer deepSeekStream.Close()
 
+	var responseText string
 	for {
 		response, err := deepSeekStream.Recv()
 		if errors.Is(err, io.EOF) {
@@ -103,11 +107,14 @@ func (s *AiService) StreamGenerateDescription(prompt string, serviceId string, s
 			err := stream.Send(&ai.GenerateResponse{
 				Response: choice.Delta.Content,
 			})
+			responseText += choice.Delta.Content
 			if err != nil {
 				return fmt.Errorf("error sending stream to client: %w", err)
 			}
 		}
 	}
+
+	err = s.aiAnalyticsService.SendAiAnalyticsGenerateEvent(prompt, responseText, service)
 
 	return nil
 }
