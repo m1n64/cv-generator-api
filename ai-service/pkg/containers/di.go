@@ -21,6 +21,7 @@ type Dependencies struct {
 	AiServiceRepository repositories.AiServicesRepository
 	ConfigManager       *services.ConfigManager
 	AiService           *services.AiService
+	AiAnalyticService   *services.AiAnalyticsService
 }
 
 func InitializeDependencies() (*Dependencies, error) {
@@ -51,7 +52,8 @@ func InitializeDependencies() (*Dependencies, error) {
 	}
 
 	deepSeek := deepseek.NewClient(os.Getenv("DEEPSEEK_TOKEN"))
-	aiService := services.NewAiService(aiServiceRepository, deepSeek, configManager)
+	aiAnalyticsService := services.NewAiAnalyticsService(rabbitMQ)
+	aiService := services.NewAiService(aiServiceRepository, aiAnalyticsService, deepSeek, configManager)
 
 	// Dependencies
 	return &Dependencies{
@@ -64,6 +66,7 @@ func InitializeDependencies() (*Dependencies, error) {
 		AiServiceRepository: aiServiceRepository,
 		ConfigManager:       configManager,
 		AiService:           aiService,
+		AiAnalyticService:   aiAnalyticsService,
 	}, nil
 }
 
