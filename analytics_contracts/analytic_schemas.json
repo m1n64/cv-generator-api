@@ -117,5 +117,31 @@
         "description": "Name of the technology (e.g., PHP or Go, etc)"
       }
     }
+  },
+  "AiAnalyticsQueueMessage": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "description": "Type of action performed (e.g., 'ai_generate')"
+      },
+      "send_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp of when the action occurred"
+      },
+      "prompt": {
+        "type": "string",
+        "description": "Prompt for the AI to generate the CV"
+      },
+      "response": {
+        "type": "string",
+        "description": "Response from the AI"
+      },
+      "service": {
+        "type": "string",
+        "description": "Service used to generate the CV"
+      }
+    }
   }
 }
