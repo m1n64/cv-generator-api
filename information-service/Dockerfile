@@ -15,6 +15,8 @@ RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
 
 RUN apk --no-cache add ca-certificates gcc g++ make git curl nodejs npm
 
+RUN apk add --no-cache libwebp-dev
+
 COPY ./ ./
 
 RUN go mod download
