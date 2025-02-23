@@ -21,7 +21,7 @@ COPY ./ ./
 
 RUN go mod download
 RUN CGO_ENABLED=0 go install -ldflags "-s -w -extldflags '-static'" github.com/go-delve/delve/cmd/dlv@latest
-RUN CGO_ENABLED=0 go build -gcflags "all=-N -l" -o main ./cmd/main.go
+RUN go build -gcflags "all=-N -l" -o main ./cmd/main.go
 
 EXPOSE 50051 4000
 
