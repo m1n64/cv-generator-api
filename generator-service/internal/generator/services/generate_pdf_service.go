@@ -56,7 +56,7 @@ func (s *GeneratePdfService) GeneratePDF(cvInfo entities.CvInfo) error {
 			if err != nil {
 				return dateStr
 			}
-			return t.Format("January 2, 2006")
+			return t.Format("January 2006")
 		},
 		"renderMd": func(data string) template.HTML {
 			var buf bytes.Buffer
