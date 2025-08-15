@@ -17,6 +17,7 @@ help:
 init:
 	@echo "🛠️  Initialization all services and networks..."
 	$(MAKE) network
+	$(MAKE) copy-envs
 	$(MAKE) up
 
 # Init all services
@@ -106,3 +107,19 @@ stop-service:
 network:
 	@echo "🌐 Create network..."
 	docker network create cv-generator-network || echo "❌ Network \"cv-generator-network\" already exists"
+
+.PHONY: copy-envs
+copy-envs:
+	@echo "📄 Copy .env.example to .env, if file exists and .env not exists..."
+	@for service in $(SERVICES); do \
+		if [ -f $$service/.env.example ]; then \
+			if [ ! -f $$service/.env ]; then \
+				cp $$service/.env.example $$service/.env; \
+				echo "✅ $$service: .env created"; \
+			else \
+				echo "ℹ️  $$service: .env already created, skipping"; \
+			fi; \
+		else \
+			echo "⚠️  $$service: .env.example not found"; \
+		fi; \
+	done

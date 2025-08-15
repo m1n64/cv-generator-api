@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   cvdata-db:
     image: postgres:latest
