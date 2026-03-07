@@ -3,6 +3,8 @@
 ### Description
 This project is a simple CV generator API, written on Go in microservice architecture. It is a simple REST API with gRPC services.
 
+> **Note!** This repository is being archived because it's outdated, difficult to maintain, and I've basically lost my liking. The rewritten backend is in this repository: https://github.com/m1n64/cv-generator-api-v2 
+
 ### Links:
 - [github](https://github.com/m1n64/cv-generator-api)
 - [API docs](https://api.resumego.online/docs/)
